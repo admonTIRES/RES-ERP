@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Models\matrizcomparativa;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class matrizModel extends Model
+{
+    use HasFactory;
+    protected $primaryKey = 'ID_FORMULARIO_MATRIZ';
+    protected $table = 'formulario_matrizcomparativa';
+    protected $fillable = [
+        'HOJA_ID',
+        'NO_MR',
+        'PROVEEDOR1',
+        'PROVEEDOR2',
+        'PROVEEDOR3',
+
+        'MATERIALES_JSON_PROVEEDOR1',
+        'MATERIALES_JSON_PROVEEDOR2',
+        'MATERIALES_JSON_PROVEEDOR3',
+
+
+        'SUBTOTAL_PROVEEDOR1',
+        'IVA_PROVEEDOR1',
+        'IMPORTE_PROVEEDOR1',
+
+
+        'SUBTOTAL_PROVEEDOR2',
+        'IVA_PROVEEDOR2',
+        'IMPORTE_PROVEEDOR2',
+
+
+        'SUBTOTAL_PROVEEDOR3',
+        'IVA_PROVEEDOR3',
+        'IMPORTE_PROVEEDOR3',
+        'ACTIVO',
+
+
+        'FECHA_COTIZACION_PROVEEDOR1',
+        'FECHA_COTIZACION_PROVEEDOR2',
+        'FECHA_COTIZACION_PROVEEDOR3',
+        'VIGENCIA_COTIZACION_PROVEEDOR1',
+        'VIGENCIA_COTIZACION_PROVEEDOR2',
+        'VIGENCIA_COTIZACION_PROVEEDOR3',
+        'TIEMPO_ENTREGA_PROVEEDOR1',
+        'TIEMPO_ENTREGA_PROVEEDOR2',
+        'TIEMPO_ENTREGA_PROVEEDOR3',
+        'CONDICIONES_PAGO_PROVEEDOR1',
+        'CONDICIONES_PAGO_PROVEEDOR2',
+        'CONDICIONES_PAGO_PROVEEDOR3',
+        'CONDICIONES_GARANTIA_PROVEEDOR1',
+        'CONDICIONES_GARANTIA_PROVEEDOR2',
+        'CONDICIONES_GARANTIA_PROVEEDOR3',
+        'SERVICIOPOST_PROVEEDOR1',
+        'SERVICIOPOST_PROVEEDOR2',
+        'SERVICIOPOST_PROVEEDOR3',
+        'BENEFICIOS_PROVEEDOR1',
+        'BENEFICIOS_PROVEEDOR2',
+        'BENEFICIOS_PROVEEDOR3',
+        'ESPECIFICACIONES_PROVEEDOR1',
+        'ESPECIFICACIONES_PROVEEDOR2',
+        'ESPECIFICACIONES_PROVEEDOR3',
+        'CERTIFIACION_CALIDAD_PROVEEDOR1',
+        'CERTIFIACION_CALIDAD_PROVEEDOR2',
+        'CERTIFIACION_CALIDAD_PROVEEDOR3',
+
+
+        'SOLICITAR_VERIFICACION',
+        'REQUIERE_COMENTARIO',
+        'COMENTARIO_SOLICITUD',
+        'ESTADO_APROBACION',
+        'FECHA_APROBACION',
+        'MOTIVO_RECHAZO',
+        'REQUIERE_PO',
+        'PROVEEDOR_SELECCIONADO',
+        'MONTO_FINAL',
+        'FORMA_PAGO',
+        'CRITERIO_SELECCION',
+        'FECHA_SOLCITIUD'
+
+
+
+
+
+
+    ];
+}

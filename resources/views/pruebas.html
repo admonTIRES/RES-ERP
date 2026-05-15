@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+
+</head>
+
+<body style="background:#f4f6f9;">
+
+
+
+    <!-- ECHARTS -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+
+
+
+
+    <div style="position:relative; width:500px; height:300px; margin:auto;">
+
+        <div id="chart" style="width:100%;height:100%;"></div>
+
+        <svg width="500" height="300" style="position:absolute; top:0; left:0; pointer-events:none;">
+
+            <path id="curveTop" d="M80 200 A170 170 0 0 1 420 200" fill="none" />
+
+            <!-- <text font-size="16" font-weight="bold" fill="#2C2A29">
+                <textPath href="#curveTop" startOffset="40%" text-anchor="middle">
+                    Bajo
+                </textPath>
+            </text>
+
+            <text font-size="16" font-weight="bold" fill="#2C2A29">
+                <textPath href="#curveTop" startOffset="59%" text-anchor="middle">
+                    Alto
+                </textPath>
+            </text> -->
+
+        </svg>
+
+    </div>
+
+
+    <script>
+        var chart = echarts.init(document.getElementById('chart'));
+
+        chart.setOption({
+            series: [{
+                type: 'gauge',
+                startAngle: 180,
+                endAngle: 0,
+                min: 0,
+                max: 100,
+                axisLine: {
+                    lineStyle: {
+                        width: 20,
+                        color: [
+                            [0.5, 'green'],
+                            [1, 'red']
+                        ]
+                    }
+                },
+                axisTick: { show: false },
+                splitLine: { show: false },
+                axisLabel: { show: false },
+                data: [{ value: 40 }]
+            }]
+        });
+    </script>
+
+
+<!-- PLOTLY -->
+
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<div id="chart" style="width:400px;height:250px;"></div>
+
+<script>
+    var data = [{
+        type: "indicator",
+        mode: "gauge+number",
+        value: 40,
+        gauge: {
+            shape: "angular",
+            axis: { range: [0, 100] },
+            steps: [
+                { range: [0, 50], color: "green" },
+                { range: [50, 100], color: "red" }
+            ]
+        }
+    }];
+
+    Plotly.newPlot('chart', data);
+</script>
+
+
+<!-- HIGHCHARTS -->
+
+   <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    
+    <div id="container"></div>
+    
+    <script>
+        Highcharts.chart('container', {
+            chart: { type: 'gauge' },
+            pane: { startAngle: -90, endAngle: 90 },
+            yAxis: {
+                min: 0,
+                max: 100,
+                plotBands: [
+                    { from: 0, to: 50, color: 'green' },
+                    { from: 50, to: 100, color: 'red' }
+                ]
+            },
+            series: [{ data: [40] }]
+        });
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCatalagoVerificacionproveedor extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('catalago_verificacionproveedor', function (Blueprint $table) {
+            $table->increments('ID_CATALOGO_VERIFICACION_PROVEEDOR');
+            $table->text('DESCRIPCION_TIPO')->nullable();
+            $table->boolean('ACTIVO')->default(1);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('catalago_verificacionproveedor');
+    }
+}

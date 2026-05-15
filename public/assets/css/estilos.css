@@ -1,0 +1,519 @@
+.contenedor-contenido {
+    padding: 20px; /* Agrega espacio en blanco alrededor del contenido */
+}
+
+.BOTON:hover{
+    background-color: #FF585D;
+    border-radius: 2px;
+
+}
+
+/* Estilo para el enlace */
+.BOTON {
+    display: inline-block;
+    transition: transform 0.3s ease; /* Transición suave para el efecto de zoom */
+}
+
+
+.BOTON.active {
+    background-color: #FF585D;
+    border-radius: 2px;
+}
+/* Dropdown principal activo */
+.nav-item.dropdown.active > .nav-link {
+    background-color: #FF585D;
+    border-radius: 2px;
+}
+
+/* Dropdown-item activo */
+.dropdown-item.active {
+    background-color: #FF585D;
+    color: white; /* Cambia el color del texto si es necesario */
+}
+
+
+/* Estilo para la tabla */
+.TableCustom table {
+    font-family: Arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border: 2px solid #3498db;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezados de columna */
+.TableCustom th {
+    background-color: rgba(0, 124, 186, 0.850);
+    color: #ffffff;
+    font-weight: bold;
+    /* font-size: 22px; */
+    text-align: left;
+    border-radius: 3px;
+    /* padding: 10px; */
+}
+
+.error {
+    border: 2px solid red;
+}
+
+/* Filas pares
+ tr:nth-child(even) {
+    background-color: rgba(0, 124, 186, 0.850);
+}
+
+/* Filas impares */
+ /* tr:nth-child(odd) {
+    background-color: rgba(0, 124, 186, 0.850); */
+/* } */
+
+/* Celdas de datos */
+ td {
+    /* padding: 8px; */
+    text-align: left; 
+    /* font-size: 22px; */
+}
+
+/* Estilo para el hover de las filas */
+/* tr:hover {
+    background-color: #69b8ed;
+    color: #ffffff;
+    transition: background-color 0.3s;
+} */
+
+/* Estilo para la clase activa (puedes agregar esta clase a la fila seleccionada) */
+/* tr.active {
+    background-color: #ff6b6b;
+    color: #ffffff;
+} */
+
+/* Agrega un borde alrededor de la tabla */
+/* table-bordered {
+    border: 1px solid #3498db;
+}  */
+
+ol {
+    background-color: rgb(164, 214, 94) !important;
+    padding: 10px !important;
+    border-radius: 10px !important;
+}
+
+.nav-item {
+    margin-left: 5px;
+}
+
+
+
+    .nombre-column {
+    width: 20%; 
+}
+
+
+td.descripcion-column {
+    max-width: 300px;
+    word-wrap: break-word; 
+    text-align: justify;
+    font-size: 12px; 
+}
+
+
+.dropdown-menu .dropdown-item {
+    font-size: 17px; 
+    padding: 5px 10px; 
+}
+.dropdown-menu hr {
+    margin: 5px 0;
+}
+
+
+input[type="checkbox"] {
+    width: 15px;  
+    height: 15px; 
+    transform: scale(1.5); 
+    margin: 5px; 
+}
+
+
+input[type="radio"]:checked {
+    background-color: black;
+    border-color: black;
+}
+
+input[type="radio"]:checked::before {
+    background-color: black;
+}
+
+.radio-container {
+    background-color: #E2EFDA;
+    border-radius: 5px;
+    padding: 5px;
+    display: inline-block;
+}
+
+/* Opcional: si deseas cambiar el estilo de los radio buttons cuando están deshabilitados */
+.form-check-input:disabled {
+    background-color: #d1d1d1;
+}
+
+
+.btn-custom:hover{
+    /* box-shadow: 1px 1px 1px 1px rgba(32, 32, 32, 0.3)!important; */
+    transform: scale(1.1);
+-webkit-box-shadow: -4px 14px 32px -5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: -4px 14px 32px -5px rgba(0, 0, 0, 0.75);
+    box-shadow: -4px 14px 32px -5px rgba(0, 0, 0, 0.75);
+}
+
+
+
+/* Estilo para el enlace */
+.btn-custom {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    
+}
+
+
+body {
+    font-family: 'Poppins', sans-serif;
+    /* background-color: #007DBA; */
+}
+
+
+
+.nav-link {
+    font-size: 12px;
+    padding: 4px 9px;
+}
+
+
+
+.total-porcentaje-circle {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: red; 
+}
+
+
+
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+
+
+
+
+table.dataTable {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 15px;
+    overflow: hidden; 
+}
+
+table.dataTable thead th:first-child {
+    border-top-left-radius: 15px;
+}
+
+table.dataTable thead th:last-child {
+    border-top-right-radius: 15px;
+}
+
+table.dataTable tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 15px;
+}
+
+table.dataTable tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 15px;
+}
+
+/* table.dataTable thead th {
+    vertical-align: middle;
+    padding: 8px 15px;
+    background-color: #3498db;
+    color: white;
+    border-bottom: 2px solid #ddd;
+} */
+
+
+
+.btn-circle {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 50%;
+}
+
+
+
+
+
+.custom-header th {
+    background-color: rgb(178, 226, 109) !important;
+    color: white; 
+    border: 2px solid rgb(178, 226, 109) !important; 
+}
+
+
+
+/* Estilo para hacer que el icono gire */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+.TableSeleccion th {
+    background-color: rgba(164, 214, 94);
+    color: #ffffff;
+    font-weight: bold;
+    /* font-size: 22px; */
+    text-align: left;
+    border-radius: 3px;
+    /* padding: 10px; */
+}
+
+
+.TableSeleccion1 th {
+    background-color: rgb(255, 255, 255);
+    color: #ffffff;
+    font-weight: bold;
+    /* font-size: 22px; */
+    text-align: left;
+    border-radius: 3px;
+    /* padding: 10px; */
+}
+
+
+
+.cardseleccion {
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+
+}
+
+
+.cardseleccion:hover {
+    transform: scale(1.02);
+    /* Aplica el efecto de zoom */
+}
+
+
+		
+
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Ancho ajustado */
+    height: 28px; /* Altura ajustada */
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px; /* Radio del borde ajustado */
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px; /* Tamaño del círculo ajustado */
+    width: 22px;
+    left: 3px; /* Posición inicial ajustada */
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(22px); /* Desplazamiento ajustado */
+  }
+  
+
+
+  .floating-input {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.floating-input:hover,
+.floating-input:focus {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+
+
+
+
+
+
+
+/* Título centrado */
+.traffic-light-title {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 10px; /* Añadir un poco de espacio debajo del título */
+}
+
+/* Centrar el semáforo en el modal */
+.traffic-light-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+/* Contenedor del semáforo */
+.traffic-light {
+    display: flex;
+    flex-direction: row; /* Los semáforos alineados horizontalmente */
+    justify-content: center;
+    align-items: center;
+}
+
+.light {
+    display: flex;
+    flex-direction: column; /* Alinear el círculo y el texto en columna */
+    align-items: center; /* Asegurarse de que estén centrados */
+    margin: 0 10px; /* Separar los semáforos un poco más entre ellos */
+}
+
+/* Ocultar los radio buttons */
+.light input[type="radio"] {
+    display: none;
+}
+
+/* Estilos para los círculos */
+.light.red::before,
+.light.yellow::before,
+.light.green::before {
+    content: '';
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0.3;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+/* Colores de los círculos apagados */
+.light.red::before {
+    background-color: #8B0000;
+}
+
+.light.yellow::before {
+    background-color: #CCCC00;
+}
+
+.light.green::before {
+    background-color: #006400;
+}
+
+/* Texto centrado y en negro */
+.label {
+    margin-top: 10px; /* Añadir espacio entre el círculo y el texto */
+    font-weight: bold;
+    font-size: 14px;
+    color: black;
+    display: inline-block;
+}
+
+/* Luces encendidas (activadas por JavaScript o CSS) */
+.active.red::before {
+    background-color: red;
+    opacity: 1;
+}
+
+.active.yellow::before {
+    background-color: yellow;
+    opacity: 1;
+}
+
+.active.green::before {
+    background-color: green;
+    opacity: 1;
+}
+
+
+.modal-xl {
+    max-width: 78%; 
+}
+
+
+
+
+    .datepicker table {
+        font-size: 14px;
+        color: #333;
+    }
+    .datepicker .table-condensed th, .datepicker .table-condensed td {
+        padding: 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .datepicker .table-condensed td.day:hover {
+        background-color: #007bff;
+        color: white;
+    }
+    .datepicker .table-condensed .today {
+        background-color: #ffc107;
+        border-radius: 50%;
+    }
+    .datepicker .table-condensed .active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+    }
+
+
+

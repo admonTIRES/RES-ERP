@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Models\organizacion;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class formulariodptModel extends Model
+{
+
+    protected $primaryKey = 'ID_FORMULARIO_DPT';
+    protected $table = 'formulario_dpt';
+    protected $fillable = [
+        'DEPARTAMENTOS_AREAS_ID',
+        'AREA_TRABAJO_DPT',
+        'PROPOSITO_FINALIDAD_DPT',
+        'NIVEL_JERARQUICO_DPT',
+        'PUESTO_REPORTA_DPT',
+        'PUESTO_LE_REPORTAN_DPT',
+        'PUESTOS_INTERACTUAN_DPT',
+        'PUESTOS_DIRECTOS_DPT',
+        'PUESTOS_INDIRECTOS_DPT',      
+        'LUGAR_TRABAJO_DPT',
+        'DISPONIBILIDAD_VIAJAR',
+        'HORARIO_ENTRADA_DPT',
+        'HORARIO_SALIDA_DPT',
+        'HORAS_COMIDA_PPT',
+        'FUNCIONES_CARGO_DPT',
+        'FUNCIONES_GESTION_DPT',
+        'NOMBRE_COMPETENCIA1',
+        'DESCRIPCION_COMPETENCIA1',
+        'COMPETENCIA1_ESCALA',
+        'NOMBRE_COMPETENCIA2',
+        'DESCRIPCION_COMPETENCIA2',
+        'COMPETENCIA2_ESCALA',
+        'NOMBRE_COMPETENCIA3',
+        'DESCRIPCION_COMPETENCIA3',
+        'COMPETENCIA3_ESCALA',
+        'NOMBRE_COMPETENCIA4',
+        'DESCRIPCION_COMPETENCIA4',
+        'COMPETENCIA4_ESCALA',
+        'NOMBRE_COMPETENCIA5',
+        'DESCRIPCION_COMPETENCIA5',
+        'COMPETENCIA5_ESCALA',
+        'NOMBRE_COMPETENCIA6',
+        'DESCRIPCION_COMPETENCIA6',
+        'COMPETENCIA6_ESCALA',
+        'NOMBRE_COMPETENCIA7',
+        'DESCRIPCION_COMPETENCIA7',
+        'COMPETENCIA7_ESCALA',
+
+        'NOMBRE_COMPETENCIA8',
+        'DESCRIPCION_COMPETENCIA8',
+        'COMPETENCIA8_ESCALA',
+        'NOMBRE_COMPETENCIA11',
+        'DESCRIPCION_COMPETENCIA11',
+        'COMPETENCIA11_ESCALA',
+        'NOMBRE_COMPETENCIA12',
+        'DESCRIPCION_COMPETENCIA12',
+        'COMPETENCIA12_ESCALA',
+        'NOMBRE_COMPETENCIA13',
+        'DESCRIPCION_COMPETENCIA13',
+        'COMPETENCIA13_ESCALA',
+        'NOMBRE_COMPETENCIA14',
+        'DESCRIPCION_COMPETENCIA14',
+        'COMPETENCIA14_ESCALA',
+
+        'ESCALA_LIDERAZGO',
+        'ESCALA_TOMADECISION',
+        'DE_INFORMACION_DPT',
+        'DE_RECURSOS_DPT',
+        'DE_INFORMACION_ESPECIFIQUE_DPT',
+        'DE_RECURSOS_ESPECIFIQUE_DPT',
+        'DE_EQUIPOS_DPT',
+        'DE_VEHICULOS_DPT',
+        'DE_EQUIPOS_ESPECIFIQUE_DPT',
+        'DE_VEHICULOS_ESPECIFIQUE_DPT',
+        'OBSERVACIONES_DPT',
+        'ORGANIGRAMA_DPT',
+        'ELABORADO_NOMBRE_DPT',
+        'ELABORADO_FIRMA_DPT',
+        'ELABORADO_FECHA_DPT',
+        'REVISADO_NOMBRE_DPT',
+        'REVISADO_FIRMA_DPT',
+        'REVISADO_FECHA_DPT',
+        'AUTORIZADO_NOMBRE_DPT',
+        'AUTORIZADO_FIRMA_DPT',
+        'AUTORIZADO_FECHA_DPT',
+         'ACTIVO'
+    ];
+
+
+    protected $casts = [
+        'PUESTOS_INTERACTUAN_DPT' => 'array',
+        'FUNCIONES_CARGO_DPT' => 'array',
+        'FUNCIONES_GESTION_DPT' => 'array',
+    ];
+
+}
