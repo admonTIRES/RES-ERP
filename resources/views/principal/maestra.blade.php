@@ -702,7 +702,7 @@
     @endif
 
     @if(request()->is('requisiciondepersonal'))
-    <script src="/assets/js_sitio/organizacion/requerimiento.js?v=6 "></script>
+    <script src="/assets/js_sitio/organizacion/requerimiento.js?v=6"></script>
     @endif
 
     @if(request()->is('catalogodevacantes'))

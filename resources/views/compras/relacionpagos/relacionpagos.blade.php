@@ -28,7 +28,7 @@
     .card-pagos {
         border: 1px solid #dfe7e3;
         border-radius: 12px;
-        overflow: hidden;
+        /* overflow: hidden; */
         margin-bottom: 20px;
         background: #fff;
     }
