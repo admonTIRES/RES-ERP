@@ -3461,7 +3461,8 @@ function cargarTablasingnaciongeneralproveedor() {
                 }
             },
             { data: 'BTN_DOCUMENTO', className: 'text-center' },
-            { data: 'BTN_EDITAR', className: 'text-center' },
+           { data: 'BTN_EDITAR', className: 'text-center' },
+            { data: 'BTN_RETORNAR', className: 'text-center' }
         ],
         columnDefs: [
             { targets: 0, title: '#', className: 'all text-center' },
@@ -3474,6 +3475,8 @@ function cargarTablasingnaciongeneralproveedor() {
             { targets: 7, title: 'Descargar formato', className: 'all text-center' },
             { targets: 8, title: 'Documento', className: 'all text-center' },
             { targets: 9, title: 'Editar', className: 'all text-center' },
+            { targets: 10, title: 'Retornar ítem', className: 'all text-center' },
+
         ],
         drawCallback: function () {
 
@@ -3535,6 +3538,93 @@ $(document).on('click', '.descargar-epp', function () {
         '_blank'
     );
 });
+
+
+
+
+
+$(document).on('click', '.RETORNAR', function () {
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Fecha de retorno',
+        input: 'date',
+        inputLabel: 'Seleccione la fecha de retorno',
+        showCancelButton: true,
+        confirmButtonText: 'Retornar',
+        cancelButtonText: 'Cancelar',
+
+        inputValidator: (value) => {
+
+            if (!value) {
+                return 'Debes seleccionar una fecha';
+            }
+        }
+
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            Swal.fire({
+                title: 'Guardando retorno...',
+                text: 'Espere un momento',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+
+                url: '/retornarAsignacionProveedor',
+                type: 'POST',
+
+                data: {
+
+                    ID_ASINGACIONES_PROVEEDORES: id,
+                    FECHA_RETORNO: result.value,
+
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+
+                success: function (response) {
+
+                    Swal.close();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: response.msj
+                    });
+
+                    if ($.fn.DataTable.isDataTable('#Tablasignacionproveedorgeneral')) {
+
+                        $('#Tablasignacionproveedorgeneral')
+                            .DataTable()
+                            .ajax.reload(null, false);
+                    }
+                },
+
+                error: function (xhr) {
+
+                    Swal.close();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.msj || 'Ocurrió un error'
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
 

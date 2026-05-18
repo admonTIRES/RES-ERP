@@ -1263,41 +1263,70 @@ class listaproveedorController extends Controller
 
                     if ($esPrimera) {
 
+                        // =========================================
+                        // SI YA ESTA RETORNADO
+                        // =========================================
                         if ($asignacion->ACTIVO == 0) {
-                            $fila['BTN_EDITAR'] =
-                                '<button type="button" class="btn btn-primary btn-custom rounded-pill EDITAR">
-                                <i class="bi bi-eye"></i>
-                            </button>';
+
+                            $fila['BTN_EDITAR'] = '';
+
+                            $fila['DESCARGAR_FORMATOS'] = '';
+
+                            $fila['DESCARGAR_EPP'] = '';
+
+
+                            $fila['BTN_RETORNAR'] = '';
+
+
+                            $fila['BTN_DOCUMENTO'] =
+                                '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+                                
                         } else {
+
+                            // =========================================
+                            // ACTIVO NORMAL
+                            // =========================================
+
                             $fila['BTN_EDITAR'] =
-                                '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>';
+                                '<button type="button"
+                                    class="btn btn-warning btn-custom rounded-pill EDITAR">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>';
+
+                                                $fila['DESCARGAR_FORMATOS'] =
+                                                    '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-asignacion"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+
+                                                $fila['DESCARGAR_EPP'] =
+                                                    '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-epp"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+
+                                                $fila['BTN_DOCUMENTO'] =
+                                                    '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+
+                                                $fila['BTN_RETORNAR'] =
+                                                    '<button class="btn btn-primary btn-custom rounded-pill pdf-button RETORNAR"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                </button>';
                         }
-
-                        $fila['DESCARGAR_FORMATOS'] =
-                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-asignacion"
-                                data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
-                                <i class="bi bi-filetype-pdf"></i>
-                            </button>';
-
-
-                        $fila['DESCARGAR_EPP'] =
-                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-epp"
-                                data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
-                                <i class="bi bi-filetype-pdf"></i>
-                            </button>';
-
-
-                        $fila['BTN_DOCUMENTO'] =
-                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
-                            data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
-                            <i class="bi bi-filetype-pdf"></i>
-                        </button>';
                     } else {
+
                         $fila['BTN_EDITAR'] = '';
                         $fila['DESCARGAR_FORMATOS'] = '';
+                        $fila['DESCARGAR_EPP'] = '';
                         $fila['BTN_DOCUMENTO'] = '';
+                        $fila['BTN_RETORNAR'] = '';
                     }
 
                     $resultado[] = $fila;
@@ -1317,6 +1346,110 @@ class listaproveedorController extends Controller
         }
     }
 
+
+
+
+    public function retornarAsignacionProveedor(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $idAsignacionProveedor = $request->ID_ASINGACIONES_PROVEEDORES;
+
+            $fechaRetorno = $request->FECHA_RETORNO;
+
+            $asignacionProveedor = asignacionproveedorModel::find($idAsignacionProveedor);
+
+            if (!$asignacionProveedor) {
+
+                return response()->json([
+                    'msj' => 'Asignación no encontrada'
+                ], 404);
+            }
+
+            if ($asignacionProveedor->ACTIVO == 0) {
+
+                return response()->json([
+                    'msj' => 'La asignación ya fue retornada'
+                ], 400);
+            }
+
+            $idsAsignaciones = json_decode($asignacionProveedor->ASIGNACIONES_ID, true);
+
+            if (!is_array($idsAsignaciones) || empty($idsAsignaciones)) {
+
+                return response()->json([
+                    'msj' => 'No existen asignaciones relacionadas'
+                ], 400);
+            }
+
+            $asignacionesInventario = DB::table('asignaciones_inventario')
+                ->whereIn('ID_ASIGNACION_FORMULARIO', $idsAsignaciones)
+                ->get();
+
+            foreach ($asignacionesInventario as $asignacion) {
+
+                $inventario = DB::table('formulario_inventario')
+                    ->where('ID_FORMULARIO_INVENTARIO', $asignacion->INVENTARIO_ID)
+                    ->first();
+
+                if (!$inventario) {
+                    continue;
+                }
+
+                $cantidadRetorna = (float)$asignacion->CANTIDAD_SALIDA;
+
+                $stockActual = (float)$inventario->CANTIDAD_EQUIPO;
+
+                $nuevoStock = $stockActual + $cantidadRetorna;
+
+                DB::table('formulario_inventario')
+                    ->where('ID_FORMULARIO_INVENTARIO', $asignacion->INVENTARIO_ID)
+                    ->update([
+                        'CANTIDAD_EQUIPO' => $nuevoStock
+                    ]);
+
+                DB::table('entradas_inventario')->insert([
+
+                    'INVENTARIO_ID'     => $asignacion->INVENTARIO_ID,
+
+                    'FECHA_INGRESO'     => $fechaRetorno,
+
+                    'CANTIDAD_PRODUCTO' => $cantidadRetorna,
+
+                    'UNIDAD_MEDIDA'     => $inventario->UNIDAD_MEDIDA,
+
+                    'ENTRA_ASIGNACION'  => 1,
+
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            $asignacionProveedor->ACTIVO = 0;
+            $asignacionProveedor->save();
+
+            DB::commit();
+
+            return response()->json([
+                'msj' => 'Artículos retornados correctamente'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'msj' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+
+
+    
     public function TablasignacionproveedorEditar(Request $request)
     {
         try {

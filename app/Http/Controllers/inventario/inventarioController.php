@@ -631,9 +631,61 @@ class inventarioController extends Controller
                 ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
                 ->where('e.INVENTARIO_ID', $inventarioId);
 
-            if ($primerEntradaId) {
-                $entradasQuery->where('e.ID_ENTRADA_FORMULARIO', '!=', $primerEntradaId);
-            }
+            // if ($primerEntradaId) {
+            //     $entradasQuery->where('e.ID_ENTRADA_FORMULARIO', '!=', $primerEntradaId);
+            // }
+
+            // $entradas = $entradasQuery->get([
+            //     'e.FECHA_INGRESO',
+            //     'e.CANTIDAD_PRODUCTO',
+            //     'e.UNIDAD_MEDIDA',
+            //     'e.VALOR_UNITARIO',
+            //     'e.ENTRADA_SOLICITUD',
+            //     'e.created_at',
+            //     'u.EMPLEADO_NOMBRE',
+            //     'u.EMPLEADO_APELLIDOPATERNO',
+            //     'u.EMPLEADO_APELLIDOMATERNO'
+            // ])->map(function ($entrada) {
+            //     $usuario = trim($entrada->EMPLEADO_NOMBRE . ' ' . $entrada->EMPLEADO_APELLIDOPATERNO . ' ' . $entrada->EMPLEADO_APELLIDOMATERNO);
+
+            //     $tipo       = $entrada->ENTRADA_SOLICITUD == 1
+            //         ? '<span class="badge bg-success">Entrada</span>'
+            //         : '<span class="badge bg-success">Entrada por compra</span>';
+            //     $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
+            //         ? 'Retornado por: ' . e($usuario)
+            //         : '';
+
+            //     $fechaMostrar = $entrada->FECHA_INGRESO;
+
+            //     // ================================
+            //     // ORDENAR: solo validar created_at si ENTRADA_SOLICITUD = 1
+            //     // ================================
+            //     if ($entrada->ENTRADA_SOLICITUD == 1) {
+            //         if (date('Y-m-d', strtotime($entrada->FECHA_INGRESO)) === date('Y-m-d', strtotime($entrada->created_at))) {
+            //             $horaCreated = date('H:i:s', strtotime($entrada->created_at));
+            //             $fechaOrden  = $entrada->FECHA_INGRESO . ' ' . $horaCreated;
+            //         } else {
+            //             $fechaOrden = $entrada->FECHA_INGRESO . ' 23:59:59';
+            //         }
+            //     } else {
+            //         $fechaOrden = $entrada->FECHA_INGRESO;
+            //     }
+
+
+            //     return [
+            //         'ORDEN_PRIORIDAD' => 1,
+            //         'FECHA'          => $fechaMostrar,
+            //         'FECHA_ORDEN'    => $fechaOrden,
+            //         'CANTIDAD'       => $entrada->CANTIDAD_PRODUCTO . ($entrada->UNIDAD_MEDIDA ? " ({$entrada->UNIDAD_MEDIDA})" : ""),
+            //         'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
+            //         'COSTO_TOTAL'    => $entrada->CANTIDAD_PRODUCTO * $entrada->VALOR_UNITARIO,
+            //         'TIPO'           => $tipo,
+            //         'USUARIO'        => $usuarioTxt,
+            //         'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
+            //         'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+            //     ];
+            // });
+
 
             $entradas = $entradasQuery->get([
                 'e.FECHA_INGRESO',
@@ -641,50 +693,102 @@ class inventarioController extends Controller
                 'e.UNIDAD_MEDIDA',
                 'e.VALOR_UNITARIO',
                 'e.ENTRADA_SOLICITUD',
+                'e.ENTRA_ASIGNACION',
                 'e.created_at',
                 'u.EMPLEADO_NOMBRE',
                 'u.EMPLEADO_APELLIDOPATERNO',
                 'u.EMPLEADO_APELLIDOMATERNO'
             ])->map(function ($entrada) {
-                $usuario = trim($entrada->EMPLEADO_NOMBRE . ' ' . $entrada->EMPLEADO_APELLIDOPATERNO . ' ' . $entrada->EMPLEADO_APELLIDOMATERNO);
 
-                $tipo       = $entrada->ENTRADA_SOLICITUD == 1
-                    ? '<span class="badge bg-success">Entrada</span>'
-                    : '<span class="badge bg-success">Entrada por compra</span>';
-                $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
-                    ? 'Retornado por: ' . e($usuario)
-                    : '';
+                $usuario = trim(
+                    $entrada->EMPLEADO_NOMBRE . ' ' .
+                        $entrada->EMPLEADO_APELLIDOPATERNO . ' ' .
+                        $entrada->EMPLEADO_APELLIDOMATERNO
+                );
+
+                // =========================================
+                // TIPO
+                // =========================================
+
+                if ($entrada->ENTRA_ASIGNACION == 1) {
+
+                    $tipo = '<span class="badge bg-info">Retornada por Administración</span>';
+
+                    $usuarioTxt = '';
+                } else {
+
+                    $tipo = $entrada->ENTRADA_SOLICITUD == 1
+                        ? '<span class="badge bg-success">Entrada</span>'
+                        : '<span class="badge bg-success">Entrada por compra</span>';
+
+                    $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
+                        ? 'Retornado por: ' . e($usuario)
+                        : '';
+                }
 
                 $fechaMostrar = $entrada->FECHA_INGRESO;
 
-                // ================================
-                // ORDENAR: solo validar created_at si ENTRADA_SOLICITUD = 1
-                // ================================
+                // =========================================
+                // ORDEN FECHA
+                // =========================================
+
                 if ($entrada->ENTRADA_SOLICITUD == 1) {
-                    if (date('Y-m-d', strtotime($entrada->FECHA_INGRESO)) === date('Y-m-d', strtotime($entrada->created_at))) {
+
+                    if (
+                        date('Y-m-d', strtotime($entrada->FECHA_INGRESO))
+                        ===
+                        date('Y-m-d', strtotime($entrada->created_at))
+                    ) {
+
                         $horaCreated = date('H:i:s', strtotime($entrada->created_at));
-                        $fechaOrden  = $entrada->FECHA_INGRESO . ' ' . $horaCreated;
+
+                        $fechaOrden = $entrada->FECHA_INGRESO . ' ' . $horaCreated;
                     } else {
+
                         $fechaOrden = $entrada->FECHA_INGRESO . ' 23:59:59';
                     }
                 } else {
+
                     $fechaOrden = $entrada->FECHA_INGRESO;
                 }
 
-
                 return [
+
                     'ORDEN_PRIORIDAD' => 1,
-                    'FECHA'          => $fechaMostrar,
-                    'FECHA_ORDEN'    => $fechaOrden,
-                    'CANTIDAD'       => $entrada->CANTIDAD_PRODUCTO . ($entrada->UNIDAD_MEDIDA ? " ({$entrada->UNIDAD_MEDIDA})" : ""),
+
+                    'FECHA'       => $fechaMostrar,
+
+                    'FECHA_ORDEN' => $fechaOrden,
+
+                    'CANTIDAD' =>
+                    $entrada->CANTIDAD_PRODUCTO .
+                        ($entrada->UNIDAD_MEDIDA
+                            ? " ({$entrada->UNIDAD_MEDIDA})"
+                            : ""),
+
                     'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
-                    'COSTO_TOTAL'    => $entrada->CANTIDAD_PRODUCTO * $entrada->VALOR_UNITARIO,
-                    'TIPO'           => $tipo,
-                    'USUARIO'        => $usuarioTxt,
-                    'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
-                    'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+
+                    'COSTO_TOTAL' =>
+                    $entrada->CANTIDAD_PRODUCTO * $entrada->VALOR_UNITARIO,
+
+                    'TIPO'    => $tipo,
+
+                    'USUARIO' => $usuarioTxt,
+
+                    'BTN_EDITAR' =>
+                    '<button type="button"
+                class="btn btn-warning btn-custom rounded-pill EDITAR">
+                <i class="bi bi-pencil-square"></i>
+            </button>',
+
+                    'BTN_VISUALIZAR' =>
+                    '<button type="button"
+                class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                <i class="bi bi-eye"></i>
+            </button>'
                 ];
             });
+
 
             // =========================
             // 3. Salidas

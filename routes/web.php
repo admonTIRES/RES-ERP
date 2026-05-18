@@ -963,6 +963,8 @@ Route::get('/TablasignacionproveedorEditar', [listaproveedorController::class, '
 Route::get('/mostrarasignacionproveedor/{id}', [listaproveedorController::class, 'mostrarasignacionproveedor']);
 Route::get('/pdfAsignacionproveedor/{id}', [pdfasingacionController::class, 'pdfAsignacionproveedor']);
 Route::get('/pdfAsignacionEppproveedor/{id}', [pdfasingacionController::class, 'pdfAsignacionEppproveedor']);
+Route::post('/retornarAsignacionProveedor', [listaproveedorController::class, 'retornarAsignacionProveedor']);
+
 
 ///// CONTRATOS PROVEEDOR
 Route::get('/Tablacontratosproveedores', [listaproveedorController::class, 'Tablacontratosproveedores']);
