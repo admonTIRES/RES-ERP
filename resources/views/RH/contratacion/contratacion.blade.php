@@ -884,7 +884,7 @@
                     </div>
 
 
-                    <div id="asignacion_colaborador" style="display: none;">
+                    <div id="asignacion_colaborador">
                         <ol class="breadcrumb mt-5">
                             <h3 style="color: #ffffff; margin: 0;"><i class="bi bi-card-list"></i>&nbsp;Asignaciones colaborador</h3>
                             <button type="button" class="btn btn-light waves-effect waves-light" id="NUEVA_ASIGNACION" style="margin-left: auto;">

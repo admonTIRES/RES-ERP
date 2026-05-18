@@ -2682,9 +2682,7 @@ $('#Tablacontratosyanexos').on('click', 'button.informacion', function () {
     cargarTablaAccionesDisciplinarias ();
     cargarTablaRecibosNomina();
 
-    validarPrimerContrato();
     cargarTablasingnaciongeneral();
-
     bloquearPorRolExterno();
 
     
@@ -4923,29 +4921,7 @@ $('#NUEVA_ASIGNACION').on('click', function () {
 
 });
 
-function validarPrimerContrato() {
 
-    $('#asignacion_colaborador').hide();
-
-    $.ajax({
-        url: '/validarPrimerContrato',
-        method: 'GET',
-        data: {
-            contrato_id: contrato_id,
-            curp: curpSeleccionada
-        },
-        success: function (response) {
-            if (response.es_primer_contrato) {
-                $('#asignacion_colaborador').show();
-            } else {
-                $('#asignacion_colaborador').hide();
-            }
-        },
-        error: function () {
-            $('#asignacion_colaborador').hide();
-        }
-    });
-}
 
 function cargarTablaAsignacionesModal() {
 
@@ -5062,7 +5038,7 @@ $("#guardarASIGNACIONES").click(function (e) {
         },async function () { 
 
             await loaderbtn('guardarASIGNACIONES')
-            await ajaxAwaitFormData({ api: 12, CURP: curpSeleccionada , ID_ASINGACIONES_CONTRATACION: ID_ASINGACIONES_CONTRATACION }, 'contratoSave', 'formularioASIGNACIONES', 'guardarASIGNACIONES', { callbackAfter: true, callbackBefore: true }, () => {
+            await ajaxAwaitFormData({ api: 12,CONTRATO_ID:contrato_id, CURP: curpSeleccionada , ID_ASINGACIONES_CONTRATACION: ID_ASINGACIONES_CONTRATACION }, 'contratoSave', 'formularioASIGNACIONES', 'guardarASIGNACIONES', { callbackAfter: true, callbackBefore: true }, () => {
                 Swal.fire({
                     icon: 'info',
                     title: 'Espere un momento',
@@ -5098,7 +5074,7 @@ $("#guardarASIGNACIONES").click(function (e) {
         },async function () { 
 
             await loaderbtn('guardarASIGNACIONES')
-            await ajaxAwaitFormData({ api: 12, CURP: curpSeleccionada ,ID_ASINGACIONES_CONTRATACION: ID_ASINGACIONES_CONTRATACION }, 'contratoSave', 'formularioASIGNACIONES', 'guardarASIGNACIONES', { callbackAfter: true, callbackBefore: true }, () => {
+            await ajaxAwaitFormData({ api: 12,CONTRATO_ID:contrato_id, CURP: curpSeleccionada ,ID_ASINGACIONES_CONTRATACION: ID_ASINGACIONES_CONTRATACION }, 'contratoSave', 'formularioASIGNACIONES', 'guardarASIGNACIONES', { callbackAfter: true, callbackBefore: true }, () => {
                 Swal.fire({
                     icon: 'info',
                     title: 'Espere un momento',
@@ -5155,7 +5131,7 @@ function cargarTablasingnaciongeneral() {
         responsive: true,
         ajax: {
             dataType: 'json',
-            data: { curp: curpSeleccionada },
+             data: { contrato: contrato_id }, 
             method: 'GET',
             cache: false,
             url: '/Tablasignacioncolaboradorgeneral',  

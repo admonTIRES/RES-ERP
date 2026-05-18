@@ -1189,9 +1189,11 @@ public function mostrarecibosnomina($id)
     {
         try {
 
-            $curp = $request->get('curp');
 
-            $asignaciones = asignacioncontratacionModel::where('CURP', $curp)->get();
+            $contrato = $request->get('contrato');
+
+            $asignaciones = asignacioncontratacionModel::where('CONTRATO_ID', $contrato)->get();
+
 
             $resultado = [];
 

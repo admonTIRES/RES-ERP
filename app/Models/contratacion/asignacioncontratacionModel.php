@@ -13,7 +13,7 @@ class asignacioncontratacionModel extends Model
     protected $primaryKey = 'ID_ASINGACIONES_CONTRATACION';
     protected $table = 'asignaciones_contratacion';
     protected $fillable = [
-
+        'CONTRATO_ID',
         'ASIGNACIONES_ID',
         'TIPO_ASIGNACION',
         'PERSONAL_ASIGNA',
