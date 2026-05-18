@@ -627,9 +627,9 @@ class inventarioController extends Controller
             // =========================
             // 2. Entradas
             // =========================
-            $entradasQuery = DB::table('entradas_inventario as e')
-                ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
-                ->where('e.INVENTARIO_ID', $inventarioId);
+            // $entradasQuery = DB::table('entradas_inventario as e')
+            //     ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
+            //     ->where('e.INVENTARIO_ID', $inventarioId);
 
             // if ($primerEntradaId) {
             //     $entradasQuery->where('e.ID_ENTRADA_FORMULARIO', '!=', $primerEntradaId);
@@ -687,7 +687,26 @@ class inventarioController extends Controller
             // });
 
 
+
+            $entradasQuery = DB::table('entradas_inventario as e')
+                ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
+                ->where('e.INVENTARIO_ID', $inventarioId);
+
+            // =====================================
+            // EXCLUIR SALDO INICIAL
+            // =====================================
+
+            if ($primerEntradaId) {
+
+                $entradasQuery->where(
+                    'e.ID_ENTRADA_FORMULARIO',
+                    '!=',
+                    $primerEntradaId
+                );
+            }
+
             $entradas = $entradasQuery->get([
+
                 'e.FECHA_INGRESO',
                 'e.CANTIDAD_PRODUCTO',
                 'e.UNIDAD_MEDIDA',
@@ -695,9 +714,11 @@ class inventarioController extends Controller
                 'e.ENTRADA_SOLICITUD',
                 'e.ENTRA_ASIGNACION',
                 'e.created_at',
+
                 'u.EMPLEADO_NOMBRE',
                 'u.EMPLEADO_APELLIDOPATERNO',
                 'u.EMPLEADO_APELLIDOMATERNO'
+
             ])->map(function ($entrada) {
 
                 $usuario = trim(
@@ -706,13 +727,16 @@ class inventarioController extends Controller
                         $entrada->EMPLEADO_APELLIDOMATERNO
                 );
 
-                // =========================================
+                // =====================================
                 // TIPO
-                // =========================================
+                // =====================================
 
                 if ($entrada->ENTRA_ASIGNACION == 1) {
 
-                    $tipo = '<span class="badge bg-info">Retornada por Administración</span>';
+                    $tipo =
+                        '<span class="badge bg-info">
+                Retornada por Administración
+            </span>';
 
                     $usuarioTxt = '';
                 } else {
@@ -728,9 +752,9 @@ class inventarioController extends Controller
 
                 $fechaMostrar = $entrada->FECHA_INGRESO;
 
-                // =========================================
-                // ORDEN FECHA
-                // =========================================
+                // =====================================
+                // FECHA ORDEN
+                // =====================================
 
                 if ($entrada->ENTRADA_SOLICITUD == 1) {
 
@@ -740,12 +764,17 @@ class inventarioController extends Controller
                         date('Y-m-d', strtotime($entrada->created_at))
                     ) {
 
-                        $horaCreated = date('H:i:s', strtotime($entrada->created_at));
+                        $horaCreated = date(
+                            'H:i:s',
+                            strtotime($entrada->created_at)
+                        );
 
-                        $fechaOrden = $entrada->FECHA_INGRESO . ' ' . $horaCreated;
+                        $fechaOrden =
+                            $entrada->FECHA_INGRESO . ' ' . $horaCreated;
                     } else {
 
-                        $fechaOrden = $entrada->FECHA_INGRESO . ' 23:59:59';
+                        $fechaOrden =
+                            $entrada->FECHA_INGRESO . ' 23:59:59';
                     }
                 } else {
 
@@ -756,7 +785,7 @@ class inventarioController extends Controller
 
                     'ORDEN_PRIORIDAD' => 1,
 
-                    'FECHA'       => $fechaMostrar,
+                    'FECHA' => $fechaMostrar,
 
                     'FECHA_ORDEN' => $fechaOrden,
 
@@ -769,9 +798,10 @@ class inventarioController extends Controller
                     'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
 
                     'COSTO_TOTAL' =>
-                    $entrada->CANTIDAD_PRODUCTO * $entrada->VALOR_UNITARIO,
+                    $entrada->CANTIDAD_PRODUCTO *
+                        $entrada->VALOR_UNITARIO,
 
-                    'TIPO'    => $tipo,
+                    'TIPO' => $tipo,
 
                     'USUARIO' => $usuarioTxt,
 
@@ -788,7 +818,6 @@ class inventarioController extends Controller
             </button>'
                 ];
             });
-
 
             // =========================
             // 3. Salidas
