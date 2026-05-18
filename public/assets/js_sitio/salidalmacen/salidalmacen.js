@@ -290,6 +290,7 @@ var Tablasalidalmacen = $("#Tablasalidalmacen").DataTable({
     { data: 'TIPO_SOLICITUD_TEXTO' },
     { data: 'SOLICITANTE_SALIDA' },    
     { data: 'FECHA_SALIDA' },  
+    { data: 'OBSERVACIONES_REC' },  
     { data: 'FECHA_ALMACEN_SOLICITUD' },    
     { data: 'ESTATUS' },    
     { data: 'MATERIALES_PENDIENTES', defaultContent: '0' }, 
@@ -303,11 +304,12 @@ columnDefs: [
     { targets: 1, title: 'Tipo de solicitud', className: 'all text-center' },
     { targets: 2, title: 'Nombre del solicitante', className: 'all text-center' }, 
     { targets: 3, title: 'Fecha de solicitud', className: 'all text-center' },
-    { targets: 4, title: 'Fecha de entrega', className: 'all text-center' },
-    { targets: 5, title: 'Estatus', className: 'all text-center' }, 
-    { targets: 6, title: 'Pendientes', className: 'all text-center' },
-    { targets: 7, title: 'Editar', className: 'all text-center' },
-    { targets: 8, title: 'Visualizar', className: 'all text-center' },
+    { targets: 4, title: 'Motivo', className: 'all text-center descripcion-column' },
+    { targets: 5, title: 'Fecha de entrega', className: 'all text-center' },
+    { targets: 6, title: 'Estatus', className: 'all text-center' }, 
+    { targets: 7, title: 'Pendientes', className: 'all text-center' },
+    { targets: 8, title: 'Editar', className: 'all text-center' },
+    { targets: 9, title: 'Visualizar', className: 'all text-center' },
 
 ],createdRow: function (row, data, dataIndex) {
     if (data.COLOR_FILA) {

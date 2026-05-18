@@ -458,7 +458,7 @@
     @endif
 
     @if(request()->is('salidaalmacen'))
-    <script src="/assets/js_sitio/salidalmacen/salidalmacen.js?v=3"></script>
+    <script src="/assets/js_sitio/salidalmacen/salidalmacen.js?v=4"></script>
     @endif
 
     @if(request()->is('aprobacionalmacen'))
