@@ -3499,10 +3499,14 @@ function cargarTablasingnaciongeneralproveedor() {
                     $(rows).eq(rowIdx).find('td:eq(7)').hide();
                     $(rows).eq(rowIdx).find('td:eq(8)').hide(); 
                     $(rows).eq(rowIdx).find('td:eq(9)').hide(); 
+                    $(rows).eq(rowIdx).find('td:eq(10)').hide(); 
+
 
                     $(firstRow).find('td:eq(7)').attr('rowspan', rowspan);
                     $(firstRow).find('td:eq(8)').attr('rowspan', rowspan);
                     $(firstRow).find('td:eq(9)').attr('rowspan', rowspan);
+                    $(firstRow).find('td:eq(10)').attr('rowspan', rowspan);
+
 
                 } else {
 
