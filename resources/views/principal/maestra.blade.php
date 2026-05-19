@@ -412,8 +412,9 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ url('/seleccion') }}">Actual</a></li>
                             <hr class="dropdown-divider">
-
                             <li><a class="dropdown-item" href="{{url('/visualizarseleccion')}}">Historial</a></li>
+                            <hr class="dropdown-divider">
+                            <li><a class="dropdown-item" href="{{url('/aprobarinteligencialaboral')}}">Aprobar inteligencia</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown" style="margin-left: -2px;">
@@ -754,11 +755,11 @@
     @endif
 
     @if(request()->is('seleccion'))
-    <script src="/assets/js_sitio/seleccion/seleccion.js?v=22.4"></script>
+    <script src="/assets/js_sitio/seleccion/seleccion.js?v=23"></script>
     @endif
 
     @if(request()->is('visualizarseleccion'))
-    <script src="/assets/js_sitio/seleccion/visualizarseleccion.js?v=3.0"></script>
+    <script src="/assets/js_sitio/seleccion/visualizarseleccion.js?v=4"></script>
     @endif
 
     @if(request()->is('pruebasconocimientos'))
@@ -896,6 +897,11 @@
     @if(request()->is('capacitaciolineasnegocios'))
     <script src="/assets/js_sitio/capacitacion/catalogos/lineanegocios.js"></script>
     @endif
+
+    @if(request()->is('aprobarinteligencialaboral'))
+    <script src="/assets/js_sitio/seleccion/aprobarseleccion.js?v=1"></script>
+    @endif
+
 
 
 

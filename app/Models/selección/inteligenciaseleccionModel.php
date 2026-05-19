@@ -14,6 +14,13 @@ class inteligenciaseleccionModel extends Model
         'ARCHIVO_COMPLETO',
         'ARCHIVO_COMPETENCIAS',
         'RIESGO_PORCENTAJE',
-        'ACTIVO'
+        'ACTIVO',
+
+
+        'APROBACION_INTELIGENCIA',
+        'QUIEN_APROBO',
+        'JUSTIFICACION_APROBACION',
+        'MOTIVO_RECHAZO',
+        'MOTIVO_APROBACION'
     ];
 }

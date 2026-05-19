@@ -58,6 +58,11 @@ use App\Http\Controllers\seleccion\seleccionController;
 use App\Http\Controllers\seleccion\catalogopruebasController;
 use App\Http\Controllers\TestController;
 
+use App\Http\Controllers\seleccion\aprobacioninteligenciaController;
+
+
+
+
 // CONTROLADORES DE CONTRATACION 
 use App\Http\Controllers\contratacion\contratacionController;
 use App\Http\Controllers\contratacion\PowerPointController;
@@ -507,6 +512,17 @@ Route::get('/pruebasconocimientos', function () {return view('RH.Catalogos.catal
 Route::post('/pruebaSave', [catalogopruebasController::class, 'store']);
 Route::get('/pruebaDelete', [catalogopruebasController::class, 'store']);
 Route::get('/Tablapruebaconocimiento', [catalogopruebasController::class, 'Tablapruebaconocimiento']);
+
+
+Route::get('/aprobarinteligencialaboral', function () {  return view('RH.Selección.aprobaciondireccion');})->middleware('role:Superusuario,Administrador,externo');
+Route::get('/Tablaprobarinteligencialaboral', [aprobacioninteligenciaController::class, 'Tablaprobarinteligencialaboral']);
+Route::post('/AprobarInteligenciaSave', [aprobacioninteligenciaController::class, 'store']);
+Route::get('/AprobarInteligenciaDelete', [aprobacioninteligenciaController::class, 'store']);
+
+
+
+
+
 
 
 //==============================================  CONTRATACION  ============================================== 

@@ -269,9 +269,6 @@
                         <small id="errorArchivoCompetencias" class="text-danger" style="display:none;">El archivo debe ser un PDF.</small>
                     </div>
 
-
-
-
                     <div class="mb-3">
                         <label class="form-label text-center">Documento Completo *</label>
                         <div class="input-group">
@@ -301,6 +298,48 @@
                             </label>
                         </div>
                     </div>
+
+
+
+                    <div id="APROBACION_DIRECCION" style="display: none;">
+
+
+                        <div class="col-12 mt-3">
+                            <label class="form-label">Estado de Aprobación</label>
+                            <select class="form-control" id="APROBACION_INTELIGENCIA" name="APROBACION_INTELIGENCIA" onchange="cambiarColor()" required>
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                <option value="Aprobada">Aprobada</option>
+                                <option value="Rechazada">Rechazada</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 mt-3" id="motivo-aprobacion-container" style="display: block;">
+                            <label class="form-label">Motivo de la aprobación *</label>
+                            <textarea class="form-control" id="MOTIVO_APROBACION" name="MOTIVO_APROBACION" rows="3" placeholder="Escriba el motivo ..." required></textarea>
+                        </div>
+
+
+                        <div class="col-12 mt-3" id="motivo-rechazo-container" style="display: none;">
+                            <label class="form-label">Motivo del rechazo *</label>
+                            <textarea class="form-control" id="MOTIVO_RECHAZO" name="MOTIVO_RECHAZO" rows="3" placeholder="Escriba el motivo..." required></textarea>
+                        </div>
+
+
+                        <div class="col-12 mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label">Quien aprueba *</label>
+                                    <input type="text" class="form-control" value="{{ Auth::user()->EMPLEADO_NOMBRE }} {{ Auth::user()->EMPLEADO_APELLIDOPATERNO }} {{ Auth::user()->EMPLEADO_APELLIDOMATERNO }}" id="QUIEN_APROBO" name="QUIEN_APROBO" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>

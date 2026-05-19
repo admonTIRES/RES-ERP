@@ -616,13 +616,37 @@ $('#Tablainteligencia tbody').on('click', 'td>button.EDITAR', function () {
     if (riesgoPorcentaje == 40) {
         document.querySelector('input[name="RIESGO_PORCENTAJE"][value="40"]').checked = true;
         document.querySelector('.light.red').classList.add('active');
+        $('#APROBACION_DIRECCION').show();
+
+        
+        
     } else if (riesgoPorcentaje == 70) {
         document.querySelector('input[name="RIESGO_PORCENTAJE"][value="70"]').checked = true;
         document.querySelector('.light.yellow').classList.add('active');
+        $('#APROBACION_DIRECCION').show();
+
     } else if (riesgoPorcentaje == 100) {
         document.querySelector('input[name="RIESGO_PORCENTAJE"][value="100"]').checked = true;
         document.querySelector('.light.green').classList.add('active');
+        $('#APROBACION_DIRECCION').hide();
+
     }
+
+
+
+    if (data.APROBACION_INTELIGENCIA === "Aprobada") {
+        $('#motivo-aprobacion-container').show();
+         $('#motivo-rechazo-container').hide();   
+
+    } else if (data.APROBACION_INTELIGENCIA === "Rechazada") {
+        $('#motivo-aprobacion-container').hide();
+        $('#motivo-rechazo-container').show();
+                 
+     } else {
+       
+          
+    }
+
 });
 
 
@@ -1659,6 +1683,11 @@ ModalInteligencia.addEventListener('hidden.bs.modal', event => {
     document.querySelectorAll('.light').forEach(light => {
         light.classList.remove('active');
     });
+
+
+    $('#APROBACION_DIRECCION').hide();
+    $('#motivo-aprobacion-container').hide();
+    $('#motivo-rechazo-container').hide();
 });
 
 
