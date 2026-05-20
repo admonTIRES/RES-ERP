@@ -351,6 +351,7 @@ var Tablamr = $("#Tablamr").DataTable({
     { data: 'SOLICITANTE_MR' },
     { data: 'NO_MR' },
     { data: 'FECHA_SOLICITUD_MR' },
+    { data: 'JUSTIFICACION_MR' },    
     { data: 'ESTADO_REVISION' }, 
     { data: 'ESTATUS' },          
     { data: 'BTN_EDITAR' },
@@ -363,10 +364,11 @@ columnDefs: [
     { targets: 1, title: 'Nombre del solicitante', className: 'all text-center' },
     { targets: 2, title: 'N° MR', className: 'all text-center' },
     { targets: 3, title: 'Fecha solicitud', className: 'all text-center' },
-    { targets: 4, title: 'Vo. Bo ', className: 'all text-center' },
-    { targets: 5, title: 'Estatus', className: 'all text-center' }, 
-    { targets: 6, title: 'Editar', className: 'all text-center' },
-    { targets: 7, title: 'Visualizar', className: 'all text-center' },
+    { targets: 4, title: 'Justificación', className: 'all text-center descripcion-column'},
+    { targets: 5, title: 'Vo. Bo ', className: 'all text-center' },
+    { targets: 6, title: 'Estatus', className: 'all text-center' }, 
+    { targets: 7, title: 'Editar', className: 'all text-center' },
+    { targets: 8, title: 'Visualizar', className: 'all text-center' },
 
     ],
  infoCallback: function (settings, start, end, max, total, pre) {

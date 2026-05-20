@@ -663,7 +663,7 @@
 
 
     @if(request()->is('requisicionmateriales'))
-    <script src="/assets/js_sitio/requisiconmaterial/requisicionmr.js?v=4.8"></script>
+    <script src="/assets/js_sitio/requisiconmaterial/requisicionmr.js?v=5"></script>
     @endif
 
     @if(request()->is('requisicionmaterialeslideres'))

@@ -330,6 +330,7 @@ var Tablarecempleados = $("#Tablarecempleados").DataTable({
     { data: 'TIPO_SOLICITUD_TEXTO' },
     { data: 'SOLICITANTE_SALIDA' },    
     { data: 'FECHA_SALIDA' },    
+    { data: 'OBSERVACIONES_REC' },    
     { data: 'ESTADO_REVISION' }, 
     { data: 'ESTATUS' },          
     { data: 'BTN_EDITAR' },
@@ -342,10 +343,11 @@ columnDefs: [
     { targets: 1, title: 'Tipo de solicitud', className: 'all text-center' },
     { targets: 2, title: 'Nombre del solicitante', className: 'all text-center' }, 
     { targets: 3, title: 'Fecha de solicitud', className: 'all text-center' },
-    { targets: 4, title: 'Vo. Bo ', className: 'all text-center' },
-    { targets: 5, title: 'Estatus', className: 'all text-center' }, 
-    { targets: 6, title: 'Editar', className: 'all text-center' },
-    { targets: 7, title: 'Visualizar', className: 'all text-center' },
+    { targets: 4, title: 'Motivo', className: 'all text-center descripcion-column' },
+    { targets: 5, title: 'Vo. Bo ', className: 'all text-center' },
+    { targets: 6, title: 'Estatus', className: 'all text-center' }, 
+    { targets: 7, title: 'Editar', className: 'all text-center' },
+    { targets: 8, title: 'Visualizar', className: 'all text-center' },
 
 ]
 
