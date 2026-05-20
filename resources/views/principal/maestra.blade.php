@@ -755,7 +755,7 @@
     @endif
 
     @if(request()->is('seleccion'))
-    <script src="/assets/js_sitio/seleccion/seleccion.js?v=23"></script>
+    <script src="/assets/js_sitio/seleccion/seleccion.js?v=24"></script>
     @endif
 
     @if(request()->is('visualizarseleccion'))

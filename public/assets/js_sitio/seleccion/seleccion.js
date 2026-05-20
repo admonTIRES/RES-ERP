@@ -1698,7 +1698,7 @@ ModalInteligencia.addEventListener('hidden.bs.modal', event => {
 $("#guardarFormSeleccionInteligencia").click(function (e) {
     e.preventDefault();
 
-    formularioValido = validarFormularioV1('formularioINTELIGENCIA');
+    formularioValido = validarFormulario3($('#formularioINTELIGENCIA'))
 
     if (formularioValido) {
 
