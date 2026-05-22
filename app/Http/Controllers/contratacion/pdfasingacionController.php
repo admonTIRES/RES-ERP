@@ -68,7 +68,7 @@ class pdfasingacionController extends Controller
         return Pdf::loadView('pdf.asignacion_equipo', $data)
             ->setPaper('letter', 'portrait')
             ->setOptions([
-                'isPhpEnabled'     => true,  
+                'isPhpEnabled'     => true,
                 'isRemoteEnabled' => true,
                 'chroot'          => public_path()
             ])
@@ -89,7 +89,7 @@ class pdfasingacionController extends Controller
 
         $curp = $asignacion->CURP;
 
-      
+
         $empleado = DB::table('formulario_contratacion')
             ->where('CURP', $curp)
             ->select(
@@ -99,7 +99,7 @@ class pdfasingacionController extends Controller
             )
             ->first();
 
-       
+
         $cargo = DB::table('contratos_anexos_contratacion as cac')
             ->join('catalogo_categorias as cc', 'cc.ID_CATALOGO_CATEGORIA', '=', 'cac.NOMBRE_CARGO')
             ->where('cac.CURP', $curp)
@@ -107,7 +107,7 @@ class pdfasingacionController extends Controller
             ->select('cc.NOMBRE_CATEGORIA')
             ->first();
 
-       
+
         $epp = [];
 
         if (!empty($asignacion->EPP_JSON)) {
@@ -138,6 +138,68 @@ class pdfasingacionController extends Controller
 
 
 
+    // public function pdfAsignacionproveedor($id)
+    // {
+    //     $asignacion = DB::table('asignaciones_proveedores')
+    //         ->where('ID_ASINGACIONES_PROVEEDORES', $id)
+    //         ->first();
+
+    //     if (!$asignacion) {
+    //         abort(404, 'Asignación no encontrada');
+    //     }
+
+    //     $empleado = DB::table('formulario_altaproveedor')
+    //         ->where('RFC_ALTA', $asignacion->RFC)
+    //         ->select(
+    //         'RFC_ALTA',
+    //         'REPRESENTANTE_LEGAL_ALTA',
+    //         )
+    //         ->first();
+
+
+    //     $idsAsignaciones = json_decode($asignacion->ASIGNACIONES_ID, true);
+
+    //     if (!is_array($idsAsignaciones) || empty($idsAsignaciones)) {
+    //         abort(404, 'No hay inventarios asociados');
+    //     }
+
+    //     $inventarios = DB::table('asignaciones_inventario as ai')
+    //         ->leftJoin(
+    //             'formulario_inventario as fi',
+    //             'fi.ID_FORMULARIO_INVENTARIO',
+    //             '=',
+    //             'ai.INVENTARIO_ID'
+    //         )
+    //         ->whereIn('ai.ID_ASIGNACION_FORMULARIO', $idsAsignaciones)
+    //         ->select(
+    //             'ai.CANTIDAD_SALIDA',
+    //             'fi.DESCRIPCION_EQUIPO',
+    //             'fi.MARCA_EQUIPO',
+    //             'fi.MODELO_EQUIPO',
+    //             'fi.SERIE_EQUIPO',
+    //             'fi.CODIGO_EQUIPO'
+    //         )
+    //         ->get();
+
+    //     $data = [
+    //         'asignacion'  => $asignacion,
+    //         'inventarios' => $inventarios,
+    //         'empleado'    => $empleado,
+    //     ];
+
+    //     return Pdf::loadView('pdf.asignacionproveedor', $data)
+    //         ->setPaper('letter', 'portrait')
+    //         ->setOptions([
+    //             'isPhpEnabled'     => true,
+    //             'isRemoteEnabled' => true,
+    //             'chroot'          => public_path()
+    //         ])
+    //         ->stream('Asignacion_' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '.pdf');
+    // }
+
+
+
+
     public function pdfAsignacionproveedor($id)
     {
         $asignacion = DB::table('asignaciones_proveedores')
@@ -151,11 +213,10 @@ class pdfasingacionController extends Controller
         $empleado = DB::table('formulario_altaproveedor')
             ->where('RFC_ALTA', $asignacion->RFC)
             ->select(
-            'RFC_ALTA',
-            'REPRESENTANTE_LEGAL_ALTA',
+                'RFC_ALTA',
+                'REPRESENTANTE_LEGAL_ALTA',
             )
             ->first();
-
 
         $idsAsignaciones = json_decode($asignacion->ASIGNACIONES_ID, true);
 
@@ -170,9 +231,17 @@ class pdfasingacionController extends Controller
                 '=',
                 'ai.INVENTARIO_ID'
             )
-            ->whereIn('ai.ID_ASIGNACION_FORMULARIO', $idsAsignaciones)
+
+            ->whereIn(
+                'ai.ID_ASIGNACION_FORMULARIO',
+                $idsAsignaciones
+            )
+
+            ->where('ai.ACTIVO', '!=', 0)
+
             ->select(
                 'ai.CANTIDAD_SALIDA',
+
                 'fi.DESCRIPCION_EQUIPO',
                 'fi.MARCA_EQUIPO',
                 'fi.MODELO_EQUIPO',
@@ -180,6 +249,12 @@ class pdfasingacionController extends Controller
                 'fi.CODIGO_EQUIPO'
             )
             ->get();
+
+
+        if ($inventarios->isEmpty()) {
+
+            abort(404, 'No existen artículos activos para descargar');
+        }
 
         $data = [
             'asignacion'  => $asignacion,
@@ -190,13 +265,16 @@ class pdfasingacionController extends Controller
         return Pdf::loadView('pdf.asignacionproveedor', $data)
             ->setPaper('letter', 'portrait')
             ->setOptions([
-                'isPhpEnabled'     => true,
+                'isPhpEnabled'    => true,
                 'isRemoteEnabled' => true,
                 'chroot'          => public_path()
             ])
-            ->stream('Asignacion_' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '.pdf');
+            ->stream(
+                'Asignacion_' .
+                    $asignacion->ID_ASINGACIONES_PROVEEDORES .
+                    '.pdf'
+            );
     }
-
 
 
 
@@ -247,7 +325,4 @@ class pdfasingacionController extends Controller
             ])
             ->stream('Asignacion_EPP_' . $id . '.pdf');
     }
-
-
-
-    }
+}

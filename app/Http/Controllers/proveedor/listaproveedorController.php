@@ -1280,9 +1280,12 @@ class listaproveedorController extends Controller
 
                             $fila['BTN_DOCUMENTO'] =
                                 '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
-                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+                                    data-id="' . $asignacion->ID_ASIGNACION_FORMULARIO . '">
                                     <i class="bi bi-filetype-pdf"></i>
                                 </button>';
+
+
+                                
                                 
                         } else {
 
@@ -1314,9 +1317,10 @@ class listaproveedorController extends Controller
                                     <i class="bi bi-filetype-pdf"></i>
                                 </button>';
 
-                                                $fila['BTN_RETORNAR'] =
-                                                    '<button class="btn btn-primary btn-custom rounded-pill pdf-button RETORNAR"
-                                    data-id="' . $asignacion->ID_ASINGACIONES_PROVEEDORES . '">
+
+                            $fila['BTN_RETORNAR'] =
+                                '<button class="btn btn-primary btn-custom rounded-pill pdf-button RETORNAR"
+                                    data-id="' . $inv->ID_ASIGNACION_FORMULARIO . '">
                                     <i class="bi bi-arrow-return-right"></i>
                                 </button>';
                         }
@@ -1327,6 +1331,16 @@ class listaproveedorController extends Controller
                         $fila['DESCARGAR_EPP'] = '';
                         $fila['BTN_DOCUMENTO'] = '';
                         $fila['BTN_RETORNAR'] = '';
+
+
+
+                        $fila['BTN_RETORNAR'] =
+                            '<button class="btn btn-primary btn-custom rounded-pill pdf-button RETORNAR"
+                                    data-id="' . $inv->ID_ASIGNACION_FORMULARIO . '">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                </button>';
+
+
                     }
 
                     $resultado[] = $fila;
@@ -1349,91 +1363,92 @@ class listaproveedorController extends Controller
 
 
 
+
     public function retornarAsignacionProveedor(Request $request)
     {
         DB::beginTransaction();
 
         try {
 
-            $idAsignacionProveedor = $request->ID_ASINGACIONES_PROVEEDORES;
+            $idAsignacion = $request->ID_ASIGNACION_FORMULARIO;
 
             $fechaRetorno = $request->FECHA_RETORNO;
 
-            $asignacionProveedor = asignacionproveedorModel::find($idAsignacionProveedor);
+            $asignacion = DB::table('asignaciones_inventario')
+                ->where(
+                    'ID_ASIGNACION_FORMULARIO',
+                    $idAsignacion
+                )
+                ->first();
 
-            if (!$asignacionProveedor) {
+            if (!$asignacion) {
 
                 return response()->json([
                     'msj' => 'Asignación no encontrada'
                 ], 404);
             }
 
-            if ($asignacionProveedor->ACTIVO == 0) {
+
+            if ($asignacion->ACTIVO == 0) {
 
                 return response()->json([
-                    'msj' => 'La asignación ya fue retornada'
+                    'msj' => 'El artículo ya fue retornado'
                 ], 400);
             }
 
-            $idsAsignaciones = json_decode($asignacionProveedor->ASIGNACIONES_ID, true);
+            $inventario = DB::table('formulario_inventario')
+                ->where(
+                    'ID_FORMULARIO_INVENTARIO',
+                    $asignacion->INVENTARIO_ID
+                )
+                ->first();
 
-            if (!is_array($idsAsignaciones) || empty($idsAsignaciones)) {
+            if (!$inventario) {
 
                 return response()->json([
-                    'msj' => 'No existen asignaciones relacionadas'
-                ], 400);
+                    'msj' => 'Inventario no encontrado'
+                ], 404);
             }
 
-            $asignacionesInventario = DB::table('asignaciones_inventario')
-                ->whereIn('ID_ASIGNACION_FORMULARIO', $idsAsignaciones)
-                ->get();
+            $cantidadRetorna = (float)$asignacion->CANTIDAD_SALIDA;
 
-            foreach ($asignacionesInventario as $asignacion) {
+            $stockActual = (float)$inventario->CANTIDAD_EQUIPO;
 
-                $inventario = DB::table('formulario_inventario')
-                    ->where('ID_FORMULARIO_INVENTARIO', $asignacion->INVENTARIO_ID)
-                    ->first();
+            $nuevoStock = $stockActual + $cantidadRetorna;
 
-                if (!$inventario) {
-                    continue;
-                }
+            DB::table('formulario_inventario')
+                ->where(
+                    'ID_FORMULARIO_INVENTARIO',
+                    $asignacion->INVENTARIO_ID
+                )
+                ->update([
+                    'CANTIDAD_EQUIPO' => $nuevoStock
+                ]);
 
-                $cantidadRetorna = (float)$asignacion->CANTIDAD_SALIDA;
+            DB::table('entradas_inventario')->insert([
 
-                $stockActual = (float)$inventario->CANTIDAD_EQUIPO;
-
-                $nuevoStock = $stockActual + $cantidadRetorna;
-
-                DB::table('formulario_inventario')
-                    ->where('ID_FORMULARIO_INVENTARIO', $asignacion->INVENTARIO_ID)
-                    ->update([
-                        'CANTIDAD_EQUIPO' => $nuevoStock
-                    ]);
-
-                DB::table('entradas_inventario')->insert([
-
-                    'INVENTARIO_ID'     => $asignacion->INVENTARIO_ID,
-
-                    'FECHA_INGRESO'     => $fechaRetorno,
-
-                    'CANTIDAD_PRODUCTO' => $cantidadRetorna,
-
-                    'UNIDAD_MEDIDA'     => $inventario->UNIDAD_MEDIDA,
-
-                    'ENTRA_ASIGNACION'  => 1,
-
-                    'created_at' => now(),
+                'INVENTARIO_ID'     => $asignacion->INVENTARIO_ID,
+                'FECHA_INGRESO'     => $fechaRetorno,
+                'CANTIDAD_PRODUCTO' => $cantidadRetorna,
+                'UNIDAD_MEDIDA'     => $inventario->UNIDAD_MEDIDA,
+                'ENTRA_ASIGNACION'  => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            DB::table('asignaciones_inventario')
+                ->where(
+                    'ID_ASIGNACION_FORMULARIO',
+                    $idAsignacion
+                )
+                ->update([
+                    'ACTIVO' => 0,
                     'updated_at' => now()
                 ]);
-            }
-
-            $asignacionProveedor->ACTIVO = 0;
-            $asignacionProveedor->save();
 
             DB::commit();
 
             return response()->json([
-                'msj' => 'Artículos retornados correctamente'
+                'msj' => 'Artículo retornado correctamente'
             ]);
         } catch (\Exception $e) {
 
@@ -1444,6 +1459,7 @@ class listaproveedorController extends Controller
             ], 500);
         }
     }
+
 
 
 

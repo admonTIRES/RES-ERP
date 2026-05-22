@@ -3478,49 +3478,51 @@ function cargarTablasingnaciongeneralproveedor() {
             { targets: 10, title: 'Retornar ítem', className: 'all text-center' },
 
         ],
-        drawCallback: function () {
+      drawCallback: function () {
 
-            const api = this.api();
-            const rows = api.rows({ page: 'current' }).nodes();
+    const api = this.api();
+    const rows = api.rows({ page: 'current' }).nodes();
 
-            let lastGroup = null;
-            let rowspan = 1;
-            let firstRow = null;
+    let lastGroup = null;
+    let rowspan = 1;
+    let firstRow = null;
 
-            api.rows({ page: 'current' }).every(function (rowIdx) {
+    api.rows({ page: 'current' }).every(function (rowIdx) {
 
-                const data = this.data();
-                const grupoActual = data.GRUPO_ID;
+        const data = this.data();
+        const grupoActual = data.GRUPO_ID;
 
-                if (lastGroup === grupoActual) {
+        if (lastGroup === grupoActual) {
 
-                    rowspan++;
+            rowspan++;
 
-                    $(rows).eq(rowIdx).find('td:eq(7)').hide();
-                    $(rows).eq(rowIdx).find('td:eq(8)').hide(); 
-                    $(rows).eq(rowIdx).find('td:eq(9)').hide(); 
-                    $(rows).eq(rowIdx).find('td:eq(10)').hide(); 
+            $(rows).eq(rowIdx).find('td:eq(7)').hide();
+            $(rows).eq(rowIdx).find('td:eq(8)').hide(); 
+            $(rows).eq(rowIdx).find('td:eq(9)').hide(); 
 
+            // =====================================
+            // YA NO OCULTAR BTN RETORNAR
+            // =====================================
 
-                    $(firstRow).find('td:eq(7)').attr('rowspan', rowspan);
-                    $(firstRow).find('td:eq(8)').attr('rowspan', rowspan);
-                    $(firstRow).find('td:eq(9)').attr('rowspan', rowspan);
-                    $(firstRow).find('td:eq(10)').attr('rowspan', rowspan);
+            $(firstRow).find('td:eq(7)').attr('rowspan', rowspan);
+            $(firstRow).find('td:eq(8)').attr('rowspan', rowspan);
+            $(firstRow).find('td:eq(9)').attr('rowspan', rowspan);
 
+            // =====================================
+            // YA NO HACER ROWSPAN EN RETORNAR
+            // =====================================
 
-                } else {
+        } else {
 
-                    lastGroup = grupoActual;
-                    rowspan = 1;
-                    firstRow = rows[rowIdx];
+            lastGroup = grupoActual;
+            rowspan = 1;
+            firstRow = rows[rowIdx];
 
-                    $(firstRow).addClass('table-light');
+            $(firstRow).addClass('table-light');
 
-                    
-                }
-            });
-        },
-
+        }
+    });
+},
        
     });
 }
@@ -3586,10 +3588,8 @@ $(document).on('click', '.RETORNAR', function () {
                 type: 'POST',
 
                 data: {
-
-                    ID_ASINGACIONES_PROVEEDORES: id,
+                    ID_ASIGNACION_FORMULARIO: id,
                     FECHA_RETORNO: result.value,
-
                     _token: $('meta[name="csrf-token"]').attr('content')
                 },
 
