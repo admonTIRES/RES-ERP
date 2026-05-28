@@ -67,6 +67,53 @@ class facturaproveedorController extends Controller
         ]);
     }
 
+    // public function validarContratoNumero(Request $request)
+    // {
+    //     $request->validate([
+    //         'numero_contrato' => 'required|string'
+    //     ]);
+
+    //     $userRFC = Auth::user()->RFC_PROVEEDOR;
+    //     $numeroContrato = $request->numero_contrato;
+
+    //     $contrato = contratoproveedorModel::where('RFC_PROVEEDOR', $userRFC)
+    //         ->where('NUMERO_CONTRATO_PROVEEDOR', $numeroContrato)
+    //         ->first();
+
+    //     if (!$contrato) {
+    //         return response()->json([
+    //             'valido' => false,
+    //             'mensaje' => 'El número de contrato es incorrecto.'
+    //         ]);
+    //     }
+
+    //     $hoy = Carbon::today();
+
+    //     $fechaInicio = Carbon::parse($contrato->FECHAI_CONTRATO_PROVEEDOR);
+    //     $fechaFin    = Carbon::parse($contrato->FECHAF_CONTRATO_PROVEEDOR);
+
+    //     if ($hoy->lt($fechaInicio)) {
+    //         return response()->json([
+    //             'valido' => false,
+    //             'mensaje' => 'El contrato aún no inicia su vigencia.'
+    //         ]);
+    //     }
+
+    //     if ($hoy->gt($fechaFin)) {
+    //         return response()->json([
+    //             'valido' => false,
+    //             'mensaje' => 'El contrato está vencido.'
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'valido' => true,
+    //         'mensaje' => 'Contrato validado',
+    //         'contrato' => $contrato
+    //     ]);
+    // }
+
+
     public function validarContratoNumero(Request $request)
     {
         $request->validate([
@@ -74,13 +121,15 @@ class facturaproveedorController extends Controller
         ]);
 
         $userRFC = Auth::user()->RFC_PROVEEDOR;
-        $numeroContrato = $request->numero_contrato;
 
         $contrato = contratoproveedorModel::where('RFC_PROVEEDOR', $userRFC)
-            ->where('NUMERO_CONTRATO_PROVEEDOR', $numeroContrato)
+            ->where('NUMERO_CONTRATO_PROVEEDOR', $request->numero_contrato)
             ->first();
 
         if (!$contrato) {
+
+            session()->forget('factura_validada');
+
             return response()->json([
                 'valido' => false,
                 'mensaje' => 'El número de contrato es incorrecto.'
@@ -90,9 +139,12 @@ class facturaproveedorController extends Controller
         $hoy = Carbon::today();
 
         $fechaInicio = Carbon::parse($contrato->FECHAI_CONTRATO_PROVEEDOR);
-        $fechaFin    = Carbon::parse($contrato->FECHAF_CONTRATO_PROVEEDOR);
+        $fechaFin = Carbon::parse($contrato->FECHAF_CONTRATO_PROVEEDOR);
 
         if ($hoy->lt($fechaInicio)) {
+
+            session()->forget('factura_validada');
+
             return response()->json([
                 'valido' => false,
                 'mensaje' => 'El contrato aún no inicia su vigencia.'
@@ -100,19 +152,26 @@ class facturaproveedorController extends Controller
         }
 
         if ($hoy->gt($fechaFin)) {
+
+            session()->forget('factura_validada');
+
             return response()->json([
                 'valido' => false,
                 'mensaje' => 'El contrato está vencido.'
             ]);
         }
 
+        session([
+            'factura_validada' => true,
+            'tipo_validacion' => 'CONTRATO',
+            'contrato_validado' => $request->numero_contrato
+        ]);
+
         return response()->json([
             'valido' => true,
-            'mensaje' => 'Contrato validado',
-            'contrato' => $contrato
+            'mensaje' => 'Contrato validado'
         ]);
     }
-
 
 
     public function validarContratoVigente()
@@ -174,7 +233,37 @@ class facturaproveedorController extends Controller
     }
 
 
-    
+
+
+    // public function validarPOGR(Request $request)
+    // {
+    //     $request->validate([
+    //         'po' => 'required',
+    //         'gr' => 'required'
+    //     ]);
+
+    //     $userRFC = Auth::user()->RFC_PROVEEDOR;
+
+    //     $existe = DB::table('formulario_bitacoragr')
+    //         ->where('PROVEEDOR_KEY', $userRFC)
+    //         ->where('NO_PO', $request->po)
+    //         ->where('NO_RECEPCION', $request->gr)
+    //         ->exists();
+
+    //     if (!$existe) {
+    //         return response()->json([
+    //             'valido' => false,
+    //             'mensaje' => 'Verifique que estén correcto el No de (PO) y (GR)'
+
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'valido' => true,
+    //         'mensaje' => 'PO y GR válidos'
+    //     ]);
+    // }
+
 
     public function validarPOGR(Request $request)
     {
@@ -192,12 +281,21 @@ class facturaproveedorController extends Controller
             ->exists();
 
         if (!$existe) {
+
+            session()->forget('factura_validada');
+
             return response()->json([
                 'valido' => false,
                 'mensaje' => 'Verifique que estén correcto el No de (PO) y (GR)'
-                
             ]);
         }
+
+        session([
+            'factura_validada' => true,
+            'tipo_validacion' => 'OC',
+            'po_validada' => $request->po,
+            'gr_validada' => $request->gr
+        ]);
 
         return response()->json([
             'valido' => true,
@@ -371,13 +469,246 @@ class facturaproveedorController extends Controller
     {
         try {
             switch (intval($request->api)) {
+                // case 1:
+
+                //     $rfc = Auth::user()->RFC_PROVEEDOR;
+                //     $requestData = $request->all();
+                //     $requestData['RFC_PROVEEDOR'] = $rfc;
+
+                //     if ($request->ID_FORMULARIO_FACTURACION == 0) {
+                //         DB::statement('ALTER TABLE formulario_facturasproveedores AUTO_INCREMENT=1;');
+
+                //         $cuentas = facturacionModel::create($requestData);
+
+                //         if ($request->hasFile('DOCUMENTOS_SOPORTE_FACTURA')) {
+                //             $file = $request->file('DOCUMENTOS_SOPORTE_FACTURA');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documentos de soporte";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $cuentas->DOCUMENTOS_SOPORTE_FACTURA = $filePath;
+                //             $cuentas->save();
+                //         }
+
+                //         if ($request->hasFile('FACTURA_PDF')) {
+                //             $file = $request->file('FACTURA_PDF');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documento factura";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $cuentas->FACTURA_PDF = $filePath;
+                //             $cuentas->save();
+                //         }
+
+                //         if ($request->hasFile('FACTURA_XML')) {
+                //             $file = $request->file('FACTURA_XML');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/XML factura";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $cuentas->FACTURA_XML = $filePath;
+                //             $cuentas->save();
+                //         }
+
+                //         if ($request->hasFile('ARCHIVO_REP')) {
+                //             $file = $request->file('ARCHIVO_REP');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/PDF/{$cuentas->ID_FORMULARIO_FACTURACION}";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $cuentas->ARCHIVO_REP = $filePath;
+                //             $cuentas->save();
+                //         }
+
+                //         if ($request->hasFile('XML_REP')) {
+                //             $file = $request->file('XML_REP');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/XML/{$cuentas->ID_FORMULARIO_FACTURACION}";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $cuentas->XML_REP = $filePath;
+                //             $cuentas->save();
+                //         }
+
+
+                //         if ($request->hasFile('ARCHIVO_RECIBO_PAGO')) {
+                //             $file = $request->file('ARCHIVO_RECIBO_PAGO');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$cuentas->ID_FORMULARIO_FACTURACION}";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $cuentas->ARCHIVO_RECIBO_PAGO = $filePath;
+                //             $cuentas->save();
+                //         }
+
+
+
+                //     } else {
+                //         $cuentas = facturacionModel::find($request->ID_FORMULARIO_FACTURACION);
+
+                //         if (isset($request->ELIMINAR)) {
+                //             $cuentas->ACTIVO = $request->ELIMINAR == 1 ? 0 : 1;
+                //             $cuentas->save();
+
+                //             $response['code'] = 1;
+                //             $response['cuenta'] = $request->ELIMINAR == 1 ? 'Desactivada' : 'Activada';
+                //             return response()->json($response);
+                //         }
+
+                //         if ($request->hasFile('DOCUMENTOS_SOPORTE_FACTURA')) {
+                //             if ($cuentas->DOCUMENTOS_SOPORTE_FACTURA && Storage::exists($cuentas->DOCUMENTOS_SOPORTE_FACTURA)) {
+                //                 Storage::delete($cuentas->DOCUMENTOS_SOPORTE_FACTURA);
+                //             }
+                //             $file = $request->file('DOCUMENTOS_SOPORTE_FACTURA');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documentos de soporte";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $requestData['DOCUMENTOS_SOPORTE_FACTURA'] = $filePath;
+                //         }
+
+                //         if ($request->hasFile('FACTURA_PDF')) {
+                //             if ($cuentas->FACTURA_PDF && Storage::exists($cuentas->FACTURA_PDF)) {
+                //                 Storage::delete($cuentas->FACTURA_PDF);
+                //             }
+                //             $file = $request->file('FACTURA_PDF');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documento factura";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $requestData['FACTURA_PDF'] = $filePath;
+                //         }
+
+                //         if ($request->hasFile('FACTURA_XML')) {
+                //             if ($cuentas->FACTURA_XML && Storage::exists($cuentas->FACTURA_XML)) {
+                //                 Storage::delete($cuentas->FACTURA_XML);
+                //             }
+                //             $file = $request->file('FACTURA_XML');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/XML factura";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $requestData['FACTURA_XML'] = $filePath;
+                //         }
+
+                //         if ($request->hasFile('ARCHIVO_REP')) {
+                //             if ($cuentas->ARCHIVO_REP && Storage::exists($cuentas->ARCHIVO_REP)) {
+                //                 Storage::delete($cuentas->ARCHIVO_REP);
+                //             }
+                //             $file = $request->file('ARCHIVO_REP');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/PDF/{$cuentas->ID_FORMULARIO_FACTURACION}";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $requestData['ARCHIVO_REP'] = $filePath;
+                //         }
+
+                //         if ($request->hasFile('XML_REP')) {
+                //             if ($cuentas->XML_REP && Storage::exists($cuentas->XML_REP)) {
+                //                 Storage::delete($cuentas->XML_REP);
+                //             }
+                //             $file = $request->file('XML_REP');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/XML/{$cuentas->ID_FORMULARIO_FACTURACION}";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $requestData['XML_REP'] = $filePath;
+                //         }
+
+                //         if ($request->hasFile('ARCHIVO_RECIBO_PAGO')) {
+                //             if ($cuentas->ARCHIVO_RECIBO_PAGO && Storage::exists($cuentas->ARCHIVO_RECIBO_PAGO)) {
+                //                 Storage::delete($cuentas->ARCHIVO_RECIBO_PAGO);
+                //             }
+                //             $file = $request->file('ARCHIVO_RECIBO_PAGO');
+                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$cuentas->ID_FORMULARIO_FACTURACION}";
+                //             $fileName = $file->getClientOriginalName();
+                //             $filePath = $file->storeAs($folderPath, $fileName);
+                //             $requestData['ARCHIVO_RECIBO_PAGO'] = $filePath;
+                //         }
+
+
+
+                //         $cuentas->update(collect($requestData)->except('RFC_PROVEEDOR')->toArray());
+
+
+                //     }
+
+                //     $response['code'] = 1;
+                //     $response['cuenta']  = $cuentas;
+                //     return response()->json($response);
+
+
+
                 case 1:
-                    
+
                     $rfc = Auth::user()->RFC_PROVEEDOR;
                     $requestData = $request->all();
                     $requestData['RFC_PROVEEDOR'] = $rfc;
+                    $proveedor = DB::table('formulario_altaproveedor')
+                        ->where('RFC_ALTA', $rfc)
+                        ->orderBy('ID_FORMULARIO_ALTA', 'desc')
+                        ->first();
+                    $tipoProveedor = $proveedor
+                        ? (string)$proveedor->TIPO_PERSONA_ALTA
+                        : null;
+
+
+                    if (!session('factura_validada')) {
+                        return response()->json([
+                            'code' => 0,
+                            'msj' => 'Debe validar la información antes de guardar'
+                        ]);
+                    }
+
+                    if ($request->TIPO_FACTURA != session('tipo_validacion')) {
+                        return response()->json([
+                            'code' => 0,
+                            'msj' => 'El tipo de factura no coincide con la validación realizada'
+                        ]);
+                    }
+
+
+                    if ($request->TIPO_FACTURA == 'OC') {
+                        if (
+                            $request->NO_PO != session('po_validada') ||
+                            $request->NO_GR != session('gr_validada')
+                        ) {
+                            return response()->json([
+                                'code' => 0,
+                                'msj' => 'La PO/GR no coincide con la validada'
+                            ]);
+                        }
+                    }
+
+
+                    if ($request->TIPO_FACTURA == 'CONTRATO') {
+                        if (
+                            $request->NO_CONTRATO != session('contrato_validado')
+                        ) {
+                            return response()->json([
+                                'code' => 0,
+                                'msj' => 'El contrato no coincide con el validado'
+                            ]);
+                        }
+                    }
+
 
                     if ($request->ID_FORMULARIO_FACTURACION == 0) {
+
+                        if ($tipoProveedor === '2') {
+                            $request->validate([
+                                'FACTURA_PDF' => 'required|file|mimes:pdf',
+                                'NO_FACTURA_EXTRANJERO' => 'required',
+                                'FECHA_FACTURA_EXTRANJERO' => 'required',
+                                'SUBTOTAL_FACTURA_EXTRANJERO' => 'required',
+                                'TOTAL_FACTURA_EXTRANJERO' => 'required'
+                            ]);
+                        } else {
+
+                            $request->validate([
+                                'FACTURA_PDF' => 'required|file|mimes:pdf',
+                                'FACTURA_XML' => 'required|file|mimes:xml',
+                                'FECHA_FACTURA' => 'required',
+                                'SUBTOTAL_FACTURA' => 'required',
+                                'IVA_FACTURA' => 'required',
+                                'TOTAL_FACTURA' => 'required',
+                                'FOLIO_FISCAL' => 'required',
+                                'METODO_PAGO' => 'required'
+                            ]);
+                        }
+                    }
+
+                    if ($request->ID_FORMULARIO_FACTURACION == 0) {
+
                         DB::statement('ALTER TABLE formulario_facturasproveedores AUTO_INCREMENT=1;');
 
                         $cuentas = facturacionModel::create($requestData);
@@ -409,6 +740,7 @@ class facturaproveedorController extends Controller
                             $cuentas->save();
                         }
 
+
                         if ($request->hasFile('ARCHIVO_REP')) {
                             $file = $request->file('ARCHIVO_REP');
                             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/PDF/{$cuentas->ID_FORMULARIO_FACTURACION}";
@@ -427,7 +759,6 @@ class facturaproveedorController extends Controller
                             $cuentas->save();
                         }
 
-
                         if ($request->hasFile('ARCHIVO_RECIBO_PAGO')) {
                             $file = $request->file('ARCHIVO_RECIBO_PAGO');
                             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$cuentas->ID_FORMULARIO_FACTURACION}";
@@ -436,98 +767,40 @@ class facturaproveedorController extends Controller
                             $cuentas->ARCHIVO_RECIBO_PAGO = $filePath;
                             $cuentas->save();
                         }
-
-
-
                     } else {
+
+    
                         $cuentas = facturacionModel::find($request->ID_FORMULARIO_FACTURACION);
 
                         if (isset($request->ELIMINAR)) {
                             $cuentas->ACTIVO = $request->ELIMINAR == 1 ? 0 : 1;
                             $cuentas->save();
-
                             $response['code'] = 1;
-                            $response['cuenta'] = $request->ELIMINAR == 1 ? 'Desactivada' : 'Activada';
+                            $response['cuenta'] = $request->ELIMINAR == 1
+                                ? 'Desactivada'
+                                : 'Activada';
                             return response()->json($response);
                         }
 
-                        if ($request->hasFile('DOCUMENTOS_SOPORTE_FACTURA')) {
-                            if ($cuentas->DOCUMENTOS_SOPORTE_FACTURA && Storage::exists($cuentas->DOCUMENTOS_SOPORTE_FACTURA)) {
-                                Storage::delete($cuentas->DOCUMENTOS_SOPORTE_FACTURA);
-                            }
-                            $file = $request->file('DOCUMENTOS_SOPORTE_FACTURA');
-                            $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documentos de soporte";
-                            $fileName = $file->getClientOriginalName();
-                            $filePath = $file->storeAs($folderPath, $fileName);
-                            $requestData['DOCUMENTOS_SOPORTE_FACTURA'] = $filePath;
-                        }
-
-                        if ($request->hasFile('FACTURA_PDF')) {
-                            if ($cuentas->FACTURA_PDF && Storage::exists($cuentas->FACTURA_PDF)) {
-                                Storage::delete($cuentas->FACTURA_PDF);
-                            }
-                            $file = $request->file('FACTURA_PDF');
-                            $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documento factura";
-                            $fileName = $file->getClientOriginalName();
-                            $filePath = $file->storeAs($folderPath, $fileName);
-                            $requestData['FACTURA_PDF'] = $filePath;
-                        }
-
-                        if ($request->hasFile('FACTURA_XML')) {
-                            if ($cuentas->FACTURA_XML && Storage::exists($cuentas->FACTURA_XML)) {
-                                Storage::delete($cuentas->FACTURA_XML);
-                            }
-                            $file = $request->file('FACTURA_XML');
-                            $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/XML factura";
-                            $fileName = $file->getClientOriginalName();
-                            $filePath = $file->storeAs($folderPath, $fileName);
-                            $requestData['FACTURA_XML'] = $filePath;
-                        }
-
-                        if ($request->hasFile('ARCHIVO_REP')) {
-                            if ($cuentas->ARCHIVO_REP && Storage::exists($cuentas->ARCHIVO_REP)) {
-                                Storage::delete($cuentas->ARCHIVO_REP);
-                            }
-                            $file = $request->file('ARCHIVO_REP');
-                            $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/PDF/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                            $fileName = $file->getClientOriginalName();
-                            $filePath = $file->storeAs($folderPath, $fileName);
-                            $requestData['ARCHIVO_REP'] = $filePath;
-                        }
-
-                        if ($request->hasFile('XML_REP')) {
-                            if ($cuentas->XML_REP && Storage::exists($cuentas->XML_REP)) {
-                                Storage::delete($cuentas->XML_REP);
-                            }
-                            $file = $request->file('XML_REP');
-                            $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/XML/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                            $fileName = $file->getClientOriginalName();
-                            $filePath = $file->storeAs($folderPath, $fileName);
-                            $requestData['XML_REP'] = $filePath;
-                        }
-
-                        if ($request->hasFile('ARCHIVO_RECIBO_PAGO')) {
-                            if ($cuentas->ARCHIVO_RECIBO_PAGO && Storage::exists($cuentas->ARCHIVO_RECIBO_PAGO)) {
-                                Storage::delete($cuentas->ARCHIVO_RECIBO_PAGO);
-                            }
-                            $file = $request->file('ARCHIVO_RECIBO_PAGO');
-                            $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                            $fileName = $file->getClientOriginalName();
-                            $filePath = $file->storeAs($folderPath, $fileName);
-                            $requestData['ARCHIVO_RECIBO_PAGO'] = $filePath;
-                        }
-
-
-
-                        $cuentas->update(collect($requestData)->except('RFC_PROVEEDOR')->toArray());
-
-                       
+                        $cuentas->update(
+                            collect($requestData)
+                                ->except('RFC_PROVEEDOR')
+                                ->toArray()
+                        );
                     }
 
-                    $response['code'] = 1;
-                    $response['cuenta']  = $cuentas;
-                    return response()->json($response);
+                    session()->forget([
+                        'factura_validada',
+                        'tipo_validacion',
+                        'po_validada',
+                        'gr_validada',
+                        'contrato_validado'
+                    ]);
 
+
+                    $response['code'] = 1;
+                    $response['cuenta'] = $cuentas;
+                    return response()->json($response);
 
                     break;
 

@@ -1126,6 +1126,8 @@ Route::get('/CatVerProDelete', [catalogoverificacionproveedorController::class, 
 Route::get('/catalogodocumentosoporte', function () {return view('compras.Catalogos.catalogo_documentosoporte');});
 Route::post('/DocumentosSave', [catalagodocumentosproveedorController::class, 'store']);
 Route::get('/Tabladocumentosoportes', [catalagodocumentosproveedorController::class, 'Tabladocumentosoportes']);
+
+
 Route::get('/DocumentosDeleteProveedor', [catalagodocumentosproveedorController::class, 'store']);
 
 
@@ -1210,7 +1212,20 @@ Route::get('/reciboelectronico', function () {return view('compras.proveedores.f
 Route::get('/Tablacargarrecp', [facturaproveedorController::class, 'Tablacargarrecp']);
 Route::get('/mostrareciboelectronico/{id}', [facturaproveedorController::class, 'mostrareciboelectronico']);
 
+Route::get('/limpiarValidacionFactura', function () {
 
+    session()->forget([
+        'factura_validada',
+        'tipo_validacion',
+        'po_validada',
+        'gr_validada',
+        'contrato_validado'
+    ]);
+
+    return response()->json([
+        'ok' => true
+    ]);
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////ALMACEN//////////////////////////////////////////////////////

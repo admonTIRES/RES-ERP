@@ -742,7 +742,7 @@
     {{-- FICHA 1.4 --}}
     {{-- ===================================================== --}}
 
-    <div class="card mt-3">
+    <!-- <div class="card mt-3">
 
         <div class="card-header header-rojo text-center">
 
@@ -880,10 +880,224 @@
 
 
 
+ -->
 
 
+    <div class="card mt-3">
 
-
+        <div class="card-header header-rojo text-center">
+            <b>
+                FICHA 1.4.
+                Evaluación Rápida para identificar
+                la presencia de condiciones inaceptables
+                (Zona roja)
+                por LEVANTAMIENTO DE CARGAS
+            </b>
+            <br><br>
+            NOTA:
+            Señale con una "X",
+            cuando la condición verificada está presente
+            (columna "SI")
+            y cuando no está presente
+            (columna "NO")
+        </div>
+        <div class="card-body">
+            <table>
+                <tr>
+                    <td width="40" class="text-center fw-bold">
+                        a.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La distancia vertical es superior a 175 cm
+                        o está por debajo del nivel del suelo?
+                    </td>
+                    <td width="55" class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td width="55" class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        b.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El desplazamiento vertical
+                        es superior a 175 cm?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        c.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La distancia horizontal
+                        es superior a 63 cm
+                        fuera del alcance máximo
+                        (brazo completamente estirado hacia delante)?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        d.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El ángulo de asimetría
+                        es superior a 135°?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        e.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿Se realizan más de 15 levantamientos/min
+                        en duración corta?
+                        <br><br>
+                        (La tarea de manipulación manual
+                        no dura más de 60 min consecutivos
+                        y viene seguida
+                        de tareas ligeras para la espalda
+                        de duración mínima de 60 min)
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        f.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿Se realizan más de 12 levantamientos/min
+                        en duración media?
+                        <br><br>
+                        (La tarea de manipulación manual
+                        no dura más de 120 min consecutivos
+                        y viene seguida
+                        de tareas ligeras para la espalda
+                        de duración mínima de 30 min)
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        g.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿Se realizan más de 8 levantamientos/min
+                        en duración larga?
+                        <br><br>
+                        (La tarea de manipulación manual
+                        que no es de duración corta ni media)
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        h.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea se puede realizar
+                        por mujeres
+                        (entre 18 y 45 años)
+                        y la carga pesa más de 20 kg?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        i.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea se puede realizar
+                        por mujeres
+                        (menores de 18
+                        y mayores de 45 años)
+                        y la carga pesa más de 15 kg?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        j.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea la realizan
+                        únicamente hombres
+                        (entre 18 y 45 años)
+                        y la carga pesa más de 25 kg?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        k.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea la realizan
+                        únicamente hombres
+                        (menores de 18
+                        y mayores de 45 años)
+                        y la carga pesa más de 20 kg?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
 
     {{-- ===================================================== --}}
@@ -891,127 +1105,189 @@
     {{-- ===================================================== --}}
 
     <div class="card mt-3">
-
         <div class="card-header header-azul text-center">
-
             <b>
                 FICHA 1.3.- Aspectos adicionales a considerar
             </b>
-
             <br><br>
-
             A cada una de las preguntas de cada apartado
             marque una "X"
             en la columna SI o NO
-
         </div>
-
         <div class="card-body">
-
             <table>
-
+                {{-- ===================================================== --}}
+                {{-- CONDICIONES AMBIENTALES --}}
+                {{-- ===================================================== --}}
                 <tr class="header-gris">
-
                     <td colspan="2" class="texto-pregunta fw-bold">
-
                         Condiciones ambientales de trabajo
                         para el levantamiento o transporte manual
-
                     </td>
-
-                    <td width="80"></td>
-
-                    <td width="80"></td>
-
+                    <td width="55"></td>
+                    <td width="55"></td>
                 </tr>
-
-
-
-
-
                 <tr>
-
                     <td width="40" class="text-center fw-bold">
                         a.
                     </td>
-
                     <td class="texto-pregunta">
-
-                        ¿Hay presencia de baja o altas temperaturas?
-
+                        ¿Hay presencia
+                        de baja o altas temperaturas?
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         b.
                     </td>
-
                     <td class="texto-pregunta">
-
-                        ¿Hay presencia de suelo resbaladizo,
+                        ¿Hay presencia
+                        de suelo resbaladizo,
                         desigual o inestable?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         c.
                     </td>
-
                     <td class="texto-pregunta">
-
-                        ¿Está restringida la libre circulación
+                        ¿Está restringida
+                        la libre circulación
                         en el puesto de trabajo?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
+                {{-- ===================================================== --}}
+                {{-- CARACTERÍSTICAS OBJETOS --}}
+                {{-- ===================================================== --}}
+                <tr class="header-gris">
+                    <td colspan="2" class="texto-pregunta fw-bold">
+                        Características de los objetos
+                        levantados o transportados
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        d.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El tamaño del objeto
+                        obstaculiza la visibilidad
+                        y el movimiento?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        e.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El centro de gravedad
+                        de la carga es inestable?
+                        <br><br>
+                        P.ej. líquidos
+                        o cosas que se mueven
+                        dentro del objeto.
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        f.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La forma de la carga
+                        y su configuración
+                        presenta bordes afilados,
+                        superficies sobresalientes
+                        o protuberancias?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        g.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El contacto con la superficie
+                        es frío?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        h.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El contacto con la superficie
+                        es caliente?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        i.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea de levantamiento
+                        o transporte manual de cargas
+                        se realiza
+                        por más de 8 horas al día?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
             </table>
-
         </div>
-
     </div>
-
-
 
     {{-- ===================================================== --}}
     {{-- TRANSPORTE DE CARGAS --}}
@@ -1325,18 +1601,7 @@
     </div>
 
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
 
     {{-- ===================================================== --}}
     {{-- EMPUJE Y TRACCIÓN DE CARGAS --}}
@@ -1554,9 +1819,7 @@
     {{-- ===================================================== --}}
 
     <div class="card mt-3">
-
         <div class="card-header header-rojo text-center">
-
             <b>
                 FICHA 2.3.
                 Evaluación Rápida para identificar
@@ -1564,164 +1827,99 @@
                 (Zona roja)
                 por EMPUJE Y TRACCIÓN DE CARGAS
             </b>
-
             <br><br>
-
             NOTA:
             Señale con una "X",
             cuando la condición verificada está presente
             (columna "SI")
             y cuando no está presente
             (columna "NO")
-
         </div>
-
         <div class="card-body">
-
             <table>
-
                 <tr>
-
                     <td width="40" class="text-center fw-bold">
                         a.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿La fuerza requerida en el empuje o tracción
                         es “Muy intensa” o superior
                         (Escala de Borg mayor o igual a 8)?
-
                         <br><br>
 
                         O
-
                         <br><br>
-
                         ¿La fuerza requerida en el empuje o tracción
                         para iniciar el movimiento
                         es 360 N o más para hombres,
                         o de 240 N o más para mujeres?
-
                         <br><br>
-
                         O
-
                         <br><br>
-
                         ¿La fuerza requerida
                         para el empuje o tracción
                         para mantener el movimiento
                         es de 250 N o más para hombres
                         o de 150 N o más mujeres?
-
                     </td>
-
                     <td width="55" class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td width="55" class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         b.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿La fuerza de empuje o tracción
                         se aplica a una altura de agarre
                         superior a 150 cm
                         o menor a 60 cm?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         c.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿La acción de empuje o tracción
                         se realiza con el tronco flexionado
                         o en torsión?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         d.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿Se realiza la tarea
                         de empuje o tracción
                         durante más de 8 horas al día?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
             </table>
-
         </div>
-
     </div>
 
 
@@ -1729,12 +1927,14 @@
 
 
 
-
+    <br><br><br><br>
 
 
     {{-- ===================================================== --}}
     {{-- FICHA 2.2 --}}
     {{-- ===================================================== --}}
+
+
 
     <div class="card mt-3">
 
@@ -1752,39 +1952,23 @@
             en la columna SI o NO
 
         </div>
-
         <div class="card-body">
-
             <table>
-
+                {{-- ===================================================== --}}
+                {{-- CONDICIONES AMBIENTALES --}}
+                {{-- ===================================================== --}}
                 <tr class="header-gris">
-
                     <td colspan="2" class="texto-pregunta fw-bold">
-
                         Condiciones ambientales de trabajo
-
                     </td>
-
-                    <td width="80"></td>
-
-                    <td width="80"></td>
-
+                    <td width="55"></td>
+                    <td width="55"></td>
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td width="40" class="text-center fw-bold">
                         a.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿Las superficies de los suelos
                         son resbaladizas,
                         inestables,
@@ -1793,142 +1977,248 @@
                         o presentan fisuras,
                         grietas
                         o están rotas?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         b.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿Hay restricciones
-                        o limitaciones para desplazarse?
-
+                        o limitaciones
+                        para desplazarse?
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         c.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿Hay rampas
-                        o cuestas con mucha pendiente?
-
+                        o cuestas
+                        con mucha pendiente?
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         d.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿La temperatura ambiental
                         no es adecuada
                         (por frío o calor)?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
-
-
-
-
-
-
                 <tr>
-
                     <td class="text-center fw-bold">
                         e.
                     </td>
-
                     <td class="texto-pregunta">
-
                         ¿Los espacios son confinados,
                         insuficientes para girar,
                         puertas estrechas, etc.?
-
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> NO
                     </td>
-
                     <td class="text-center">
                         <span class="check-box"></span> SI
                     </td>
-
                 </tr>
-
+                {{-- ===================================================== --}}
+                {{-- CARACTERÍSTICAS OBJETOS --}}
+                {{-- ===================================================== --}}
+                <tr class="header-gris">
+                    <td colspan="2" class="texto-pregunta fw-bold">
+                        Características de los objetos
+                        a empujar / tirar
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        f.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El objeto limita
+                        la visibilidad del trabajador
+                        u obstaculiza el movimiento?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        g.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El objeto carece de asas?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        h.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El objeto es inestable?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        i.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿El objeto tiene
+                        características peligrosas,
+                        superficies afiladas,
+                        elementos sobresalientes, etc.,
+                        que puedan dañar al trabajador?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        j.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿Las ruedas están desgastadas,
+                        rotas
+                        o sin mantenimiento?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        k.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿Las ruedas son inadecuadas
+                        para las condiciones de trabajo?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                {{-- ===================================================== --}}
+                {{-- CARACTERÍSTICAS TAREA --}}
+                {{-- ===================================================== --}}
+                <tr class="header-gris">
+                    <td colspan="2" class="texto-pregunta fw-bold">
+                        Características de la tarea
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        l.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea de empuje
+                        o tracción
+                        se realiza
+                        por más de 8 horas al día?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        m.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿Se deben hacer movimientos acelerados
+                        para iniciar,
+                        frenar
+                        o mover la carga?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center fw-bold">
+                        n.
+                    </td>
+                    <td class="texto-pregunta">
+                        ¿La tarea requiere
+                        el uso de las manos
+                        por detrás del cuerpo
+                        para transportar la carga?
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> NO
+                    </td>
+                    <td class="text-center">
+                        <span class="check-box"></span> SI
+                    </td>
+                </tr>
             </table>
-
         </div>
-
     </div>
+
+
 
 
     {{-- ===================================================== --}}
@@ -2939,14 +3229,6 @@
 
 
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 
     {{-- ===================================================== --}}
     {{-- POSTURA DINÁMICA --}}
@@ -2987,7 +3269,6 @@
     {{-- ===================================================== --}}
     {{-- POSTURAS DINÁMICAS FORZADAS --}}
     {{-- ===================================================== --}}
-
     <div class="card mt-2">
 
         <div class="card-header header-res">

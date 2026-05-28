@@ -795,6 +795,7 @@
                         | Roles operativos (solo aplican si NO es Superusuario/Admin)
                         |--------------------------------------------------------------------------
                         */
+
                         $tieneSoloRolIntendente = !$esSuperusuario && $user->hasRole('Intendente');
                         $tieneSoloRolAlmacenista = !$esSuperusuario && $user->hasRole('Almacenista');
                         $tieneSoloRolLideOperaciones = !$esSuperusuario && $user->hasRole('Líder de Operaciones');
@@ -811,6 +812,11 @@
                         $tieneSoloRolSoftware = !$esSuperusuario && $user->hasRole('Desarrollador de Software Junior');
                         $tieneSoloRolAmadellaves = !$esSuperusuario && $user->hasRole('Ama de llaves');
 
+                        $tieneSoloRolFRE = !$esSuperusuario && $user->hasRole('Especialista para evaluar factores de riesgo ergonómicos');
+                        $tieneSoloRolFRP = !$esSuperusuario && $user->hasRole('Especialista para evaluar factores de riesgo psicosociales');
+                        $tieneSoloRolSSPA = !$esSuperusuario && $user->hasRole('Responsable de SSPA');
+                        $tieneSoloRolAT = !$esSuperusuario && $user->hasRole('Apoyo Técnico');
+
                         /*
                         |--------------------------------------------------------------------------
                         | Agrupador de roles restringidos
@@ -821,6 +827,11 @@
                         $tieneSoloRolAsistentePlaneacion ||
                         $tieneSoloRolHSEQ ||
                         $tieneSoloRolSoftware ||
+                        $tieneSoloRolFRE ||
+                        $tieneSoloRolFRP ||
+                        $tieneSoloRolSSPA ||
+                        $tieneSoloRolAT ||
+
                         $tieneSoloRolAmadellaves;
 
                         @endphp
@@ -894,7 +905,7 @@
                                     <h2 class="modules__text">Almacén</h2>
                                 </div>
                             </a>
-                            @elseif($tieneRolRestringidoUnico || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior  )
+                            @elseif($tieneRolRestringidoUnico || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior )
                             <div class="modules__card" onclick="noPermiso('Almacén')">
                                 <div class="modules__circle"><img src="assets/Modulos/img/Almacén.png" alt=""></div>
                                 <h2 class="modules__text">Almacén</h2>

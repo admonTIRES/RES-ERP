@@ -8,6 +8,10 @@ let tipoProveedor = null;
 $("#NUEVA_FACTURA").click(function (e) {
     e.preventDefault();
 
+
+    $.get('/limpiarValidacionFactura');
+    
+
     $.get('/validarPuedeSubirFactura', function (res) {
 
         if (!res.puede) {
@@ -29,7 +33,8 @@ $("#NUEVA_FACTURA").click(function (e) {
         $('#camposFacturaExtranjero').addClass('d-none');
         $('#FACTURA_PDF').val('');
         $('#FACTURA_XML').val('');
-        $('#btnGuardarFactura').hide(); 
+        $('#btnGuardarFactura').hide().prop('disabled', true);
+        
         $('#contenedorCONTRATO').addClass('d-none');
         $('#soporteFacturaTextoContrato').addClass('d-none');
 
@@ -55,7 +60,7 @@ Modalfactura.addEventListener('hidden.bs.modal', event => {
     $('#camposFacturaExtranjero').addClass('d-none');
     $('#FACTURA_PDF').val('');
     $('#FACTURA_XML').val('');
-    $('#btnGuardarFactura').hide(); 
+    $('#btnGuardarFactura').hide().prop('disabled', true);
     $('#contenedorCONTRATO').addClass('d-none');
     $('#soporteFacturaTextoContrato').addClass('d-none');
  
@@ -64,12 +69,19 @@ Modalfactura.addEventListener('hidden.bs.modal', event => {
 
 
 
+
+
 $(document).on('change', '#TIPO_FACTURA', function () {
 
     let tipo = $(this).val();
 
+    if (tipo != '') {
+
+        $.get('/limpiarValidacionFactura');
+    }
+
     $('#contenedorOC, #datosFactura, #camposFactura','#camposFacturaExtranjero,#soporteFacturaTexto,#contenedorCONTRATO,#soporteFacturaTextoContrato').addClass('d-none');
-    $('#btnGuardarFactura').hide();
+    $('#btnGuardarFactura').hide().prop('disabled', true);
 
    
     $.get('/obtenerTipoProveedor', function (res) {
@@ -151,8 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function activarCampos() {
 
     $('#datosFactura').removeClass('d-none');
-    $('#btnGuardarFactura').show();
-
+$('#btnGuardarFactura').show().prop('disabled', false);
 
     if (tipoProveedor == 2) {
 
@@ -210,19 +221,19 @@ $(document).on('click', '#btnValidarCONTRATO', function () {
         },
         success: function (res) {
 
+        
+
             if (!res.valido) {
 
-              
-                Swal.fire('Error', res.mensaje, 'error');
+            Swal.fire('Error', res.mensaje, 'error');
 
-                $('#datosFactura').addClass('d-none');
-                $('#btnGuardarFactura').hide();
+            $('#datosFactura').addClass('d-none');
 
-              
+            $('#btnGuardarFactura').hide().prop('disabled', true);
 
-                return;
+            return;
             }
-
+            
             Swal.fire('Correcto', 'Contrato válido y vigente', 'success');
 
            validarTextoFactura();
@@ -273,16 +284,19 @@ $(document).on('click', '#btnValidarPOGR', function () {
         },
         success: function (res) {
 
+           
+
             if (!res.valido) {
 
-                Swal.fire('Error', res.mensaje, 'error');
+            Swal.fire('Error', res.mensaje, 'error');
 
-                $('#datosFactura').addClass('d-none');
-                $('#btnGuardarFactura').hide();
+            $('#datosFactura').addClass('d-none');
 
-                return;
-            }
+            $('#btnGuardarFactura').hide().prop('disabled', true);
 
+            return;
+                    }
+            
             Swal.fire('Correcto', 'Orden de Compra (PO) y Recepción (GR) son válidos', 'success');
             
             validarTextoFactura();
@@ -455,16 +469,52 @@ $("#btnGuardarFactura").click(function (e) {
                 $('.swal2-popup').addClass('ld ld-breath')
         
                 
-            }, function (data) {
+            },
+            //     function (data) {
                     
 
-                ID_FORMULARIO_FACTURACION = data.cuenta.ID_FORMULARIO_FACTURACION
-                    alertMensaje('success','Información guardada correctamente', 'Esta información esta lista para usarse',null,null, 1500)
-                     $('#miModal_factura').modal('hide')
-                    document.getElementById('formularioFACTURA').reset();
-                    Tablafacturaproveedores.ajax.reload()
+            //     ID_FORMULARIO_FACTURACION = data.cuenta.ID_FORMULARIO_FACTURACION
+            //         alertMensaje('success','Información guardada correctamente', 'Esta información esta lista para usarse',null,null, 1500)
+            //          $('#miModal_factura').modal('hide')
+            //         document.getElementById('formularioFACTURA').reset();
+            //         Tablafacturaproveedores.ajax.reload()
 
-            })
+            // }
+            
+            function (data) {
+
+                    if (data.code == 0) {
+
+                        Swal.close();
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+
+                        return;
+                    }
+
+                    ID_FORMULARIO_FACTURACION = data.cuenta.ID_FORMULARIO_FACTURACION;
+
+                    alertMensaje(
+                        'success',
+                        'Información guardada correctamente',
+                        'Esta información esta lista para usarse',
+                        null,
+                        null,
+                        1500
+                    );
+
+                    $('#miModal_factura').modal('hide');
+
+                    document.getElementById('formularioFACTURA').reset();
+
+                    Tablafacturaproveedores.ajax.reload();
+                }
+            
+            )
             
             
         }, 1)

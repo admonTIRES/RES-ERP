@@ -428,7 +428,7 @@
     @endif
 
     @if(request()->is('factura'))
-    <script src="/assets/js_sitio/proveedor/factura/cargarfactura.js?v=6"></script>
+    <script src="/assets/js_sitio/proveedor/factura/cargarfactura.js?v=7"></script>
     @endif
 
     @if(request()->is('reciboelectronico'))
