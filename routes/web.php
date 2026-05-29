@@ -1023,6 +1023,10 @@ Route::get('/RelacionDelete', [relacionpagoController::class, 'store']);
 Route::get('/descargarExcelRelacionPagos/{ID}', [relacionpagoController::class, 'descargarExcelRelacionPagos']);
 
 
+//============================================== COMPROBANTE DE PAGOS   ============================================== 
+Route::get('/comprobantepagos', function () { return view('compras.comprobantedepago.comprobantepago');});
+
+
 
 Route::get('/pdfFichaErgonomica', [relacionpagoController::class, 'pdfFichaErgonomica']);
 

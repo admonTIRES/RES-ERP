@@ -17,6 +17,8 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
+
+
 use App\Models\proveedor\relacionpagosModel;
 
 
@@ -223,50 +225,38 @@ class relacionpagoController extends Controller
             }
 
 
-            $banco  = '';
 
+            $banco  = '';
             $cuenta = '';
 
-            if ($tipo == 1) {
+            $cuentaProveedor = DB::table('formulario_altacuentaproveedor')
+                ->where('RFC_PROVEEDOR', $factura->RFC_PROVEEDOR)
+                ->where('ACTIVO', 1)
+                ->orderBy('ID_FORMULARIO_CUENTAPROVEEDOR', 'DESC')
+                ->first();
 
-                $cuentaProveedor = DB::table(
-                    'formulario_altacuentaproveedor'
-                )
+            if ($cuentaProveedor) {
 
-                    ->where(
-                        'RFC_PROVEEDOR',
-                        $factura->RFC_PROVEEDOR
-                    )
+                //---------------------------------------------------
+                // NACIONALES
+                //---------------------------------------------------
 
-                    ->where('ACTIVO', 1)
-
-                    ->orderBy(
-                        'ID_FORMULARIO_CUENTAPROVEEDOR',
-                        'DESC'
-                    )
-
-                    ->first();
-
-
-                if ($cuentaProveedor) {
+                if ($tipo == 1) {
 
                     $tipoBanco = trim(
-                        strtolower(
-                            $cuentaProveedor->TIPO_BANCO
-                        )
+                        strtolower($cuentaProveedor->TIPO_BANCO)
                     );
 
                     if (
                         $tipoBanco == 'bbva' ||
-                        $tipoBanco == 'bancomer bbva' |
+                        $tipoBanco == 'bancomer bbva' ||
                         $tipoBanco == 'bancomer'
-
                     ) {
+
                         $banco = 'BBVA';
                     } else {
 
-                        $banco =
-                            $cuentaProveedor->TIPO_BANCO;
+                        $banco = $cuentaProveedor->TIPO_BANCO;
                     }
 
                     $bancosNumeroCuenta = [
@@ -274,16 +264,30 @@ class relacionpagoController extends Controller
                         'bancomer bbva',
                         'bancomer'
                     ];
+
                     if (
                         in_array(
                             $tipoBanco,
                             $bancosNumeroCuenta
                         )
                     ) {
+
                         $cuenta = $cuentaProveedor->NUMERO_CUENTA;
                     } else {
-                        $cuenta = $cuentaProveedor ->CLABE_INTERBANCARIA;
+
+                        $cuenta = $cuentaProveedor->CLABE_INTERBANCARIA;
                     }
+                }
+
+                //---------------------------------------------------
+                // EXTRANJEROS
+                //---------------------------------------------------
+
+                else if ($tipo == 2) {
+
+                    $banco = $cuentaProveedor->TIPO_BANCO;
+
+                    $cuenta = $cuentaProveedor->NUMERO_CUENTA;
                 }
             }
 
@@ -402,26 +406,70 @@ class relacionpagoController extends Controller
 
         usort($datos, function ($a, $b) {
 
-            $aEsBBVA = strtoupper( trim($a['BANCO']) ) == 'BBVA';
-            $bEsBBVA = strtoupper( trim($b['BANCO']) ) == 'BBVA';
+
+            $ordenMoneda = [
+                'MXN' => 1,
+                'USD' => 2
+            ];
+
+            $monedaA = strtoupper(trim($a['MONEDA']));
+            $monedaB = strtoupper(trim($b['MONEDA']));
+
+            $valorMonedaA = $ordenMoneda[$monedaA] ?? 99;
+            $valorMonedaB = $ordenMoneda[$monedaB] ?? 99;
+
+            if ($valorMonedaA != $valorMonedaB) {
+
+                return $valorMonedaA <=> $valorMonedaB;
+            }
+
+
+            $aEsBBVA = strtoupper(trim($a['BANCO'])) == 'BBVA';
+            $bEsBBVA = strtoupper(trim($b['BANCO'])) == 'BBVA';
 
             if ($aEsBBVA == $bEsBBVA) {
+
                 return 0;
             }
+
             return $aEsBBVA ? -1 : 1;
         });
 
         $spreadsheet = new Spreadsheet();
+
+
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Relación de pagos');
         $sheet->mergeCells('A1:M2');
+
+        $sheet->getRowDimension(1)->setRowHeight(18);
+        $sheet->getRowDimension(2)->setRowHeight(18);
+
         $sheet->setCellValue('A1', 'Relación de pagos RES');
         $sheet->getStyle('A1')->applyFromArray([
-
-        'font' => [ 'bold' => true, 'size' => 16,'name' => 'Arial'],
-        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER ]
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'name' => 'Arial'
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
 
         ]);
+
+        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+        $drawing->setName('Logo RES');
+        $drawing->setDescription('Logo RES');
+        $drawing->setPath(
+            public_path('assets/images/Color@4x.png')
+        );
+        $drawing->setCoordinates('A1');
+        $drawing->setHeight(45);
+        $drawing->setOffsetX(10);
+        $drawing->setOffsetY(5);
+        $drawing->setWorksheet($sheet);
 
         $filaEncabezado = 4;
 

@@ -180,6 +180,46 @@ $(document).on('click', '#agregarPagoManual', function () {
 });
 
 
+$(document).on(
+    'keyup change',
+    '.seleccionar-factura, .total-factura, .moneda-factura',
+    function () {
+
+        calcularTotalesRelacion();
+    }
+);
+
+$(document).on(
+    'keyup change',
+    '.subtotal-factura, .iva-factura',
+    function () {
+
+        let fila = $(this).closest('tr');
+
+        let subtotal = parseFloat(
+            fila.find('.subtotal-factura').val()
+        );
+
+        let iva = parseFloat(
+            fila.find('.iva-factura').val()
+        );
+
+        if (isNaN(subtotal)) {
+            subtotal = 0;
+        }
+
+        if (isNaN(iva)) {
+            iva = 0;
+        }
+
+
+        fila.find('.total-factura').val(
+            subtotal + iva
+        );
+
+        calcularTotalesRelacion();
+    }
+);
 
 
 $(document).on('click', '.eliminarPagoManual', function () {
