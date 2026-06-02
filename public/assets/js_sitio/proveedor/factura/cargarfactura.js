@@ -723,3 +723,42 @@ $(document).ready(function() {
         resetFormulario('#miModal_factura');
     });
 });
+
+
+
+
+
+
+
+
+function validarArchivo(input, extensionPermitida) {
+    const archivo = input.files[0];
+
+    if (!archivo) return;
+
+    const extension = archivo.name.split('.').pop().toLowerCase();
+
+    if (extension !== extensionPermitida) {
+        alertToast('Solo se permiten archivos .' + extensionPermitida);
+
+        $(input).val('');
+
+        input.value = '';
+
+        return false;
+    }
+
+    return true;
+}
+
+$('#FACTURA_PDF').on('change', function () {
+    validarArchivo(this, 'pdf');
+});
+
+$('#FACTURA_XML').on('change', function () {
+    validarArchivo(this, 'xml');
+});
+
+$('#DOCUMENTOS_SOPORTE_FACTURA').on('change', function () {
+    validarArchivo(this, 'pdf');
+});

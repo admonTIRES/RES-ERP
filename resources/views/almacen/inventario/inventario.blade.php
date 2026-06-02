@@ -359,7 +359,6 @@
                                                 </div>
                                                 <div class="col-12 mt-2" id="DATOS_VEHICULOS" style="display: none;">
                                                     <div class="row">
-z
                                                         <div class="col-6 mt-2">
                                                             <div class="form-group">
                                                                 <label>Placas *</label>

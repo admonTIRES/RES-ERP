@@ -1883,10 +1883,10 @@
 
 
                     <hr>
-                    <h6>Recibo de pago</h6>
+                    <h6>Comprobante de pago</h6>
 
                     <div class="mb-3">
-                        <label>¿Subir recibo de pago?</label>
+                        <label>¿Subir comprobante de pago?</label>
                         <select id="SUBIR_RECIBO_PAGO" name="SUBIR_RECIBO_PAGO" class="form-control">
                             <option value="">Seleccione</option>
                             <option value="1">Sí</option>
@@ -1899,7 +1899,7 @@
                         <input type="file" id="ARCHIVO_RECIBO_PAGO" name="ARCHIVO_RECIBO_PAGO" class="form-control mb-2" accept=".pdf">
 
                         <a id="verReciboPago" target="_blank" class="btn btn-info d-none">
-                            Ver recibo de pago
+                            Ver comprobante de pago
                         </a>
 
                     </div>

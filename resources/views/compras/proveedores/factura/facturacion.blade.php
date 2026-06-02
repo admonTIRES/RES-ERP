@@ -7,6 +7,16 @@
     .datepicker {
         z-index: 9999 !important;
     }
+
+    .lista-soporte-factura {
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding-left: 40px !important;
+    }
 </style>
 
 <div class="contenedor-contenido">
@@ -82,31 +92,41 @@
                             </div>
                         </div>
                     </div>
+
+
                     <div class="mb-3 d-none" id="soporteFacturaTextoContrato">
                         <p>
                             El soporte de la factura debe incluir en un solo archivo los siguientes documentos:
                         </p>
-                        <ul>
-                            <li>Verificación de la factura</li>
-                            <li>Opinión de cumplimiento en positivo</li>
-                            <li>Carta de contenido nacional (Si aplica)</li>
-                            <li>Comprobante del pago al IMSS e INFONAVIT (Si aplica)</li>
-                            <li>Comprobante del pago SAT (Si aplica)</li>
-                        </ul>
+                        <ol class="lista-soporte-factura">
+                            <li>Verificación de comprobantes fiscales digitales por internet emitida por el SAT.</li>
+                            <li>Constancia de opinión de cumplimiento del SAT, emitida en el mes de ingreso de la factura.</li>
+                            <li>Carta de contenido nacional (Si aplica).</li>
+                            <li>Comprobante del pago al IMSS e INFONAVIT (Si aplica).</li>
+                            <li>Comprobante del pago SAT (Si aplica).</li>
+                        </ol>
+                        <p class="mt-3 mb-0">
+                            <strong>NOTA:</strong> <b> En caso de que su personal ingrese a nuestra instalación es obligatorio adjuntar en su soporte los archivos número 4 y 5. </b>
+                        </p>
                     </div>
+
+
                     <div class="mb-3 d-none" id="soporteFacturaTexto">
                         <p>
                             El soporte de la factura debe incluir en un solo archivo los siguientes documentos:
                         </p>
-                        <ul>
-                            <li>Factura en PDF</li>
-                            <li>Verificación de comprobantes fiscales digitales por internet emitida por el SAT</li>
-                            <li>Opinión de cumplimiento en positivo</li>
-                            <li>Carta de contenido nacional (Si aplica)</li>
-                            <li>Comprobante del pago al IMSS e INFONAVIT (Si aplica)</li>
-                            <li>Comprobante del pago SAT (Si aplica)</li>
-                        </ul>
+                        <ol class="lista-soporte-factura">
+                            <li>Verificación de comprobantes fiscales digitales por internet emitida por el SAT.</li>
+                            <li>Constancia de opinión de cumplimiento del SAT, emitida en el mes de ingreso de la factura.</li>
+                            <li>Carta de contenido nacional (Si aplica).</li>
+                            <li>Comprobante del pago al IMSS e INFONAVIT (Si aplica).</li>
+                            <li>Comprobante del pago SAT (Si aplica).</li>
+                        </ol>
+                        <p class="mt-3 mb-0">
+                            <strong>NOTA:</strong> <b> En caso de que su personal ingrese a nuestra instalación es obligatorio adjuntar en su soporte los archivos número 4 y 5. </b>
+                        </p>
                     </div>
+
 
                     <div class="row d-none" id="datosFactura">
                         <div class="col-md-4 mb-3" id="FACTURA_DIV">
@@ -121,7 +141,6 @@
                             <label class="form-label">Soporte de la factura PDF *</label>
                             <input type="file" class="form-control" name="DOCUMENTOS_SOPORTE_FACTURA" id="DOCUMENTOS_SOPORTE_FACTURA" accept=".pdf" required>
                         </div>
-
                     </div>
 
                     <div class="row d-none" id="camposFactura">
