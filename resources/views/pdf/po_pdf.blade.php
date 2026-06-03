@@ -216,73 +216,147 @@
             </tr>
         </table>
     </main>
+
+
+
     <table class="tabla-info_2">
         <tr>
             <td colspan="4" class="bg-gray text-center bold">Proveedor</td>
         </tr>
+
         <tr>
             <td colspan="4" class="text-center">
-                {{ $proveedor->RAZON_SOCIAL ?? '' }}
+
+                @if($proveedor)
+
+                {{ $proveedor->RAZON_SOCIAL }}
                 <hr>
-                <span>{{ $proveedor->RFC_PROVEEDOR ?? '' }}</span>
+                <span>{{ $proveedor->RFC_PROVEEDOR }}</span>
+
+                @else
+
+                {{ $orden->PROVEEDOR_SELECCIONADO }}
+
+                @endif
+
             </td>
         </tr>
+
+        @if($proveedor1)
+
         <tr>
             <td class="bg-gray bold">Contacto:</td>
             <td colspan="3">{{ $proveedor->NOMBRE_DIRECTORIO ?? '' }}</td>
         </tr>
+
         <tr>
             <td class="bg-gray bold">Dirección:</td>
             <td colspan="3">
-                @if ($proveedor1->TIPO_PERSONA_ALTA == '1')
-                {{ $proveedor1->TIPO_VIALIDAD_EMPRESA ?? '' }} {{ $proveedor1->NOMBRE_VIALIDAD_EMPRESA ?? '' }}
+
+                @if($proveedor1->TIPO_PERSONA_ALTA == '1')
+
+                {{ $proveedor1->TIPO_VIALIDAD_EMPRESA ?? '' }}
+                {{ $proveedor1->NOMBRE_VIALIDAD_EMPRESA ?? '' }}
                 {{ $proveedor1->NUMERO_EXTERIOR_EMPRESA ?? '' }}
-                {{ $proveedor1->NUMERO_INTERIOR_EMPRESA ? 'Int. ' . $proveedor1->NUMERO_INTERIOR_EMPRESA : '' }},
-                Col. {{ $proveedor1->NOMBRE_COLONIA_EMPRESA ?? '' }}<br>
-                C.P. {{ $proveedor1->CODIGO_POSTAL ?? '' }},
-                {{ $proveedor1->NOMBRE_LOCALIDAD_EMPRESA ?? '' }},
-                {{ $proveedor1->NOMBRE_ENTIDAD_EMPRESA ?? '' }}
-                @elseif ($proveedor1->TIPO_PERSONA_ALTA == '2')
-                {{ $proveedor1->DOMICILIO_EXTRANJERO ?? '' }},
-                {{ $proveedor1->DEPARTAMENTO_EXTRANJERO ?? '' }},
-                {{ $proveedor1->CODIGO_EXTRANJERO ?? '' }},
-                {{ $proveedor1->ESTADO_EXTRANJERO ?? '' }},
-                {{ $proveedor1->CIUDAD_EXTRANJERO ?? '' }},
-                {{ $proveedor1->PAIS_EXTRANJERO ?? '' }}
+
+                @if(!empty($proveedor1->NUMERO_INTERIOR_EMPRESA))
+                Int. {{ $proveedor1->NUMERO_INTERIOR_EMPRESA }}
                 @endif
+
+                @if(!empty($proveedor1->NOMBRE_COLONIA_EMPRESA))
+                , Col. {{ $proveedor1->NOMBRE_COLONIA_EMPRESA }}
+                @endif
+
+                <br>
+
+                C.P. {{ $proveedor1->CODIGO_POSTAL ?? '' }}
+
+                @if(!empty($proveedor1->NOMBRE_LOCALIDAD_EMPRESA))
+                , {{ $proveedor1->NOMBRE_LOCALIDAD_EMPRESA }}
+                @endif
+
+                @if(!empty($proveedor1->NOMBRE_ENTIDAD_EMPRESA))
+                , {{ $proveedor1->NOMBRE_ENTIDAD_EMPRESA }}
+                @endif
+
+                @elseif($proveedor1->TIPO_PERSONA_ALTA == '2')
+
+                {{ $proveedor1->DOMICILIO_EXTRANJERO ?? '' }}
+
+                @if(!empty($proveedor1->DEPARTAMENTO_EXTRANJERO))
+                , {{ $proveedor1->DEPARTAMENTO_EXTRANJERO }}
+                @endif
+
+                @if(!empty($proveedor1->CODIGO_EXTRANJERO))
+                , {{ $proveedor1->CODIGO_EXTRANJERO }}
+                @endif
+
+                @if(!empty($proveedor1->ESTADO_EXTRANJERO))
+                , {{ $proveedor1->ESTADO_EXTRANJERO }}
+                @endif
+
+                @if(!empty($proveedor1->CIUDAD_EXTRANJERO))
+                , {{ $proveedor1->CIUDAD_EXTRANJERO }}
+                @endif
+
+                @if(!empty($proveedor1->PAIS_EXTRANJERO))
+                , {{ $proveedor1->PAIS_EXTRANJERO }}
+                @endif
+
+                @endif
+
             </td>
         </tr>
+
         <tr>
             <td class="bg-gray bold">Ciudad / País</td>
+
             <td>
-                @if ($proveedor1->TIPO_PERSONA_ALTA == '1')
-                {{ $proveedor1->NOMBRE_LOCALIDAD_EMPRESA ?? '' }}, {{ $proveedor1->PAIS_EMPRESA ?? '' }}
-                @else
-                {{ $proveedor1->CIUDAD_EXTRANJERO ?? '' }}, {{ $proveedor1->PAIS_EXTRANJERO ?? '' }}
+
+                @if($proveedor1->TIPO_PERSONA_ALTA == '1')
+
+                {{ $proveedor1->NOMBRE_LOCALIDAD_EMPRESA ?? '' }}
+
+                @if(!empty($proveedor1->PAIS_EMPRESA))
+                , {{ $proveedor1->PAIS_EMPRESA }}
                 @endif
+
+                @else
+
+                {{ $proveedor1->CIUDAD_EXTRANJERO ?? '' }}
+
+                @if(!empty($proveedor1->PAIS_EXTRANJERO))
+                , {{ $proveedor1->PAIS_EXTRANJERO }}
+                @endif
+
+                @endif
+
             </td>
+
             <td class="bg-gray bold">Fecha de entrega<br>(aaaa/mm/dd)</td>
             <td>{{ $orden->FECHA_ENTREGA ?? '' }}</td>
         </tr>
+
         <tr>
             <td class="bg-gray bold">Teléfono</td>
-            <td>{{ $proveedor1->TELEFONO_DIRECOTORIO && trim($proveedor1->TELEFONO_DIRECOTORIO) !== '' ? $proveedor1->TELEFONO_DIRECOTORIO : 'N/P' }}</td>
-            <td class="bg-gray bold">Celular</td>
-            <td>{{ $proveedor1->CELULAR_DIRECTORIO && trim($proveedor1->CELULAR_DIRECTORIO) !== '' ? $proveedor1->CELULAR_DIRECTORIO : 'N/P' }}</td>
+            <td>{{ $proveedor1->TELEFONO_DIRECOTORIO ?? '' }}</td>
 
+            <td class="bg-gray bold">Celular</td>
+            <td>{{ $proveedor1->CELULAR_DIRECTORIO ?? '' }}</td>
         </tr>
+
         <tr>
             <td class="bg-gray bold">E-mail</td>
             <td colspan="3">
-                @if (!empty($proveedor->CORREO_DIRECTORIO))
-                <a href="mailto:{{ $proveedor->CORREO_DIRECTORIO }}">{{ $proveedor->CORREO_DIRECTORIO }}</a>
-                @else
-                N/P
-                @endif
+                {{ $proveedor->CORREO_DIRECTORIO ?? '' }}
             </td>
-
         </tr>
+
+        @endif
+
     </table>
+    
+
     <table class="tabla-info_2">
         <thead>
             <tr class="bg-gray text-center">

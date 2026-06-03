@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 class pdfpoController extends Controller
 {
 
+
     public function generarPDFPO($id)
     {
         $orden = poModel::find($id);
@@ -26,24 +27,44 @@ class pdfpoController extends Controller
             return response()->json(['error' => 'Orden no encontrada'], 404);
         }
 
-        $proveedor = directorioModel::where('RFC_PROVEEDOR', $orden->PROVEEDOR_SELECCIONADO)->first();
+        $proveedor = directorioModel::where(
+            'RFC_PROVEEDOR',
+            $orden->PROVEEDOR_SELECCIONADO
+        )->first();
 
-
-        $proveedor1 = altaproveedorModel::where('RFC_ALTA', $orden->PROVEEDOR_SELECCIONADO)->first();
-
+        $proveedor1 = altaproveedorModel::where(
+            'RFC_ALTA',
+            $orden->PROVEEDOR_SELECCIONADO
+        )->first();
 
         $usuarioSolicito = DB::table('usuarios')
-            ->select('EMPLEADO_NOMBRE', 'EMPLEADO_APELLIDOPATERNO', 'EMPLEADO_APELLIDOMATERNO')
+            ->select(
+                'EMPLEADO_NOMBRE',
+                'EMPLEADO_APELLIDOPATERNO',
+                'EMPLEADO_APELLIDOMATERNO'
+            )
             ->where('ID_USUARIO', $orden->USUARIO_ID)
             ->first();
 
         $usuarioAprobo = DB::table('usuarios')
-            ->select('EMPLEADO_NOMBRE', 'EMPLEADO_APELLIDOPATERNO', 'EMPLEADO_APELLIDOMATERNO')
+            ->select(
+                'EMPLEADO_NOMBRE',
+                'EMPLEADO_APELLIDOPATERNO',
+                'EMPLEADO_APELLIDOMATERNO'
+            )
             ->where('ID_USUARIO', $orden->APROBO_ID)
             ->first();
 
-        return Pdf::loadView('pdf.po_pdf', compact('orden', 'proveedor', 'usuarioSolicito', 'usuarioAprobo', 'proveedor1'))
-            ->download("PO_{$orden->NO_PO}.pdf");
+        return Pdf::loadView(
+            'pdf.po_pdf',
+            compact(
+                'orden',
+                'proveedor',
+                'proveedor1',
+                'usuarioSolicito',
+                'usuarioAprobo'
+            )
+        )->download("PO_{$orden->NO_PO}.pdf");
     }
 
 
