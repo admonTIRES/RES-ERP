@@ -1422,8 +1422,10 @@ class listaproveedorController extends Controller
                     $asignacion->INVENTARIO_ID
                 )
                 ->update([
-                    'CANTIDAD_EQUIPO' => $nuevoStock
-                ]);
+                    'CANTIDAD_EQUIPO' => $nuevoStock,
+                    'ASIGNADO' => 0
+
+            ]);
 
             DB::table('entradas_inventario')->insert([
 
