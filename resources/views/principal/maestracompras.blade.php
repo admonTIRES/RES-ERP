@@ -474,6 +474,9 @@
                             </li>
                         </ul>
                         @endif
+
+
+                        
                         @if(auth()->check() && auth()->user()->hasRoles(['Superusuario', 'Administrador','Asistente de compras','externo']))
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown" style="margin-left: -10px;">

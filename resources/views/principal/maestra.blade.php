@@ -389,21 +389,33 @@
                         </ul>
                     </li>
                     @endif
-                    @if(auth()->check() && auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
+
+
+
+
+                    @if(auth()->check() && auth()->user()->hasRoles(['Superusuario','Administrador','externo','Asistente de planeación y logística']))
                     <li class="nav-item dropdown" style="margin-left: -2px;">
+
                         <a class="nav-link dropdown-toggle BOTON" href="#" style="color: #fff; font-weight: bold; text-decoration: none; " role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-lines-fill" style="margin-right: 5px;"></i> <span class="d-lg-none">Reclutamiento</span><span class="d-none d-lg-inline">Reclutamiento</span>
                         </a>
+
+
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ url('/listavacantes') }}">Banco de CV</a></li>
+                            @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
 
                             <hr class="dropdown-divider">
                             <li><a class="dropdown-item" href="{{url('/postulaciones')}}">Vacantes Actual</a></li>
                             <hr class="dropdown-divider">
                             <li><a class="dropdown-item" href="{{url('/postulacioneshistorial')}}">Vacantes Historial</a></li>
+                            @endif
                         </ul>
+
                     </li>
                     @endif
+
+
                     @if(auth()->check() && auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
                     <li class="nav-item dropdown" style="margin-left: -2px;">
                         <a class="nav-link dropdown-toggle BOTON" href="#" style="color: #fff; font-weight: bold; text-decoration: none; " role="button" data-bs-toggle="dropdown" aria-expanded="false">
