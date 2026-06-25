@@ -49,31 +49,62 @@ class ofertasController extends Controller
             $fechaInicio = Carbon::now('America/Mexico_City')->startOfYear()->toDateString();
             $fechaFin    = Carbon::now('America/Mexico_City')->endOfYear()->toDateString();
 
+            // $tabla = ofertasModel::select(
+            //     'formulario_ofertas.*',
+            //     'formulario_solicitudes.NO_SOLICITUD',
+            //     'formulario_solicitudes.NOMBRE_COMERCIAL_SOLICITUD',
+            //     'formulario_ofertas.SOLICITUD_ID'
+            // )
+            //     ->leftJoin(
+            //         'formulario_solicitudes',
+            //         'formulario_ofertas.SOLICITUD_ID',
+            //         '=',
+            //         'formulario_solicitudes.ID_FORMULARIO_SOLICITUDES'
+            //     )
+            //     ->whereRaw('formulario_ofertas.ID_FORMULARIO_OFERTAS IN (
+            //     SELECT MAX(ID_FORMULARIO_OFERTAS)
+            //     FROM formulario_ofertas
+            //     GROUP BY SUBSTRING_INDEX(NO_OFERTA, "-Rev", 1)
+            // )')
+
+            //     ->whereBetween(
+            //         DB::raw('DATE(formulario_ofertas.FECHA_OFERTA)'),
+            //         [$fechaInicio, $fechaFin]
+            //     )
+
+            //     ->get();
+
             $tabla = ofertasModel::select(
                 'formulario_ofertas.*',
                 'formulario_solicitudes.NO_SOLICITUD',
                 'formulario_solicitudes.NOMBRE_COMERCIAL_SOLICITUD',
                 'formulario_ofertas.SOLICITUD_ID'
-            )
-                ->leftJoin(
-                    'formulario_solicitudes',
-                    'formulario_ofertas.SOLICITUD_ID',
-                    '=',
-                    'formulario_solicitudes.ID_FORMULARIO_SOLICITUDES'
-                )
-                ->whereRaw('formulario_ofertas.ID_FORMULARIO_OFERTAS IN (
+                    )
+                        ->leftJoin(
+                            'formulario_solicitudes',
+                            'formulario_ofertas.SOLICITUD_ID',
+                            '=',
+                            'formulario_solicitudes.ID_FORMULARIO_SOLICITUDES'
+                        )
+                        ->whereRaw('formulario_ofertas.ID_FORMULARIO_OFERTAS IN (
                 SELECT MAX(ID_FORMULARIO_OFERTAS)
                 FROM formulario_ofertas
                 GROUP BY SUBSTRING_INDEX(NO_OFERTA, "-Rev", 1)
             )')
-
-                ->whereBetween(
-                    DB::raw('DATE(formulario_ofertas.FECHA_OFERTA)'),
-                    [$fechaInicio, $fechaFin]
-                )
-
-                ->get();
-
+                        ->whereBetween(
+                            DB::raw('DATE(formulario_ofertas.FECHA_OFERTA)'),
+                            [$fechaInicio, $fechaFin]
+                        )
+                        ->orderByRaw("
+                CAST(
+                    SUBSTRING_INDEX(
+                        SUBSTRING_INDEX(formulario_ofertas.NO_OFERTA, '-Rev', 1),
+                        '-',
+                        -1
+                    ) AS UNSIGNED
+                ) ASC
+            ")
+                        ->get();
 
             $solicitudesAceptadas = solicitudesModel::select(
                 'ID_FORMULARIO_SOLICITUDES',
