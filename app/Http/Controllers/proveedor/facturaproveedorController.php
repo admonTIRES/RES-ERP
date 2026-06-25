@@ -43,10 +43,7 @@ class facturaproveedorController extends Controller
         $existeBloqueo = DB::table('formulario_facturasproveedores')
             ->where('RFC_PROVEEDOR', $rfc)
             ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
-            ->where(function ($query) {
-                $query->whereNull('ESTATUS_FACTURA') 
-                    ->orWhere('ESTATUS_FACTURA', '!=', 2);
-            })
+            ->where('SUBIR_RECIBO_PAGO', 1) 
             ->where(function ($query) {
                 $query->whereNull('SUBIR_REP')
                     ->orWhere('SUBIR_REP', 0)

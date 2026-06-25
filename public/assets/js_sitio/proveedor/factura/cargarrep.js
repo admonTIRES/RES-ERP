@@ -50,11 +50,7 @@ $("#btnGuardarFactura").click(function (e) {
             }, function (data) {
                     
 
-                ID_FORMULARIO_FACTURACION = data.cuenta.ID_FORMULARIO_FACTURACION
-                    alertMensaje('success','Información guardada correctamente', 'Esta información esta lista para usarse',null,null, 1500)
-                     $('#miModal_factura').modal('hide')
-                    document.getElementById('formularioFACTURA').reset();
-                    Tablacargarrecp.ajax.reload()
+               window.location.reload();
 
             })
             
@@ -85,12 +81,8 @@ $("#btnGuardarFactura").click(function (e) {
                     
                 setTimeout(() => {
 
-                    
-                    ID_FORMULARIO_FACTURACION = data.cuenta.ID_FORMULARIO_FACTURACION
-                    alertMensaje('success', 'Información guardada correctamente', 'Información guardada')
-                     $('#miModal_factura').modal('hide')
-                    document.getElementById('formularioFACTURA').reset();
-                    Tablacargarrecp.ajax.reload()
+                  
+                    window.location.reload();
 
 
                 }, 300);  
