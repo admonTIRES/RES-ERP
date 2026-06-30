@@ -159,19 +159,16 @@ class contratacionController extends Controller
 
                 if ($fechaInicio && $fechaFin) {
 
-                    // 🔥 Manejo correcto de fechas
                     $inicio = new \DateTime($fechaInicio);
                     $fin = new \DateTime($fechaFin);
                     $hoy = new \DateTime();
 
-                    // 🔴 Quitar horas (clave)
                     $inicio->setTime(0, 0, 0);
                     $fin->setTime(0, 0, 0);
                     $hoy->setTime(0, 0, 0);
 
                     $totalDias = $inicio->diff($fin)->days;
 
-                    // 🔴 SIN +1 (conteo real correcto)
                     if ($fin >= $hoy) {
                         $diasRestantes = $hoy->diff($fin)->days;
                     } else {
@@ -181,7 +178,6 @@ class contratacionController extends Controller
                     $umbralVerde = $totalDias * 0.60;
                     $umbralAmarillo = $totalDias * 0.30;
 
-                    // 🔥 Estados corregidos
                     if ($fin < $hoy) {
 
                         $estado_dias = "<span style='color: red;'>(Terminado)</span>";
@@ -1247,41 +1243,78 @@ public function mostrarecibosnomina($id)
 
                     if ($esPrimera) {
 
+                        // =========================================
+                        // SI YA ESTA RETORNADO
+                        // =========================================
                         if ($asignacion->ACTIVO == 0) {
-                            $fila['BTN_EDITAR'] =
-                                '<button type="button" class="btn btn-primary btn-custom rounded-pill EDITAR">
-                                <i class="bi bi-eye"></i>
-                            </button>';
+
+                            $fila['BTN_EDITAR'] = '';
+
+                            $fila['DESCARGAR_FORMATOS'] = '';
+
+                            $fila['DESCARGAR_EPP'] = '';
+
+
+                            $fila['BTN_RETORNAR'] = '';
+
+
+                            $fila['BTN_DOCUMENTO'] =
+                                '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
+                                    data-id="' . $asignacion->ID_ASIGNACION_FORMULARIO . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
                         } else {
+
+                            // =========================================
+                            // ACTIVO NORMAL
+                            // =========================================
+
                             $fila['BTN_EDITAR'] =
-                                '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>';
+                                '<button type="button"
+                                    class="btn btn-warning btn-custom rounded-pill EDITAR">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>';
+
+                            $fila['DESCARGAR_FORMATOS'] =
+                                '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-asignacion"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_CONTRATACION . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+
+                            $fila['DESCARGAR_EPP'] =
+                                '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-epp"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_CONTRATACION . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+
+                            $fila['BTN_DOCUMENTO'] =
+                                '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
+                                    data-id="' . $asignacion->ID_ASINGACIONES_CONTRATACION . '">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </button>';
+
+
+                            $fila['BTN_RETORNAR'] =
+                                '<button class="btn btn-primary btn-custom rounded-pill pdf-button RETORNAR"
+                                    data-id="' . $inv->ID_ASIGNACION_FORMULARIO . '">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                </button>';
                         }
-
-                        $fila['DESCARGAR_FORMATOS'] =
-                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-asignacion"
-                                data-id="' . $asignacion->ID_ASINGACIONES_CONTRATACION . '">
-                                <i class="bi bi-filetype-pdf"></i>
-                            </button>';
-
-
-                        $fila['DESCARGAR_EPP'] =
-                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button descargar-epp"
-                                data-id="' . $asignacion->ID_ASINGACIONES_CONTRATACION . '">
-                                <i class="bi bi-filetype-pdf"></i>
-                            </button>';
-
-
-                        $fila['BTN_DOCUMENTO'] =
-                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoasignacion"
-                            data-id="' . $asignacion->ID_ASINGACIONES_CONTRATACION . '">
-                            <i class="bi bi-filetype-pdf"></i>
-                        </button>';
                     } else {
+
                         $fila['BTN_EDITAR'] = '';
                         $fila['DESCARGAR_FORMATOS'] = '';
+                        $fila['DESCARGAR_EPP'] = '';
                         $fila['BTN_DOCUMENTO'] = '';
+                        $fila['BTN_RETORNAR'] = '';
+
+
+
+                        $fila['BTN_RETORNAR'] =
+                            '<button class="btn btn-primary btn-custom rounded-pill pdf-button RETORNAR"
+                                    data-id="' . $inv->ID_ASIGNACION_FORMULARIO . '">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                </button>';
                     }
 
                     $resultado[] = $fila;
@@ -1300,6 +1333,110 @@ public function mostrarecibosnomina($id)
             ]);
         }
     }
+
+
+
+    public function retornarAsignacionColaborador(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $idAsignacion = $request->ID_ASIGNACION_FORMULARIO;
+
+            $fechaRetorno = $request->FECHA_RETORNO;
+
+            $asignacion = DB::table('asignaciones_inventario')
+                ->where(
+                    'ID_ASIGNACION_FORMULARIO',
+                    $idAsignacion
+                )
+                ->first();
+
+            if (!$asignacion) {
+
+                return response()->json([
+                    'msj' => 'Asignación no encontrada'
+                ], 404);
+            }
+
+
+            if ($asignacion->ACTIVO == 0) {
+
+                return response()->json([
+                    'msj' => 'El artículo ya fue retornado'
+                ], 400);
+            }
+
+            $inventario = DB::table('formulario_inventario')
+                ->where(
+                    'ID_FORMULARIO_INVENTARIO',
+                    $asignacion->INVENTARIO_ID
+                )
+                ->first();
+
+            if (!$inventario) {
+
+                return response()->json([
+                    'msj' => 'Inventario no encontrado'
+                ], 404);
+            }
+
+            $cantidadRetorna = (float)$asignacion->CANTIDAD_SALIDA;
+
+            $stockActual = (float)$inventario->CANTIDAD_EQUIPO;
+
+            $nuevoStock = $stockActual + $cantidadRetorna;
+
+            DB::table('formulario_inventario')
+                ->where(
+                    'ID_FORMULARIO_INVENTARIO',
+                    $asignacion->INVENTARIO_ID
+                )
+                ->update([
+                    'CANTIDAD_EQUIPO' => $nuevoStock,
+                    'ASIGNADO' => 0
+
+                ]);
+
+            DB::table('entradas_inventario')->insert([
+
+                'INVENTARIO_ID'     => $asignacion->INVENTARIO_ID,
+                'FECHA_INGRESO'     => $fechaRetorno,
+                'CANTIDAD_PRODUCTO' => $cantidadRetorna,
+                'UNIDAD_MEDIDA'     => $inventario->UNIDAD_MEDIDA,
+                'ENTRA_ASIGNACION'  => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            DB::table('asignaciones_inventario')
+                ->where(
+                    'ID_ASIGNACION_FORMULARIO',
+                    $idAsignacion
+                )
+                ->update([
+                    'ACTIVO' => 0,
+                    'updated_at' => now()
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'msj' => 'Artículo retornado correctamente'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'msj' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    
 
     public function TablasignacioncolaboradorEditar(Request $request)
     {

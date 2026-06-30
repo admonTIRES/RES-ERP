@@ -5110,6 +5110,134 @@ $("#guardarASIGNACIONES").click(function (e) {
 });
 
 
+// function cargarTablasingnaciongeneral() {
+//     if ($.fn.DataTable.isDataTable('#Tablasignacioncolaboradorgeneral')) {
+//         Tablasignacioncolaboradorgeneral.clear().destroy();
+//     }
+
+//     Tablasignacioncolaboradorgeneral = $("#Tablasignacioncolaboradorgeneral").DataTable({
+//         language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
+//         lengthChange: true,
+//         lengthMenu: [
+//             [10, 25, 50, -1],
+//             [10, 25, 50, 'All']
+//         ],
+//         info: false,
+//         paging: true,
+//         searching: true,
+//         filtering: true,
+//         scrollY: '65vh',
+//         scrollCollapse: true,
+//         responsive: true,
+//         ajax: {
+//             dataType: 'json',
+//              data: { contrato: contrato_id }, 
+//             method: 'GET',
+//             cache: false,
+//             url: '/Tablasignacioncolaboradorgeneral',  
+//             beforeSend: function () {
+//                 $('#loadingIcon16').css('display', 'inline-block');
+//             },
+//             complete: function () {
+//                 $('#loadingIcon16').css('display', 'none');
+//                 Tablasignacioncolaboradorgeneral.columns.adjust().draw(); 
+//             },
+//             error: function (jqXHR, textStatus, errorThrown) {
+//                 $('#loadingIcon16').css('display', 'none');
+//                 alertErrorAJAX(jqXHR, textStatus, errorThrown);
+//             },
+//             dataSrc: 'data'
+//         },
+//        columns: [
+//             {
+//                 data: null,
+//                 render: function (data, type, row, meta) {
+//                     return meta.row + 1;
+//                 },
+//                 className: 'text-center'
+//             },
+//            { data: 'DESCRIPCION_EQUIPO', className: 'text-center' },
+//             { data: 'CANTIDAD_SALIDA', className: 'text-center' },
+//             { data: 'MARCA_EQUIPO', className: 'text-center' },
+//             { data: 'MODELO_EQUIPO', className: 'text-center' },
+//             { data: 'SERIE_EQUIPO', className: 'text-center' },
+//             { data: 'CODIGO_EQUIPO', className: 'text-center' },
+//             {
+//                 data: null,
+//                 className: 'text-center',
+//                 render: function (data, type, row) {
+
+//                     if (row.TIPO_ASIGNACION == 1) {
+//                         return row.DESCARGAR_FORMATOS || '';
+//                     }
+
+//                     if (row.TIPO_ASIGNACION == 2) {
+//                         return row.DESCARGAR_EPP || '';
+//                     }
+
+//                     return '';
+//                 }
+//             },
+//             { data: 'BTN_DOCUMENTO', className: 'text-center' },
+//             { data: 'BTN_EDITAR', className: 'text-center' },
+//         ],
+//         columnDefs: [
+//             { targets: 0, title: '#', className: 'all text-center' },
+//             { targets: 1, title: 'Descripción', className: 'all text-center' },
+//             { targets: 2, title: 'Cantidad', className: 'all text-center' },
+//             { targets: 3, title: 'Marca', className: 'all text-center' },
+//             { targets: 4, title: 'Modelo', className: 'all text-center' },
+//             { targets: 5, title: 'No. Serie', className: 'all text-center' },
+//             { targets: 6, title: 'No. Inventario', className: 'all text-center' },
+//             { targets: 7, title: 'Descargar formato', className: 'all text-center' },
+//             { targets: 8, title: 'Documento', className: 'all text-center' },
+//             { targets: 9, title: 'Editar', className: 'all text-center' },
+//         ],
+//         drawCallback: function () {
+
+//             const api = this.api();
+//             const rows = api.rows({ page: 'current' }).nodes();
+
+//             let lastGroup = null;
+//             let rowspan = 1;
+//             let firstRow = null;
+
+//             api.rows({ page: 'current' }).every(function (rowIdx) {
+
+//                 const data = this.data();
+//                 const grupoActual = data.GRUPO_ID;
+
+//                 if (lastGroup === grupoActual) {
+
+//                     rowspan++;
+
+//                     $(rows).eq(rowIdx).find('td:eq(7)').hide();
+//                     $(rows).eq(rowIdx).find('td:eq(8)').hide(); 
+//                     $(rows).eq(rowIdx).find('td:eq(9)').hide(); 
+
+//                     $(firstRow).find('td:eq(7)').attr('rowspan', rowspan);
+//                     $(firstRow).find('td:eq(8)').attr('rowspan', rowspan);
+//                     $(firstRow).find('td:eq(9)').attr('rowspan', rowspan);
+
+//                 } else {
+
+//                     lastGroup = grupoActual;
+//                     rowspan = 1;
+//                     firstRow = rows[rowIdx];
+
+//                     $(firstRow).addClass('table-light');
+
+                    
+//                 }
+//             });
+//         },
+
+       
+//     });
+// }
+
+
+
 function cargarTablasingnaciongeneral() {
     if ($.fn.DataTable.isDataTable('#Tablasignacioncolaboradorgeneral')) {
         Tablasignacioncolaboradorgeneral.clear().destroy();
@@ -5148,7 +5276,7 @@ function cargarTablasingnaciongeneral() {
             },
             dataSrc: 'data'
         },
-       columns: [
+      columns: [
             {
                 data: null,
                 render: function (data, type, row, meta) {
@@ -5179,7 +5307,19 @@ function cargarTablasingnaciongeneral() {
                 }
             },
             { data: 'BTN_DOCUMENTO', className: 'text-center' },
-            { data: 'BTN_EDITAR', className: 'text-center' },
+           { data: 'BTN_EDITAR', className: 'text-center' },
+            {
+            data: null,
+            className: 'text-center',
+            render: function (data, type, row) {
+
+                if (row.TIPO_ASIGNACION == 2) {
+                    return '';
+                }
+
+                return row.BTN_RETORNAR || '';
+            }
+        }
         ],
         columnDefs: [
             { targets: 0, title: '#', className: 'all text-center' },
@@ -5192,49 +5332,137 @@ function cargarTablasingnaciongeneral() {
             { targets: 7, title: 'Descargar formato', className: 'all text-center' },
             { targets: 8, title: 'Documento', className: 'all text-center' },
             { targets: 9, title: 'Editar', className: 'all text-center' },
+            { targets: 10, title: 'Retornar ítem', className: 'all text-center' },
+
         ],
-        drawCallback: function () {
+      drawCallback: function () {
 
-            const api = this.api();
-            const rows = api.rows({ page: 'current' }).nodes();
+    const api = this.api();
+    const rows = api.rows({ page: 'current' }).nodes();
 
-            let lastGroup = null;
-            let rowspan = 1;
-            let firstRow = null;
+    let lastGroup = null;
+    let rowspan = 1;
+    let firstRow = null;
 
-            api.rows({ page: 'current' }).every(function (rowIdx) {
+    api.rows({ page: 'current' }).every(function (rowIdx) {
 
-                const data = this.data();
-                const grupoActual = data.GRUPO_ID;
+        const data = this.data();
+        const grupoActual = data.GRUPO_ID;
 
-                if (lastGroup === grupoActual) {
+        if (lastGroup === grupoActual) {
 
-                    rowspan++;
+            rowspan++;
 
-                    $(rows).eq(rowIdx).find('td:eq(7)').hide();
-                    $(rows).eq(rowIdx).find('td:eq(8)').hide(); 
-                    $(rows).eq(rowIdx).find('td:eq(9)').hide(); 
+            $(rows).eq(rowIdx).find('td:eq(7)').hide();
+            $(rows).eq(rowIdx).find('td:eq(8)').hide(); 
+            $(rows).eq(rowIdx).find('td:eq(9)').hide(); 
 
-                    $(firstRow).find('td:eq(7)').attr('rowspan', rowspan);
-                    $(firstRow).find('td:eq(8)').attr('rowspan', rowspan);
-                    $(firstRow).find('td:eq(9)').attr('rowspan', rowspan);
+            // =====================================
+            // YA NO OCULTAR BTN RETORNAR
+            // =====================================
 
-                } else {
+            $(firstRow).find('td:eq(7)').attr('rowspan', rowspan);
+            $(firstRow).find('td:eq(8)').attr('rowspan', rowspan);
+            $(firstRow).find('td:eq(9)').attr('rowspan', rowspan);
 
-                    lastGroup = grupoActual;
-                    rowspan = 1;
-                    firstRow = rows[rowIdx];
+            // =====================================
+            // YA NO HACER ROWSPAN EN RETORNAR
+            // =====================================
 
-                    $(firstRow).addClass('table-light');
+        } else {
 
-                    
-                }
-            });
-        },
+            lastGroup = grupoActual;
+            rowspan = 1;
+            firstRow = rows[rowIdx];
 
+            $(firstRow).addClass('table-light');
+
+        }
+    });
+},
        
     });
 }
+
+
+$(document).on('click', '.RETORNAR', function () {
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Fecha de retorno',
+        input: 'date',
+        inputLabel: 'Seleccione la fecha de retorno',
+        showCancelButton: true,
+        confirmButtonText: 'Retornar',
+        cancelButtonText: 'Cancelar',
+
+        inputValidator: (value) => {
+
+            if (!value) {
+                return 'Debes seleccionar una fecha';
+            }
+        }
+
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            Swal.fire({
+                title: 'Guardando retorno...',
+                text: 'Espere un momento',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+
+                url: '/retornarAsignacionColaborador',
+                type: 'POST',
+
+                data: {
+                    ID_ASIGNACION_FORMULARIO: id,
+                    FECHA_RETORNO: result.value,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+
+                success: function (response) {
+
+                    Swal.close();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correcto',
+                        text: response.msj
+                    });
+
+                    if ($.fn.DataTable.isDataTable('#Tablasignacionproveedorgeneral')) {
+
+                        $('#Tablasignacionproveedorgeneral')
+                            .DataTable()
+                            .ajax.reload(null, false);
+                    }
+                },
+
+                error: function (xhr) {
+
+                    Swal.close();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.msj || 'Ocurrió un error'
+                    });
+                }
+            });
+        }
+    });
+});
+
+
 
 
 $(document).on('click', '.descargar-asignacion', function () {
