@@ -408,10 +408,32 @@ $(document).on('change', '#FACTURA_XML', function () {
         let timbre = getNode('TimbreFiscalDigital');
 
         let uuid = timbre?.getAttribute('UUID') || '';
+
         let fecha = timbre?.getAttribute('FechaTimbrado') || '';
 
         if (fecha.includes('T')) {
             fecha = fecha.split('T')[0];
+        }
+
+        $('#FECHA_FACTURA').val(fecha);
+
+        // Validar que la factura sea del mes actual
+        if (fecha) {
+
+            let fechaFactura = new Date(fecha + 'T00:00:00');
+            let hoy = new Date();
+
+            let mismoMes = (
+                fechaFactura.getMonth() === hoy.getMonth() &&
+                fechaFactura.getFullYear() === hoy.getFullYear()
+            );
+
+            if (mismoMes) {
+                $('#btnGuardarFactura').show();
+            } else {
+                $('#btnGuardarFactura').hide();
+                alertToast('Solos se reciben facturas con fecha del mes en curso.');
+            }
         }
 
         $('#SUBTOTAL_FACTURA').val(subtotal);
@@ -761,4 +783,30 @@ $('#FACTURA_XML').on('change', function () {
 
 $('#DOCUMENTOS_SOPORTE_FACTURA').on('change', function () {
     validarArchivo(this, 'pdf');
+});
+
+
+
+$(document).on('input change', '#FECHA_FACTURA_EXTRANJERO', function () {
+
+    let fecha = $(this).val();
+
+    if (!fecha) return;
+
+    let fechaFactura = new Date(fecha + 'T00:00:00');
+    let hoy = new Date();
+
+    let mismoMes = (
+        fechaFactura.getMonth() === hoy.getMonth() &&
+        fechaFactura.getFullYear() === hoy.getFullYear()
+    );
+
+    if (mismoMes) {
+        $('#btnGuardarFactura').show();
+    } else {
+        alertToast('Solos se reciben facturas con fecha del mes en curso.');
+        $(this).val('');               
+        $('#btnGuardarFactura').hide();
+    }
+
 });
