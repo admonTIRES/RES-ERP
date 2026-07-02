@@ -121,38 +121,68 @@ class solicitudesController extends Controller
         }
     }
 
-
     // public function Tablasolicitudes()
     // {
     //     try {
-    //         $tabla = solicitudesModel::get();
+
+    //         $fechaInicio = Carbon::now('America/Mexico_City')->startOfYear()->toDateString();
+    //         $fechaFin    = Carbon::now('America/Mexico_City')->endOfYear()->toDateString();
+
+    //         $tabla = solicitudesModel::whereBetween(
+    //             DB::raw('DATE(FECHA_CREACION_SOLICITUD)'),
+    //             [$fechaInicio, $fechaFin]
+    //         )->get();
 
     //         $rows = [];
     //         foreach ($tabla as $value) {
-    //             $verificaciones = verificacionsolicitudModel::where('SOLICITUD_ID', $value->ID_FORMULARIO_SOLICITUDES)->get();
+
+    //             $verificaciones = verificacionsolicitudModel::where(
+    //                 'SOLICITUD_ID',
+    //                 $value->ID_FORMULARIO_SOLICITUDES
+    //             )->get();
 
     //             $verificacionesAgrupadas = $verificaciones->map(function ($verificacion) {
     //                 return [
     //                     'VERIFICADO_EN' => $verificacion->VERIFICADO_EN,
     //                     'EVIDENCIA_VERIFICACION' => $verificacion->EVIDENCIA_VERIFICACION,
-    //                     'BTN_DOCUMENTO' => '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-verificacion" data-id="' . $verificacion->ID_VERIFICACION_SOLICITUD . '" title="Ver evidencia"> <i class="bi bi-filetype-pdf"></i></button>'
+    //                     'BTN_DOCUMENTO' =>
+    //                     '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-verificacion"
+    //                         data-id="' . $verificacion->ID_VERIFICACION_SOLICITUD . '"
+    //                         title="Ver evidencia">
+    //                         <i class="bi bi-filetype-pdf"></i>
+    //                     </button>'
     //                 ];
     //             });
+
     //             $rows[] = array_merge($value->toArray(), [
     //                 'SOLICITAR_VERIFICACION' => $value->SOLICITAR_VERIFICACION,
     //                 'PROCEDE_COTIZAR' => $value->PROCEDE_COTIZAR,
-    //                 'MOTIVO_COTIZACION' => $value->MOTIVO_COTIZACION, 
+    //                 'MOTIVO_COTIZACION' => $value->MOTIVO_COTIZACION,
     //                 'VERIFICACIONES' => $verificacionesAgrupadas,
-    //                 'BTN_EDITAR' => ($value->ACTIVO == 0) ?
-    //                     '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>' :
-    //                     '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
-    //                 'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>',
-    //                 'BTN_ELIMINAR' => '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_SOLICITUDES . '"' . ($value->ACTIVO ? ' checked' : '') . '><span class="slider round"></span></label>',
-    //                 'BTN_CORREO' => ($value->ACTIVO == 0) ?
-    //                     '<button type="button" class="btn btn-info btn-custom rounded-pill CORREO" disabled><i class="bi bi-ban"></i></button>' :
-    //                     '<button type="button" class="btn btn-info btn-custom rounded-pill CORREO"><i class="bi bi-envelope-arrow-up-fill"></i></button>',
+    //                 'BTN_EDITAR' => ($value->ACTIVO == 0)
+    //                     ? '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled>
+    //                         <i class="bi bi-ban"></i>
+    //                    </button>'
+    //                     : '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR">
+    //                         <i class="bi bi-pencil-square"></i>
+    //                    </button>',
+    //                 'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+    //                                     <i class="bi bi-eye"></i>
+    //                                  </button>',
+    //                 'BTN_ELIMINAR' => '<label class="switch">
+    //                                 <input type="checkbox" class="ELIMINAR"
+    //                                     data-id="' . $value->ID_FORMULARIO_SOLICITUDES . '"' .
+    //                     ($value->ACTIVO ? ' checked' : '') . '>
+    //                                 <span class="slider round"></span>
+    //                               </label>',
+    //                 'BTN_CORREO' => ($value->ACTIVO == 0)
+    //                     ? '<button type="button" class="btn btn-info btn-custom rounded-pill CORREO" disabled>
+    //                         <i class="bi bi-ban"></i>
+    //                    </button>'
+    //                     : '<button type="button" class="btn btn-info btn-custom rounded-pill CORREO">
+    //                         <i class="bi bi-envelope-arrow-up-fill"></i>
+    //                    </button>',
     //             ]);
-
     //         }
 
     //         return response()->json([
@@ -167,6 +197,7 @@ class solicitudesController extends Controller
     //     }
     // }
 
+
     public function Tablasolicitudes()
     {
         try {
@@ -177,7 +208,9 @@ class solicitudesController extends Controller
             $tabla = solicitudesModel::whereBetween(
                 DB::raw('DATE(FECHA_CREACION_SOLICITUD)'),
                 [$fechaInicio, $fechaFin]
-            )->get();
+            )
+                ->orderByRaw("CAST(SUBSTRING_INDEX(NO_SOLICITUD, '-', 1) AS UNSIGNED) ASC")
+                ->get();
 
             $rows = [];
             foreach ($tabla as $value) {
@@ -193,10 +226,10 @@ class solicitudesController extends Controller
                         'EVIDENCIA_VERIFICACION' => $verificacion->EVIDENCIA_VERIFICACION,
                         'BTN_DOCUMENTO' =>
                         '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-verificacion"
-                            data-id="' . $verificacion->ID_VERIFICACION_SOLICITUD . '"
-                            title="Ver evidencia">
-                            <i class="bi bi-filetype-pdf"></i>
-                        </button>'
+                        data-id="' . $verificacion->ID_VERIFICACION_SOLICITUD . '"
+                        title="Ver evidencia">
+                        <i class="bi bi-filetype-pdf"></i>
+                    </button>'
                     ];
                 });
 
@@ -207,14 +240,14 @@ class solicitudesController extends Controller
                     'VERIFICACIONES' => $verificacionesAgrupadas,
                     'BTN_EDITAR' => ($value->ACTIVO == 0)
                         ? '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled>
-                            <i class="bi bi-ban"></i>
-                       </button>'
+                        <i class="bi bi-ban"></i>
+                    </button>'
                         : '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR">
-                            <i class="bi bi-pencil-square"></i>
-                       </button>',
+                        <i class="bi bi-pencil-square"></i>
+                    </button>',
                     'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
                                         <i class="bi bi-eye"></i>
-                                     </button>',
+                                    </button>',
                     'BTN_ELIMINAR' => '<label class="switch">
                                     <input type="checkbox" class="ELIMINAR"
                                         data-id="' . $value->ID_FORMULARIO_SOLICITUDES . '"' .
@@ -223,11 +256,11 @@ class solicitudesController extends Controller
                                   </label>',
                     'BTN_CORREO' => ($value->ACTIVO == 0)
                         ? '<button type="button" class="btn btn-info btn-custom rounded-pill CORREO" disabled>
-                            <i class="bi bi-ban"></i>
-                       </button>'
+                        <i class="bi bi-ban"></i>
+                    </button>'
                         : '<button type="button" class="btn btn-info btn-custom rounded-pill CORREO">
-                            <i class="bi bi-envelope-arrow-up-fill"></i>
-                       </button>',
+                        <i class="bi bi-envelope-arrow-up-fill"></i>
+                    </button>',
                 ]);
             }
 
@@ -242,8 +275,6 @@ class solicitudesController extends Controller
             ]);
         }
     }
-
-
 
     public function mostrarverificacioncliente($id)
     {
