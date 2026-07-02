@@ -46,110 +46,6 @@ class relacionpagoController extends Controller
     }
 
 
-
-    // public function getFacturasRelacionPagos()
-    // {
-    //     $facturas = DB::table('formulario_facturasproveedores as f')
-    //         ->where('f.ESTATUS_FACTURA', 1)
-    //         ->orderBy('f.ID_FORMULARIO_FACTURACION', 'DESC')
-    //         ->get();
-
-    //     $datos = [];
-
-    //     foreach ($facturas as $factura) {
-
-
-    //         $proveedor = DB::table('formulario_altaproveedor')
-    //             ->where('RFC_ALTA', $factura->RFC_PROVEEDOR)
-    //             ->orderBy('ID_FORMULARIO_ALTA', 'DESC')
-    //             ->first();
-
-    //         $tipo = $proveedor ? $proveedor->TIPO_PERSONA_ALTA : null;
-
-    //         if ($tipo == 1) {
-
-    //             $fechaFactura = $factura->FECHA_FACTURA;
-    //             $folioFiscal  = $factura->FOLIO_FISCAL;
-    //             $subtotal = $factura->SUBTOTAL_FACTURA;
-    //             $iva      = $factura->IVA_FACTURA;
-    //             $total    = $factura->TOTAL_FACTURA;
-    //             $moneda = $factura->MONEDA_FACTURA;
-    //         } else {
-
-    //             $fechaFactura = $factura->FECHA_FACTURA_EXTRANJERO;
-    //             $folioFiscal  = $factura->NO_FACTURA_EXTRANJERO;
-    //             $subtotal = $factura->SUBTOTAL_FACTURA_EXTRANJERO;
-    //             $iva      = $factura->IVA_FACTURA_EXTRANJERO;
-    //             $total    = $factura->TOTAL_FACTURA_EXTRANJERO;
-    //             $moneda = $factura->MONEDA_FACTURA_EXTRANJERO;
-    //         }
-
-    //         $banco  = '';
-    //         $cuenta = '';
-
-    //         if ($tipo == 1) {
-
-    //             $cuentaProveedor = DB::table('formulario_altacuentaproveedor')
-    //                 ->where('RFC_PROVEEDOR', $factura->RFC_PROVEEDOR)
-    //                 ->where('ACTIVO', 1)
-    //                 ->orderBy('ID_FORMULARIO_CUENTAPROVEEDOR', 'DESC')
-    //                 ->first();
-
-    //             if ($cuentaProveedor) {
-
-    //                 $tipoBanco = trim(
-    //                     strtolower($cuentaProveedor->TIPO_BANCO)
-    //                 );
-
-    //                 if (
-    //                     $tipoBanco == 'bbva' ||
-    //                     $tipoBanco == 'bancomer bbva' ||
-    //                     $tipoBanco == 'bancomer'
-    //                 ) {
-    //                     $banco = 'BBVA';
-    //                 } else {
-    //                     $banco = $cuentaProveedor->TIPO_BANCO;
-    //                 }
-
-    //                 $bancosNumeroCuenta = [
-    //                     'bbva',
-    //                     'bancomer bbva',
-    //                     'bancomer'
-    //                 ];
-    //                 if (
-    //                     in_array(
-    //                         $tipoBanco,
-    //                         $bancosNumeroCuenta
-    //                     )
-    //                 ) {
-    //                     $cuenta = $cuentaProveedor->NUMERO_CUENTA;
-    //                 } else {
-    //                     $cuenta = $cuentaProveedor->CLABE_INTERBANCARIA;
-    //                 }
-    //             }
-    //         }
-
-    //         $datos[] = [
-    //             'ID_FORMULARIO_FACTURACION'=> $factura->ID_FORMULARIO_FACTURACION,
-    //             'FECHA_FACTURA' => $fechaFactura,
-    //             'FOLIO_FISCAL' => $folioFiscal,
-    //             'RAZON_SOCIAL_ALTA' => $proveedor ? $proveedor->RAZON_SOCIAL_ALTA: '',
-    //             'RFC_PROVEEDOR' => $factura->RFC_PROVEEDOR,
-    //             'SUBTOTAL' => $subtotal,
-    //             'IVA' => $iva,
-    //             'TOTAL' => $total,
-    //             'MONEDA' => $moneda,
-    //             'FECHA_RECEPCION' => date( 'Y-m-d', strtotime($factura->created_at)),
-    //             'DIAS_CREDITO' => $proveedor ? $proveedor->DIAS_CREDITO_ALTA : '',
-    //             'BANCO' => $banco,
-    //             'NO_CUENTA' => $cuenta,
-    //         ];
-    //     }
-
-    //     return response()->json($datos);
-    // }
-
-
     public function getFacturasRelacionPagos()
     {
 
@@ -179,8 +75,21 @@ class relacionpagoController extends Controller
             }
         }
 
+        // $facturas = DB::table('formulario_facturasproveedores as f')
+        //     ->where('f.ESTATUS_FACTURA', 1)
+        //     ->whereNotIn(
+        //         'f.ID_FORMULARIO_FACTURACION',
+        //         $idsUsados
+        //     )
+        //     ->orderBy('f.ID_FORMULARIO_FACTURACION', 'DESC')
+        //     ->get();
+
         $facturas = DB::table('formulario_facturasproveedores as f')
             ->where('f.ESTATUS_FACTURA', 1)
+            ->where(function ($query) {
+                $query->whereNull('f.SUBIR_RECIBO_PAGO')
+                    ->orWhere('f.SUBIR_RECIBO_PAGO', '!=', 1);
+            })
             ->whereNotIn(
                 'f.ID_FORMULARIO_FACTURACION',
                 $idsUsados
