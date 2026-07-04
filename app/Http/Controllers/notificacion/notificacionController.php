@@ -18,6 +18,7 @@ use DB;
 use App\Models\requisicionmaterial\mrModel;
 use App\Models\recempleados\recemplaedosModel;
 use App\Models\paginaweb\ContactoPaginaWeb;
+use App\Models\proveedor\facturacionModel;
 
 
 
@@ -810,6 +811,53 @@ class notificacionController extends Controller
             }
 
 
+            /**
+             * 16. NOTIFICACIONES - FACTURAS POR REVISAR
+             */
+           
+            $notiFacturas = collect([]);
+
+            $usuariosFacturacion = [1, 3, 6];
+
+            if (in_array($idUsuario, $usuariosFacturacion)) {
+
+                $badgeFactura = "<span style='
+        background-color:#17a2b8;
+        color:white;
+        padding:3px 8px;
+        border-radius:6px;
+        font-size:11px;
+        font-weight:bold;
+        display:inline-block;
+    '>Facturación</span>";
+
+                $notiFacturas = DB::table('formulario_facturasproveedores as cp')
+                    ->leftJoin('formulario_altaproveedor as fa', 'cp.RFC_PROVEEDOR', '=', 'fa.RFC_ALTA')
+                    ->select(
+                        'cp.*',
+                        'fa.RAZON_SOCIAL_ALTA',
+                        'fa.RFC_ALTA'
+                    )
+                    ->whereNull('cp.ESTATUS_FACTURA')
+                    ->orderBy('cp.created_at', 'desc')
+                    ->get()
+                    ->map(function ($n) use ($badgeFactura) {
+
+                        $fechaFactura = !empty($n->FECHA_FACTURA)
+                            ? $n->FECHA_FACTURA
+                            : $n->FECHA_FACTURA_EXTRANJERO;
+
+                        return [
+                            'titulo'        => 'Factura pendiente de revisión',
+                            'detalle'       => 'Proveedor:'. $n->RAZON_SOCIAL_ALTA ?? 'Sin proveedor',
+                            'fecha'         => 'Fecha: ' . ($fechaFactura ?: 'Sin fecha'),
+                            'fecha_sort'    => $fechaFactura ?: $n->created_at,
+                            'estatus_badge' => $badgeFactura,
+                            'link'          => url('/listafacturas')
+                        ];
+                    });
+            }
+
 
             $resultado = collect($notiVoBo)
                 ->merge(collect($notiAutorizar))
@@ -825,7 +873,8 @@ class notificacionController extends Controller
                 ->merge(collect($notiAprobarPO))
                 ->merge(collect($notiVoboGR))
                 // ->merge(collect($notiActualizacionDocs))
-                ->merge(collect($notiPaginaWeb)) 
+                ->merge(collect($notiPaginaWeb))
+                ->merge(collect($notiFacturas))
 
 
                 ->sortByDesc(function ($item) {
