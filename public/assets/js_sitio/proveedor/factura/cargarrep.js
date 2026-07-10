@@ -50,7 +50,11 @@ $("#btnGuardarFactura").click(function (e) {
             }, function (data) {
                     
 
-               window.location.reload();
+                alertMensaje('success', 'Información guardada correctamente', 'Esta información esta lista para usarse', null, null, 1500)
+                $('#miModal_factura').modal('hide')
+                document.getElementById('formularioFACTURA').reset();
+                window.location.reload();
+
 
             })
             
@@ -82,9 +86,11 @@ $("#btnGuardarFactura").click(function (e) {
                 setTimeout(() => {
 
                   
+                    alertMensaje('success', 'Información guardada correctamente', 'Información guardada')
+                     $('#miModal_factura').modal('hide')
+                    document.getElementById('formularioFACTURA').reset();
                     window.location.reload();
-
-
+ 
                 }, 300);  
             })
         }, 1)
@@ -292,23 +298,23 @@ $(document).on('change', '#XML_REP', function () {
             // VALIDAR QUE NO EXCEDA
             // =========================================
 
-            if (montoREP > totalFactura) {
+            // if (montoREP > totalFactura) {
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Monto inválido',
-                    html:
-                        '<b>Total factura:</b> $' + totalFactura.toFixed(2) +
-                        '<br><b>Monto REP:</b> $' + montoREP.toFixed(2) +
-                        '<br><br>El monto del REP no puede ser mayor al total de la factura.'
-                });
+            //     Swal.fire({
+            //         icon: 'error',
+            //         title: 'Monto inválido',
+            //         html:
+            //             '<b>Total factura:</b> $' + totalFactura.toFixed(2) +
+            //             '<br><b>Monto REP:</b> $' + montoREP.toFixed(2) +
+            //             '<br><br>El monto del REP no puede ser mayor al total de la factura.'
+            //     });
 
-                $('#XML_REP').val('');
+            //     $('#XML_REP').val('');
 
-                $('#btnGuardarFactura').prop('disabled', true);
+            //     $('#btnGuardarFactura').prop('disabled', true);
 
-                return;
-            }
+            //     return;
+            // }
 
             // =========================================
             // XML CORRECTO

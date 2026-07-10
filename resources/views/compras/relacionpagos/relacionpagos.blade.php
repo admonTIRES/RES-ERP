@@ -114,9 +114,6 @@
         <h3 style="color: #ffffff; margin: 0;">
             <i class="bi bi-cash-stack"></i>&nbsp;&nbsp;Relación de pagos
         </h3>
-        <!-- <button type="button" class="btn btn-light waves-effect waves-light" id="PDFS_FICHAS" style="margin-left: auto;">
-           PDF
-        </button> -->
         <button type="button" class="btn btn-light waves-effect waves-light" id="NUEVA_RELACION" style="margin-left: auto;">
             Nueva &nbsp;<i class="bi bi-plus-circle"></i>
         </button>

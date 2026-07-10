@@ -778,11 +778,3 @@ function descargarExcelRelacionPagos(id)
 
 
 
-$("#PDFS_FICHAS").click(function (e) {
-
-    e.preventDefault();
-
-    window.open('/pdfFichaErgonomica', '_blank');
-
-});
-
