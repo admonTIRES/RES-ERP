@@ -405,16 +405,29 @@ class facturaproveedorController extends Controller
         try {
             $userRFC = Auth::user()->RFC_PROVEEDOR;
 
+            // $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)
+            //     ->where('ESTATUS_FACTURA', 1)
+            //     ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
+            //     ->where(function ($query) {
+            //         $query->whereNull('SUBIR_REP')
+            //             ->orWhere('SUBIR_REP', 0);
+            //     })
+            //     ->where('SUBIR_RECIBO_PAGO', 1) 
+            //     ->get();
+
+
             $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)
                 ->where('ESTATUS_FACTURA', 1)
                 ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
+                ->where('SUBIR_RECIBO_PAGO', 1)
                 ->where(function ($query) {
-                    $query->whereNull('SUBIR_REP')
-                        ->orWhere('SUBIR_REP', 0);
+                    $query->where(function ($q) {
+                        $q->whereNull('SUBIR_REP')
+                            ->orWhere('SUBIR_REP', 0);
+                    })
+                        ->orWhere('ESTATUS_REP', 2);
                 })
-                ->where('SUBIR_RECIBO_PAGO', 1) 
                 ->get();
-
                 
             foreach ($tabla as $value) {
 
