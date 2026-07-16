@@ -573,128 +573,382 @@ class inventarioController extends Controller
     /////////////////////////////////// ENTRADA INVENTARIO /////////////////////////////////// 
 
 
+    // public function Tablaentradainventario(Request $request)
+    // {
+    //     try {
+    //         $inventarioId = $request->get('inventario');
+    //         $data = [];
+    //         $primerEntradaId = null;
+
+    //         // =========================
+    //         // 1. Saldo inicial
+    //         // =========================
+    //         $saldoInicial = DB::table('inventario_respaldo')
+    //             ->where('INVENTARIO_ID', $inventarioId)
+    //             ->first(['CANTIDAD_EQUIPO', 'FECHA_ADQUISICION', 'UNITARIO_EQUIPO']);
+
+    //         if ($saldoInicial) {
+    //             $data[] = [
+    //                 'ORDEN_PRIORIDAD' => 0,
+    //                 'FECHA'          => $saldoInicial->FECHA_ADQUISICION,
+    //                 'FECHA_ORDEN'    => $saldoInicial->FECHA_ADQUISICION,
+    //                 'CANTIDAD'       => $saldoInicial->CANTIDAD_EQUIPO,
+    //                 'VALOR_UNITARIO' => $saldoInicial->UNITARIO_EQUIPO,
+    //                 'COSTO_TOTAL'    => $saldoInicial->CANTIDAD_EQUIPO * $saldoInicial->UNITARIO_EQUIPO,
+    //                 'TIPO'           => '<span class="badge bg-warning text-dark">Saldo inicial</span>',
+    //                 'USUARIO'        => '',
+    //                 'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
+    //                 'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+    //             ];
+    //         } else {
+    //             $primerEntrada = DB::table('entradas_inventario')
+    //                 ->where('INVENTARIO_ID', $inventarioId)
+    //                 ->orderBy('FECHA_INGRESO', 'asc')
+    //                 ->first();
+
+    //             if ($primerEntrada) {
+    //                 $primerEntradaId = $primerEntrada->ID_ENTRADA_FORMULARIO;
+
+    //                 $data[] = [
+    //                     'ORDEN_PRIORIDAD' => 0,
+    //                     'FECHA'          => $primerEntrada->FECHA_INGRESO,
+    //                     'FECHA_ORDEN'    => $primerEntrada->FECHA_INGRESO,
+    //                     'CANTIDAD'       => $primerEntrada->CANTIDAD_PRODUCTO . ($primerEntrada->UNIDAD_MEDIDA ? " ({$primerEntrada->UNIDAD_MEDIDA})" : ""),
+    //                     'VALOR_UNITARIO' => $primerEntrada->VALOR_UNITARIO,
+    //                     'COSTO_TOTAL'    => $primerEntrada->CANTIDAD_PRODUCTO * $primerEntrada->VALOR_UNITARIO,
+    //                     'TIPO'           => '<span class="badge bg-warning text-dark">Saldo inicial</span>',
+    //                     'USUARIO'        => '',
+    //                     'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
+    //                     'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+    //                 ];
+    //             }
+    //         }
+
+
+    //         $entradasQuery = DB::table('entradas_inventario as e')
+    //             ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
+    //             ->where('e.INVENTARIO_ID', $inventarioId);
+
+    //         if ($primerEntradaId) {
+
+    //             $entradasQuery->where(
+    //                 'e.ID_ENTRADA_FORMULARIO',
+    //                 '!=',
+    //                 $primerEntradaId
+    //             );
+    //         }
+
+    //         $entradas = $entradasQuery->get([
+
+    //             'e.FECHA_INGRESO',
+    //             'e.CANTIDAD_PRODUCTO',
+    //             'e.UNIDAD_MEDIDA',
+    //             'e.VALOR_UNITARIO',
+    //             'e.ENTRADA_SOLICITUD',
+    //             'e.ENTRA_ASIGNACION',
+    //             'e.created_at',
+
+    //             'u.EMPLEADO_NOMBRE',
+    //             'u.EMPLEADO_APELLIDOPATERNO',
+    //             'u.EMPLEADO_APELLIDOMATERNO'
+
+    //         ])->map(function ($entrada) {
+
+    //             $usuario = trim(
+    //                 $entrada->EMPLEADO_NOMBRE . ' ' .
+    //                     $entrada->EMPLEADO_APELLIDOPATERNO . ' ' .
+    //                     $entrada->EMPLEADO_APELLIDOMATERNO
+    //             );
+
+    //             // =====================================
+    //             // TIPO
+    //             // =====================================
+
+    //             if ($entrada->ENTRA_ASIGNACION == 1) {
+
+    //                 $tipo =
+    //                     '<span class="badge bg-info">
+    //             Retornada por Administración
+    //         </span>';
+
+    //                 $usuarioTxt = '';
+    //             } else {
+
+    //                 $tipo = $entrada->ENTRADA_SOLICITUD == 1
+    //                     ? '<span class="badge bg-success">Entrada</span>'
+    //                     : '<span class="badge bg-success">Entrada por compra</span>';
+
+    //                 $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
+    //                     ? 'Retornado por: ' . e($usuario)
+    //                     : '';
+    //             }
+
+    //             $fechaMostrar = $entrada->FECHA_INGRESO;
+
+
+    //             if ($entrada->ENTRADA_SOLICITUD == 1) {
+
+    //                 if (
+    //                     date('Y-m-d', strtotime($entrada->FECHA_INGRESO))
+    //                     ===
+    //                     date('Y-m-d', strtotime($entrada->created_at))
+    //                 ) {
+
+    //                     $horaCreated = date(
+    //                         'H:i:s',
+    //                         strtotime($entrada->created_at)
+    //                     );
+
+    //                     $fechaOrden =
+    //                         $entrada->FECHA_INGRESO . ' ' . $horaCreated;
+    //                 } else {
+
+    //                     $fechaOrden =
+    //                         $entrada->FECHA_INGRESO . ' 23:59:59';
+    //                 }
+    //             } else {
+
+    //                 $fechaOrden = $entrada->FECHA_INGRESO;
+    //             }
+
+    //             return [
+
+    //                 'ORDEN_PRIORIDAD' => 1,
+    //                 'FECHA' => $fechaMostrar,
+    //                 'FECHA_ORDEN' => $fechaOrden,
+    //                 'CANTIDAD' =>
+    //                 $entrada->CANTIDAD_PRODUCTO .
+    //                     ($entrada->UNIDAD_MEDIDA
+    //                         ? " ({$entrada->UNIDAD_MEDIDA})"
+    //                         : ""),
+
+    //                 'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
+
+    //                 'COSTO_TOTAL' =>
+    //                 $entrada->CANTIDAD_PRODUCTO *
+    //                     $entrada->VALOR_UNITARIO,
+
+    //                 'TIPO' => $tipo,
+
+    //                 'USUARIO' => $usuarioTxt,
+
+    //                 'BTN_EDITAR' =>
+    //                 '<button type="button"
+    //             class="btn btn-warning btn-custom rounded-pill EDITAR">
+    //             <i class="bi bi-pencil-square"></i>
+    //         </button>',
+
+    //                 'BTN_VISUALIZAR' =>
+    //                 '<button type="button"
+    //             class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+    //             <i class="bi bi-eye"></i>
+    //         </button>'
+    //             ];
+    //         });
+
+    //         // =========================
+    //         // 3. Salidas
+    //         // =========================
+
+    //         $salidas = DB::table('salidas_inventario as s')
+    //             ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 's.USUARIO_ID')
+    //             ->where('s.INVENTARIO_ID', $inventarioId)
+    //             ->get([
+    //                 's.FECHA_SALIDA',
+    //                 's.CANTIDAD_SALIDA',
+    //                 's.UNIDAD_MEDIDA',
+    //                 's.created_at',
+    //                 's.SALIDA_ASIGNACIONES',
+    //                 's.USUARIO_ASIGNACION',
+    //                 'u.EMPLEADO_NOMBRE',
+    //                 'u.EMPLEADO_APELLIDOPATERNO',
+    //                 'u.EMPLEADO_APELLIDOMATERNO'
+    //             ])
+    //             ->map(function ($salida) {
+
+    //                 if ($salida->SALIDA_ASIGNACIONES == 1) {
+
+    //                     $asignado = $salida->USUARIO_ASIGNACION;
+
+    //                     $colaborador = DB::table('formulario_contratacion')
+    //                         ->where('CURP', $asignado)
+    //                         ->first();
+
+    //                     $proveedor = DB::table('formulario_directorio')
+    //                         ->where('RFC_PROVEEDOR', $asignado)
+    //                         ->first();
+
+    //                     if ($colaborador) {
+    //                         $usuario = trim($colaborador->NOMBRE_COLABORADOR . ' ' .
+    //                             $colaborador->PRIMER_APELLIDO . ' ' .
+    //                             $colaborador->SEGUNDO_APELLIDO);
+
+    //                         $tipoBadge = '<span class="badge text-bg-warning">Asignado colaborador</span>';
+    //                     } 
+    //                     elseif ($proveedor) {
+    //                     $usuario = $proveedor->NOMBRE_DIRECTORIO . ' (' . $proveedor->RFC_PROVEEDOR . ')';
+
+    //                     $tipoBadge = '<span class="badge text-bg-warning">Asignado proveedor</span>';
+
+    //                     } else {
+    //                         $usuario = $asignado;
+    //                         $tipoBadge = '<span class="badge text-bg-warning">Asignado</span>';
+    //                     }
+    //                 } else {
+
+
+    //                     $usuario = trim(
+    //                         ($salida->EMPLEADO_NOMBRE ?? '') . ' ' .
+    //                             ($salida->EMPLEADO_APELLIDOPATERNO ?? '') . ' ' .
+    //                             ($salida->EMPLEADO_APELLIDOMATERNO ?? '')
+    //                     );
+
+    //                     $tipoBadge = '<span class="badge bg-danger">Salida</span>';
+    //                 }
+
+    //                 return [
+    //                     'ORDEN_PRIORIDAD' => 1,
+    //                     'FECHA'          => $salida->FECHA_SALIDA,
+    //                     'FECHA_ORDEN'    => $salida->FECHA_SALIDA,
+    //                     'CANTIDAD'       => $salida->CANTIDAD_SALIDA . ($salida->UNIDAD_MEDIDA ? " ({$salida->UNIDAD_MEDIDA})" : ""),
+    //                     'VALOR_UNITARIO' => '',
+    //                     'COSTO_TOTAL'    => '',
+    //                     'TIPO'           => $tipoBadge,
+    //                     'USUARIO'        => $usuario,
+    //                     'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
+    //                     'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+    //                 ];
+    //             });
+
+
+    //         // =========================
+    //         // 4. Unir todo y ordenar
+    //         // =========================
+    //         $todos = collect($data)
+    //             ->merge($entradas)
+    //             ->merge($salidas)
+    //             ->sortBy([
+    //                 ['ORDEN_PRIORIDAD', 'asc'],
+    //                 ['FECHA_ORDEN', 'asc']
+    //             ])
+    //             ->values();
+
+    //         return response()->json([
+    //             'data' => $todos,
+    //             'msj'  => 'Información consultada correctamente'
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'msj'  => 'Error ' . $e->getMessage(),
+    //             'data' => 0
+    //         ]);
+    //     }
+    // }
+
+
     public function Tablaentradainventario(Request $request)
     {
         try {
+
             $inventarioId = $request->get('inventario');
             $data = [];
             $primerEntradaId = null;
 
-            // =========================
-            // 1. Saldo inicial
-            // =========================
+            
             $saldoInicial = DB::table('inventario_respaldo')
                 ->where('INVENTARIO_ID', $inventarioId)
-                ->first(['CANTIDAD_EQUIPO', 'FECHA_ADQUISICION', 'UNITARIO_EQUIPO']);
+                ->first([
+                    'CANTIDAD_EQUIPO',
+                    'FECHA_ADQUISICION',
+                    'UNITARIO_EQUIPO'
+                ]);
 
             if ($saldoInicial) {
+
                 $data[] = [
                     'ORDEN_PRIORIDAD' => 0,
-                    'FECHA'          => $saldoInicial->FECHA_ADQUISICION,
-                    'FECHA_ORDEN'    => $saldoInicial->FECHA_ADQUISICION,
-                    'CANTIDAD'       => $saldoInicial->CANTIDAD_EQUIPO,
-                    'VALOR_UNITARIO' => $saldoInicial->UNITARIO_EQUIPO,
-                    'COSTO_TOTAL'    => $saldoInicial->CANTIDAD_EQUIPO * $saldoInicial->UNITARIO_EQUIPO,
-                    'TIPO'           => '<span class="badge bg-warning text-dark">Saldo inicial</span>',
-                    'USUARIO'        => '',
-                    'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
-                    'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+                    'FECHA'           => $saldoInicial->FECHA_ADQUISICION,
+                    'FECHA_ORDEN'     => $saldoInicial->FECHA_ADQUISICION . ' 00:00:00',
+                    'CANTIDAD'        => $saldoInicial->CANTIDAD_EQUIPO,
+                    'VALOR_UNITARIO'  => $saldoInicial->UNITARIO_EQUIPO,
+                    'COSTO_TOTAL'     => $saldoInicial->CANTIDAD_EQUIPO * $saldoInicial->UNITARIO_EQUIPO,
+                    'TIPO'            => '<span class="badge bg-warning text-dark">Saldo inicial</span>',
+                    'USUARIO'         => '',
+
+                    'BTN_EDITAR' =>
+                    '<button type="button"
+                        class="btn btn-warning btn-custom rounded-pill EDITAR">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>',
+
+                    'BTN_VISUALIZAR' =>
+                    '<button type="button"
+                        class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                        <i class="bi bi-eye"></i>
+                    </button>'
                 ];
             } else {
+
                 $primerEntrada = DB::table('entradas_inventario')
                     ->where('INVENTARIO_ID', $inventarioId)
                     ->orderBy('FECHA_INGRESO', 'asc')
+                    ->orderBy('created_at', 'asc')
                     ->first();
 
                 if ($primerEntrada) {
+
                     $primerEntradaId = $primerEntrada->ID_ENTRADA_FORMULARIO;
 
                     $data[] = [
                         'ORDEN_PRIORIDAD' => 0,
-                        'FECHA'          => $primerEntrada->FECHA_INGRESO,
-                        'FECHA_ORDEN'    => $primerEntrada->FECHA_INGRESO,
-                        'CANTIDAD'       => $primerEntrada->CANTIDAD_PRODUCTO . ($primerEntrada->UNIDAD_MEDIDA ? " ({$primerEntrada->UNIDAD_MEDIDA})" : ""),
+                        'FECHA'           => $primerEntrada->FECHA_INGRESO,
+                        'FECHA_ORDEN'     => $primerEntrada->FECHA_INGRESO . ' 00:00:00',
+
+                        'CANTIDAD' =>
+                        $primerEntrada->CANTIDAD_PRODUCTO .
+                            (
+                                $primerEntrada->UNIDAD_MEDIDA
+                                ? " ({$primerEntrada->UNIDAD_MEDIDA})"
+                                : ""
+                            ),
+
                         'VALOR_UNITARIO' => $primerEntrada->VALOR_UNITARIO,
-                        'COSTO_TOTAL'    => $primerEntrada->CANTIDAD_PRODUCTO * $primerEntrada->VALOR_UNITARIO,
-                        'TIPO'           => '<span class="badge bg-warning text-dark">Saldo inicial</span>',
-                        'USUARIO'        => '',
-                        'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
-                        'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+
+                        'COSTO_TOTAL' =>
+                        $primerEntrada->CANTIDAD_PRODUCTO *
+                            $primerEntrada->VALOR_UNITARIO,
+
+                        'TIPO' =>
+                        '<span class="badge bg-warning text-dark">
+                            Saldo inicial
+                        </span>',
+
+                        'USUARIO' => '',
+
+                        'BTN_EDITAR' =>
+                        '<button type="button"
+                            class="btn btn-warning btn-custom rounded-pill EDITAR">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>',
+
+                        'BTN_VISUALIZAR' =>
+                        '<button type="button"
+                            class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                            <i class="bi bi-eye"></i>
+                        </button>'
                     ];
                 }
             }
 
-            // =========================
-            // 2. Entradas
-            // =========================
-            // $entradasQuery = DB::table('entradas_inventario as e')
-            //     ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
-            //     ->where('e.INVENTARIO_ID', $inventarioId);
-
-            // if ($primerEntradaId) {
-            //     $entradasQuery->where('e.ID_ENTRADA_FORMULARIO', '!=', $primerEntradaId);
-            // }
-
-            // $entradas = $entradasQuery->get([
-            //     'e.FECHA_INGRESO',
-            //     'e.CANTIDAD_PRODUCTO',
-            //     'e.UNIDAD_MEDIDA',
-            //     'e.VALOR_UNITARIO',
-            //     'e.ENTRADA_SOLICITUD',
-            //     'e.created_at',
-            //     'u.EMPLEADO_NOMBRE',
-            //     'u.EMPLEADO_APELLIDOPATERNO',
-            //     'u.EMPLEADO_APELLIDOMATERNO'
-            // ])->map(function ($entrada) {
-            //     $usuario = trim($entrada->EMPLEADO_NOMBRE . ' ' . $entrada->EMPLEADO_APELLIDOPATERNO . ' ' . $entrada->EMPLEADO_APELLIDOMATERNO);
-
-            //     $tipo       = $entrada->ENTRADA_SOLICITUD == 1
-            //         ? '<span class="badge bg-success">Entrada</span>'
-            //         : '<span class="badge bg-success">Entrada por compra</span>';
-            //     $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
-            //         ? 'Retornado por: ' . e($usuario)
-            //         : '';
-
-            //     $fechaMostrar = $entrada->FECHA_INGRESO;
-
-            //     // ================================
-            //     // ORDENAR: solo validar created_at si ENTRADA_SOLICITUD = 1
-            //     // ================================
-            //     if ($entrada->ENTRADA_SOLICITUD == 1) {
-            //         if (date('Y-m-d', strtotime($entrada->FECHA_INGRESO)) === date('Y-m-d', strtotime($entrada->created_at))) {
-            //             $horaCreated = date('H:i:s', strtotime($entrada->created_at));
-            //             $fechaOrden  = $entrada->FECHA_INGRESO . ' ' . $horaCreated;
-            //         } else {
-            //             $fechaOrden = $entrada->FECHA_INGRESO . ' 23:59:59';
-            //         }
-            //     } else {
-            //         $fechaOrden = $entrada->FECHA_INGRESO;
-            //     }
-
-
-            //     return [
-            //         'ORDEN_PRIORIDAD' => 1,
-            //         'FECHA'          => $fechaMostrar,
-            //         'FECHA_ORDEN'    => $fechaOrden,
-            //         'CANTIDAD'       => $entrada->CANTIDAD_PRODUCTO . ($entrada->UNIDAD_MEDIDA ? " ({$entrada->UNIDAD_MEDIDA})" : ""),
-            //         'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
-            //         'COSTO_TOTAL'    => $entrada->CANTIDAD_PRODUCTO * $entrada->VALOR_UNITARIO,
-            //         'TIPO'           => $tipo,
-            //         'USUARIO'        => $usuarioTxt,
-            //         'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
-            //         'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
-            //     ];
-            // });
-
-
-
+       
             $entradasQuery = DB::table('entradas_inventario as e')
-                ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 'e.USUARIO_ID')
+                ->leftJoin(
+                    'usuarios as u',
+                    'u.ID_USUARIO',
+                    '=',
+                    'e.USUARIO_ID'
+                )
                 ->where('e.INVENTARIO_ID', $inventarioId);
-
-            // =====================================
-            // EXCLUIR SALDO INICIAL
-            // =====================================
 
             if ($primerEntradaId) {
 
@@ -705,60 +959,53 @@ class inventarioController extends Controller
                 );
             }
 
-            $entradas = $entradasQuery->get([
+            $entradas = $entradasQuery
+                ->get([
+                    'e.FECHA_INGRESO',
+                    'e.CANTIDAD_PRODUCTO',
+                    'e.UNIDAD_MEDIDA',
+                    'e.VALOR_UNITARIO',
+                    'e.ENTRADA_SOLICITUD',
+                    'e.ENTRA_ASIGNACION',
+                    'e.created_at',
 
-                'e.FECHA_INGRESO',
-                'e.CANTIDAD_PRODUCTO',
-                'e.UNIDAD_MEDIDA',
-                'e.VALOR_UNITARIO',
-                'e.ENTRADA_SOLICITUD',
-                'e.ENTRA_ASIGNACION',
-                'e.created_at',
+                    'u.EMPLEADO_NOMBRE',
+                    'u.EMPLEADO_APELLIDOPATERNO',
+                    'u.EMPLEADO_APELLIDOMATERNO'
+                ])
+                ->map(function ($entrada) {
 
-                'u.EMPLEADO_NOMBRE',
-                'u.EMPLEADO_APELLIDOPATERNO',
-                'u.EMPLEADO_APELLIDOMATERNO'
+                    $usuario = trim(
+                        ($entrada->EMPLEADO_NOMBRE ?? '') . ' ' .
+                            ($entrada->EMPLEADO_APELLIDOPATERNO ?? '') . ' ' .
+                            ($entrada->EMPLEADO_APELLIDOMATERNO ?? '')
+                    );
 
-            ])->map(function ($entrada) {
+                
+                    if ($entrada->ENTRA_ASIGNACION == 1) {
 
-                $usuario = trim(
-                    $entrada->EMPLEADO_NOMBRE . ' ' .
-                        $entrada->EMPLEADO_APELLIDOPATERNO . ' ' .
-                        $entrada->EMPLEADO_APELLIDOMATERNO
-                );
+                        $tipo =
+                            '<span class="badge bg-info">
+                            Retornada por Administración
+                        </span>';
 
-                // =====================================
-                // TIPO
-                // =====================================
+                        $usuarioTxt = '';
+                    } else {
 
-                if ($entrada->ENTRA_ASIGNACION == 1) {
+                        $tipo = $entrada->ENTRADA_SOLICITUD == 1
+                            ? '<span class="badge bg-success">Entrada</span>'
+                            : '<span class="badge bg-success">Entrada por compra</span>';
 
-                    $tipo =
-                        '<span class="badge bg-info">
-                Retornada por Administración
-            </span>';
+                        $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
+                            ? 'Retornado por: ' . e($usuario)
+                            : '';
+                    }
 
-                    $usuarioTxt = '';
-                } else {
+                    $fechaMostrar = $entrada->FECHA_INGRESO;
 
-                    $tipo = $entrada->ENTRADA_SOLICITUD == 1
-                        ? '<span class="badge bg-success">Entrada</span>'
-                        : '<span class="badge bg-success">Entrada por compra</span>';
-
-                    $usuarioTxt = $entrada->ENTRADA_SOLICITUD == 1
-                        ? 'Retornado por: ' . e($usuario)
-                        : '';
-                }
-
-                $fechaMostrar = $entrada->FECHA_INGRESO;
-
-                // =====================================
-                // FECHA ORDEN
-                // =====================================
-
-                if ($entrada->ENTRADA_SOLICITUD == 1) {
-
+                 
                     if (
+                        !empty($entrada->created_at) &&
                         date('Y-m-d', strtotime($entrada->FECHA_INGRESO))
                         ===
                         date('Y-m-d', strtotime($entrada->created_at))
@@ -770,61 +1017,66 @@ class inventarioController extends Controller
                         );
 
                         $fechaOrden =
-                            $entrada->FECHA_INGRESO . ' ' . $horaCreated;
+                            date(
+                                'Y-m-d',
+                                strtotime($entrada->FECHA_INGRESO)
+                            ) .
+                            ' ' .
+                            $horaCreated;
                     } else {
 
+                   
                         $fechaOrden =
-                            $entrada->FECHA_INGRESO . ' 23:59:59';
+                            date(
+                                'Y-m-d',
+                                strtotime($entrada->FECHA_INGRESO)
+                            ) .
+                            ' 23:59:59';
                     }
-                } else {
 
-                    $fechaOrden = $entrada->FECHA_INGRESO;
-                }
+                    return [
+                        'ORDEN_PRIORIDAD' => 1,
+                        'FECHA'           => $fechaMostrar,
+                        'FECHA_ORDEN'     => $fechaOrden,
 
-                return [
+                        'CANTIDAD' =>
+                        $entrada->CANTIDAD_PRODUCTO .
+                            (
+                                $entrada->UNIDAD_MEDIDA
+                                ? " ({$entrada->UNIDAD_MEDIDA})"
+                                : ""
+                            ),
 
-                    'ORDEN_PRIORIDAD' => 1,
+                        'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
 
-                    'FECHA' => $fechaMostrar,
+                        'COSTO_TOTAL' =>
+                        $entrada->CANTIDAD_PRODUCTO *
+                            $entrada->VALOR_UNITARIO,
 
-                    'FECHA_ORDEN' => $fechaOrden,
+                        'TIPO'    => $tipo,
+                        'USUARIO' => $usuarioTxt,
 
-                    'CANTIDAD' =>
-                    $entrada->CANTIDAD_PRODUCTO .
-                        ($entrada->UNIDAD_MEDIDA
-                            ? " ({$entrada->UNIDAD_MEDIDA})"
-                            : ""),
+                        'BTN_EDITAR' =>
+                        '<button type="button"
+                            class="btn btn-warning btn-custom rounded-pill EDITAR">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>',
 
-                    'VALOR_UNITARIO' => $entrada->VALOR_UNITARIO,
+                        'BTN_VISUALIZAR' =>
+                        '<button type="button"
+                            class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                            <i class="bi bi-eye"></i>
+                        </button>'
+                    ];
+                });
 
-                    'COSTO_TOTAL' =>
-                    $entrada->CANTIDAD_PRODUCTO *
-                        $entrada->VALOR_UNITARIO,
-
-                    'TIPO' => $tipo,
-
-                    'USUARIO' => $usuarioTxt,
-
-                    'BTN_EDITAR' =>
-                    '<button type="button"
-                class="btn btn-warning btn-custom rounded-pill EDITAR">
-                <i class="bi bi-pencil-square"></i>
-            </button>',
-
-                    'BTN_VISUALIZAR' =>
-                    '<button type="button"
-                class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
-                <i class="bi bi-eye"></i>
-            </button>'
-                ];
-            });
-
-            // =========================
-            // 3. Salidas
-            // =========================
-          
             $salidas = DB::table('salidas_inventario as s')
-                ->leftJoin('usuarios as u', 'u.ID_USUARIO', '=', 's.USUARIO_ID')
+                ->leftJoin(
+                    'usuarios as u',
+                    'u.ID_USUARIO',
+                    '=',
+                    's.USUARIO_ID'
+                )
                 ->where('s.INVENTARIO_ID', $inventarioId)
                 ->get([
                     's.FECHA_SALIDA',
@@ -833,6 +1085,7 @@ class inventarioController extends Controller
                     's.created_at',
                     's.SALIDA_ASIGNACIONES',
                     's.USUARIO_ASIGNACION',
+
                     'u.EMPLEADO_NOMBRE',
                     'u.EMPLEADO_APELLIDOPATERNO',
                     'u.EMPLEADO_APELLIDOMATERNO'
@@ -852,58 +1105,132 @@ class inventarioController extends Controller
                             ->first();
 
                         if ($colaborador) {
-                            $usuario = trim($colaborador->NOMBRE_COLABORADOR . ' ' .
-                                $colaborador->PRIMER_APELLIDO . ' ' .
-                                $colaborador->SEGUNDO_APELLIDO);
 
-                            $tipoBadge = '<span class="badge text-bg-warning">Asignado colaborador</span>';
-                        } 
-                        elseif ($proveedor) {
-                        $usuario = $proveedor->NOMBRE_DIRECTORIO . ' (' . $proveedor->RFC_PROVEEDOR . ')';
+                            $usuario = trim(
+                                $colaborador->NOMBRE_COLABORADOR . ' ' .
+                                    $colaborador->PRIMER_APELLIDO . ' ' .
+                                    $colaborador->SEGUNDO_APELLIDO
+                            );
 
-                        $tipoBadge = '<span class="badge text-bg-warning">Asignado proveedor</span>';
-                            
+                            $tipoBadge =
+                                '<span class="badge text-bg-warning">
+                                Asignado colaborador
+                            </span>';
+                        } elseif ($proveedor) {
+
+                            $usuario =
+                                $proveedor->NOMBRE_DIRECTORIO .
+                                ' (' .
+                                $proveedor->RFC_PROVEEDOR .
+                                ')';
+
+                            $tipoBadge =
+                                '<span class="badge text-bg-warning">
+                                Asignado proveedor
+                            </span>';
                         } else {
+
                             $usuario = $asignado;
-                            $tipoBadge = '<span class="badge text-bg-warning">Asignado</span>';
+
+                            $tipoBadge =
+                                '<span class="badge text-bg-warning">
+                                Asignado
+                            </span>';
                         }
                     } else {
 
-                      
                         $usuario = trim(
                             ($salida->EMPLEADO_NOMBRE ?? '') . ' ' .
                                 ($salida->EMPLEADO_APELLIDOPATERNO ?? '') . ' ' .
                                 ($salida->EMPLEADO_APELLIDOMATERNO ?? '')
                         );
 
-                        $tipoBadge = '<span class="badge bg-danger">Salida</span>';
+                        $tipoBadge =
+                            '<span class="badge bg-danger">
+                            Salida
+                        </span>';
+                    }
+
+                    $fechaMostrar = $salida->FECHA_SALIDA;
+
+                    if (
+                        !empty($salida->created_at) &&
+                        date('Y-m-d', strtotime($salida->FECHA_SALIDA))
+                        ===
+                        date('Y-m-d', strtotime($salida->created_at))
+                    ) {
+
+                        $horaCreated = date(
+                            'H:i:s',
+                            strtotime($salida->created_at)
+                        );
+
+                        $fechaOrden =
+                            date(
+                                'Y-m-d',
+                                strtotime($salida->FECHA_SALIDA)
+                            ) .
+                            ' ' .
+                            $horaCreated;
+                    } else {
+
+                        $fechaOrden =
+                            date(
+                                'Y-m-d',
+                                strtotime($salida->FECHA_SALIDA)
+                            ) .
+                            ' 23:59:59';
                     }
 
                     return [
                         'ORDEN_PRIORIDAD' => 1,
-                        'FECHA'          => $salida->FECHA_SALIDA,
-                        'FECHA_ORDEN'    => $salida->FECHA_SALIDA,
-                        'CANTIDAD'       => $salida->CANTIDAD_SALIDA . ($salida->UNIDAD_MEDIDA ? " ({$salida->UNIDAD_MEDIDA})" : ""),
+                        'FECHA'           => $fechaMostrar,
+                        'FECHA_ORDEN'     => $fechaOrden,
+
+                        'CANTIDAD' =>
+                        $salida->CANTIDAD_SALIDA .
+                            (
+                                $salida->UNIDAD_MEDIDA
+                                ? " ({$salida->UNIDAD_MEDIDA})"
+                                : ""
+                            ),
+
                         'VALOR_UNITARIO' => '',
                         'COSTO_TOTAL'    => '',
                         'TIPO'           => $tipoBadge,
                         'USUARIO'        => $usuario,
-                        'BTN_EDITAR'     => '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>',
-                        'BTN_VISUALIZAR' => '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>'
+
+                        'BTN_EDITAR' =>
+                        '<button type="button"
+                            class="btn btn-warning btn-custom rounded-pill EDITAR">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>',
+
+                        'BTN_VISUALIZAR' =>
+                        '<button type="button"
+                            class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                            <i class="bi bi-eye"></i>
+                        </button>'
                     ];
                 });
 
-
-            // =========================
-            // 4. Unir todo y ordenar
-            // =========================
+        
             $todos = collect($data)
                 ->merge($entradas)
                 ->merge($salidas)
-                ->sortBy([
-                    ['ORDEN_PRIORIDAD', 'asc'],
-                    ['FECHA_ORDEN', 'asc']
-                ])
+                ->sort(function ($a, $b) {
+
+                    if ($a['ORDEN_PRIORIDAD'] != $b['ORDEN_PRIORIDAD']) {
+
+                        return $a['ORDEN_PRIORIDAD']
+                            <=> $b['ORDEN_PRIORIDAD'];
+                    }
+
+                    return strcmp(
+                        $a['FECHA_ORDEN'],
+                        $b['FECHA_ORDEN']
+                    );
+                })
                 ->values();
 
             return response()->json([
@@ -911,6 +1238,7 @@ class inventarioController extends Controller
                 'msj'  => 'Información consultada correctamente'
             ]);
         } catch (\Exception $e) {
+
             return response()->json([
                 'msj'  => 'Error ' . $e->getMessage(),
                 'data' => 0

@@ -59,7 +59,7 @@
                                 <label class="form-label">Fecha de solicitud *</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_SALIDA" name="FECHA_SALIDA"
-                                        style="pointer-events:none; background-color:#e9ecef;" required >
+                                        style="pointer-events:none; background-color:#e9ecef;" required tabindex="-1">
                                     <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                                 </div>
                             </div>

@@ -403,7 +403,8 @@ $(document).ready(function() {
     } 
 
         
-        
+
+            
     });
 
     $('#miModal_RECURSOSEMPLEADOS').on('hidden.bs.modal', function () {
@@ -476,18 +477,21 @@ $('#Tablasalidalmacen tbody').on('click', 'td>button.EDITAR', function () {
         $('#APROBACION_DIRECCION').hide();
     }
 
-   if (row.data().FIRMO_ALMACENISTA === "1") {
-        $('#DIV_FIRMAR_ALMACEN').hide();
-    } else  {
+    if (row.data().FIRMO_ALMACENISTA === "1") {
+       
+       $('#DIV_FIRMAR_ALMACEN').hide();
+       
+    } else {
+        
        $('#DIV_FIRMAR_ALMACEN').show();
        
-        // const hoy = new Date();
-        // const yyyy = hoy.getFullYear();
-        // const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-        // const dd = String(hoy.getDate()).padStart(2, '0');
-        // const fechaHoy = `${yyyy}-${mm}-${dd}`;
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        const fechaHoy = `${yyyy}-${mm}-${dd}`;
 
-        // $("#FECHA_ALMACEN_SOLICITUD").val(fechaHoy);
+        $("#FECHA_ALMACEN_SOLICITUD").val(fechaHoy);
     } 
 
 
