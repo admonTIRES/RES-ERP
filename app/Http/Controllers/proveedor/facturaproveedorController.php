@@ -40,17 +40,29 @@ class facturaproveedorController extends Controller
     {
         $rfc = Auth::user()->RFC_PROVEEDOR;
 
+        // $existeBloqueo = DB::table('formulario_facturasproveedores')
+        //     ->where('RFC_PROVEEDOR', $rfc)
+        //     ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
+        //     ->where('SUBIR_RECIBO_PAGO', 1) 
+        //     ->where(function ($query) {
+        //         $query->whereNull('SUBIR_REP')
+        //             ->orWhere('SUBIR_REP', 0)
+        //             ->orWhereNull('ESTATUS_REP')
+        //             ->orWhere('ESTATUS_REP', '!=', 1);
+        //     })
+        //     ->exists();
+
         $existeBloqueo = DB::table('formulario_facturasproveedores')
             ->where('RFC_PROVEEDOR', $rfc)
             ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
-            ->where('SUBIR_RECIBO_PAGO', 1) 
+            ->where('SUBIR_RECIBO_PAGO', 1)
             ->where(function ($query) {
                 $query->whereNull('SUBIR_REP')
                     ->orWhere('SUBIR_REP', 0)
-                    ->orWhereNull('ESTATUS_REP')
-                    ->orWhere('ESTATUS_REP', '!=', 1);
+                    ->orWhere('ESTATUS_REP', 2);
             })
             ->exists();
+
 
         if ($existeBloqueo) {
             return response()->json([
@@ -428,7 +440,7 @@ class facturaproveedorController extends Controller
                         ->orWhere('ESTATUS_REP', 2);
                 })
                 ->get();
-                
+
             foreach ($tabla as $value) {
 
                 if ($value->ACTIVO == 0) {
