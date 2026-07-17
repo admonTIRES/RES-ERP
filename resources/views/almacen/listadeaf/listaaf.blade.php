@@ -267,25 +267,25 @@
                                                         <div class="col-3">
                                                             <div class="form-group">
                                                                 <label>Frente derecha *</label>
-                                                                <input type="text" class="form-control" id="FRENTE_DERECHA" name="FRENTE_DERECHA" required>
+                                                                <textarea class="form-control" id="FRENTE_DERECHA" name="FRENTE_DERECHA" rows="3" required></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="col-3">
                                                             <div class="form-group">
                                                                 <label>Frente izquierda *</label>
-                                                                <input type="text" class="form-control" id="FRENTE_IZQUIERDA" name="FRENTE_IZQUIERDA" required>
+                                                                <textarea class="form-control" id="FRENTE_IZQUIERDA" name="FRENTE_IZQUIERDA" rows="3" required></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="col-3">
                                                             <div class="form-group">
                                                                 <label>Trasera derecha *</label>
-                                                                <input type="text" class="form-control" id="TRASERA_DERECHA" name="TRASERA_DERECHA" required>
+                                                                <textarea class="form-control" id="TRASERA_DERECHA" name="TRASERA_DERECHA" rows="3" required></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="col-3">
                                                             <div class="form-group">
                                                                 <label>Trasera izquierda *</label>
-                                                                <input type="text" class="form-control" id="TRASERA_IZQUIERDA" name="TRASERA_IZQUIERDA" required>
+                                                                <textarea class="form-control" id="TRASERA_IZQUIERDA" name="TRASERA_IZQUIERDA" rows="3" required></textarea>
                                                             </div>
                                                         </div>
 
