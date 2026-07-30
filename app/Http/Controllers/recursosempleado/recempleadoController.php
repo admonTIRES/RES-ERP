@@ -923,6 +923,101 @@ class recempleadoController extends Controller
                     break;
 
 
+                // case 3:
+                //     if ($request->ID_FORMULARIO_RECURSOS_EMPLEADOS == 0) {
+                //         DB::statement('ALTER TABLE formulario_recempleados AUTO_INCREMENT=1;');
+
+                //         $materialesJson = is_string($request->MATERIALES_JSON)
+                //             ? $request->MATERIALES_JSON
+                //             : json_encode($request->MATERIALES_JSON, JSON_UNESCAPED_UNICODE);
+
+                //         $mrs = recemplaedosModel::create(array_merge(
+                //             $request->except(['MATERIALES_JSON', 'DOCUMENTO_SOLICITUD']),
+                //             [
+                //                 'USUARIO_ID' => auth()->user()->ID_USUARIO,
+                //                 'CURP' => auth()->user()->CURP,
+                //                 'MATERIALES_JSON' => $materialesJson
+                //             ]
+                //         ));
+
+                //         if ($request->hasFile('DOCUMENTO_SOLICITUD')) {
+                //             $documento = $request->file('DOCUMENTO_SOLICITUD');
+                //             $curp = auth()->user()->CURP;
+                //             $idDocumento = $mrs->ID_FORMULARIO_RECURSOS_EMPLEADOS;
+
+                //             $nombreArchivo = preg_replace('/[^A-Za-z0-9áéíóúÁÉÍÓÚñÑ\-]/u', '_', pathinfo($documento->getClientOriginalName(), PATHINFO_FILENAME))
+                //                 . '.' . $documento->getClientOriginalExtension();
+
+                //             $rutaCarpeta = 'reclutamiento/' . $curp . '/Formatos de solicitud/' . $idDocumento;
+                //             $rutaCompleta = $documento->storeAs($rutaCarpeta, $nombreArchivo);
+
+                //             $mrs->DOCUMENTO_SOLICITUD = $rutaCompleta;
+                //             $mrs->save();
+                //         }
+
+                //         return response()->json([
+                //             'code' => 1,
+                //             'mr' => $mrs
+                //         ]);
+                //     } else {
+                //         if (isset($request->ELIMINAR)) {
+                //             $estado = $request->ELIMINAR == 1 ? 0 : 1;
+                //             recemplaedosModel::where('ID_FORMULARIO_RECURSOS_EMPLEADOS', $request->ID_FORMULARIO_RECURSOS_EMPLEADOS)
+                //                 ->update(['ACTIVO' => $estado]);
+
+                //             return response()->json([
+                //                 'code' => 1,
+                //                 'mr' => $estado == 0 ? 'Desactivada' : 'Activada'
+                //             ]);
+                //         } else {
+                //             $mrs = recemplaedosModel::find($request->ID_FORMULARIO_RECURSOS_EMPLEADOS);
+
+                //             if ($mrs) {
+                //                 $datos = $request->except(['USUARIO_ID', 'CURP', 'DOCUMENTO_SOLICITUD']);
+
+                //                 if (isset($datos['MATERIALES_JSON'])) {
+                //                     $datos['MATERIALES_JSON'] = is_string($datos['MATERIALES_JSON'])
+                //                         ? $datos['MATERIALES_JSON']
+                //                         : json_encode($datos['MATERIALES_JSON'], JSON_UNESCAPED_UNICODE);
+                //                 }
+
+                //                 $datos['AUTORIZO_ID'] = auth()->user()->ID_USUARIO;
+
+                //                 $mrs->update($datos);
+
+                //                 if ($request->hasFile('DOCUMENTO_SOLICITUD')) {
+                //                     if ($mrs->DOCUMENTO_SOLICITUD && Storage::exists($mrs->DOCUMENTO_SOLICITUD)) {
+                //                         Storage::delete($mrs->DOCUMENTO_SOLICITUD);
+                //                     }
+
+                //                     $documento = $request->file('DOCUMENTO_SOLICITUD');
+                //                     $curp = $mrs->CURP;
+                //                     $idDocumento = $mrs->ID_FORMULARIO_RECURSOS_EMPLEADOS;
+
+                //                     $nombreArchivo = preg_replace('/[^A-Za-z0-9áéíóúÁÉÍÓÚñÑ\-]/u', '_', pathinfo($documento->getClientOriginalName(), PATHINFO_FILENAME))
+                //                         . '.' . $documento->getClientOriginalExtension();
+
+                //                     $rutaCarpeta = 'reclutamiento/' . $curp . '/Formatos de solicitud/' . $idDocumento;
+                //                     $rutaCompleta = $documento->storeAs($rutaCarpeta, $nombreArchivo);
+
+                //                     $mrs->DOCUMENTO_SOLICITUD = $rutaCompleta;
+                //                     $mrs->save();
+                //                 }
+
+                //                 return response()->json([
+                //                     'code' => 1,
+                //                     'mr' => 'Actualizada'
+                //                 ]);
+                //             }
+
+                //             return response()->json([
+                //                 'code' => 0,
+                //                 'msj' => 'MR no encontrada'
+                //             ], 404);
+                //         }
+                //     }
+                //     break;
+
                 case 3:
                     if ($request->ID_FORMULARIO_RECURSOS_EMPLEADOS == 0) {
                         DB::statement('ALTER TABLE formulario_recempleados AUTO_INCREMENT=1;');
@@ -981,7 +1076,11 @@ class recempleadoController extends Controller
                                         : json_encode($datos['MATERIALES_JSON'], JSON_UNESCAPED_UNICODE);
                                 }
 
-                                $datos['AUTORIZO_ID'] = auth()->user()->ID_USUARIO;
+                                if (empty($mrs->AUTORIZO_ID)) {
+                                    $datos['AUTORIZO_ID'] = auth()->user()->ID_USUARIO;
+                                } else {
+                                    unset($datos['AUTORIZO_ID']);
+                                }
 
                                 $mrs->update($datos);
 
@@ -1018,14 +1117,10 @@ class recempleadoController extends Controller
                     }
                     break;
 
-
-
+               
                 case 4:
                     if ($request->ID_FORMULARIO_RECURSOS_EMPLEADOS == 0) {
                         DB::statement('ALTER TABLE formulario_recempleados AUTO_INCREMENT=1;');
-
-
-
 
                         $materialesJson = is_string($request->MATERIALES_JSON)
                             ? $request->MATERIALES_JSON

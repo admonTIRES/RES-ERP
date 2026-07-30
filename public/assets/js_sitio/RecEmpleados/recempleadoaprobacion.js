@@ -324,88 +324,120 @@ $('#Tablarecempleadoaprobacion').on('click', '.ver-archivo-recempleado', functio
 
 $(document).ready(function() {
     $('#Tablarecempleadoaprobacion tbody').on('click', 'td>button.VISUALIZAR', function () {
-
-
     var tr = $(this).closest('tr');
     var row = Tablarecempleadoaprobacion.row(tr);
 
     hacerSoloLectura(row.data(), '#miModal_RECURSOSEMPLEADOS');
 
     ID_FORMULARIO_RECURSOS_EMPLEADOS = row.data().ID_FORMULARIO_RECURSOS_EMPLEADOS;
+        
+         cargarMaterialesDesdeJSON(row.data().MATERIALES_JSON);
     
-    CURP = row.data().CURP;
+        var CURP = row.data().CURP;
 
-    $.get('/obtenerUltimoContrato/' + CURP, function (response) {
-        var selectContrato = $('#CONTRATO_ID');
-        selectContrato.empty(); 
-        selectContrato.append('<option value="" selected disabled>Seleccione una opción</option>');
+        editarDatoTabla(row.data(), 'formularioRECURSOSEMPLEADO', 'miModal_RECURSOSEMPLEADOS', 1);
 
-        if (response.success && response.contrato) {
-            var c = response.contrato;
-            var texto = c.NOMBRE_DOCUMENTO_CONTRATO + ' — ' +
-                        'Inicio: ' + (c.FECHAI_CONTRATO ?? 'Sin fecha') +
-                        ' — Fin: ' + (c.VIGENCIA_CONTRATO ?? 'Sin fecha');
+        const dias = document.getElementById("NODIAS_PERMISO");
+        const horas = document.getElementById("NOHORAS_PERMISO");
 
-            selectContrato.append('<option value="' + c.ID_CONTRATOS_ANEXOS + '">' + texto + '</option>');
-        } else {
-            selectContrato.append('<option value="" disabled>No hay contratos registrados</option>');
+        if (row.data().NODIAS_PERMISO && parseInt(row.data().NODIAS_PERMISO) > 0) {
+            dias.disabled = false;
+            horas.value = "";
+            horas.disabled = true;
         }
-    });
-    
-    
-    cargarMaterialesDesdeJSON(row.data().MATERIALES_JSON);
 
+        else if (row.data().NOHORAS_PERMISO && parseInt(row.data().NOHORAS_PERMISO) > 0) {
+            horas.disabled = false;
+            dias.value = "";
+            dias.disabled = true;
+        }
 
-    editarDatoTabla(row.data(), 'formularioRECURSOSEMPLEADO', 'miModal_RECURSOSEMPLEADOS', 1);
-
-
-    if (row.data().TIPO_SOLICITUD === "1") {
-        $('#PERMISO_AUSENCIA').show();
-        $('#GOCE_SUELDO').show();
-        $('#SOLIDA_ALMACEN').hide();
-        $('#SOLICITUD_VACACIONES').hide();
-    } else if (row.data().TIPO_SOLICITUD === "2") {
-        $('#SOLIDA_ALMACEN').show();
-        $('#PERMISO_AUSENCIA').hide();
-        $('#GOCE_SUELDO').hide();
-        $('#SOLICITUD_VACACIONES').hide();
-    } else if (row.data().TIPO_SOLICITUD === "3") {
-        $('#SOLICITUD_VACACIONES').show();
-        $('#PERMISO_AUSENCIA').hide();
-        $('#GOCE_SUELDO').hide();
-        $('#SOLIDA_ALMACEN').hide();
-    }
-
-    if (row.data().CONCEPTO_PERMISO === "9") {
-        $('#EXPLIQUE_PERMISO').show();
-    } else {
-        $('#EXPLIQUE_PERMISO').hide();
-    }
-
-     if (row.data().DAR_BUENO == 1) { 
-        $('#VISTO_BUENO_JEFE').show();
-        $('#MOTIVO_RECHAZO_JEFE_DIV').hide();
-
-    } else if (row.data().DAR_BUENO == 2) {
-        $('#VISTO_BUENO_JEFE').show();
-        $('#MOTIVO_RECHAZO_JEFE_DIV').show();
-
-    } else {
-        $('#VISTO_BUENO_JEFE').hide();
-        $('#MOTIVO_RECHAZO_JEFE_DIV').hide();
-    }  
-
+        else {
+            dias.disabled = false;
+            horas.disabled = false;
+        }
         
 
-    
-    if (row.data().ESTADO_APROBACION === "Aprobada") {
-     $('#SELECCIONAR_SUBIRDOCUMENTO').show();
-    } else if (row.data().ESTADO_APROBACION === "Rechazada") {
-     $('#SELECCIONAR_SUBIRDOCUMENTO').show();            
-    } else {
-     $('#SELECCIONAR_SUBIRDOCUMENTO').hide();
+        if (row.data().TIPO_SOLICITUD === "1") {
+            $('#PERMISO_AUSENCIA').show();
+            $('#GOCE_SUELDO').show();
+            $('#SOLIDA_ALMACEN').hide();
+            $('#SOLICITUD_VACACIONES').hide();
 
-    }
+        $.get('/obtenerContratoPorFechaPermiso/' + CURP, {
+            fecha_inicial: $('#FECHA_INICIAL_PERMISO').val()
+        }, function (response) {
+            mostrarContrato(response);
+        });
+
+            
+            
+        } else if (row.data().TIPO_SOLICITUD === "2") {
+            $('#SOLIDA_ALMACEN').show();
+            $('#PERMISO_AUSENCIA').hide();
+            $('#GOCE_SUELDO').hide();
+            $('#SOLICITUD_VACACIONES').hide();
+        } else if (row.data().TIPO_SOLICITUD === "3") {
+            $('#SOLICITUD_VACACIONES').show();
+            $('#PERMISO_AUSENCIA').hide();
+            $('#GOCE_SUELDO').hide();
+            $('#SOLIDA_ALMACEN').hide();
+
+        $.get('/obtenerContratoPorFechaVacaciones/' + CURP, {
+        fecha_inicio_vacaciones: $('#FECHA_INICIO_VACACIONES').val()
+        }, function (response) {
+            mostrarContrato(response);
+        });
+                    
+
+        }
+
+        if (row.data().CONCEPTO_PERMISO === "9") {
+            $('#EXPLIQUE_PERMISO').show();
+        } else {
+            $('#EXPLIQUE_PERMISO').hide();
+        }
+        
+        if (row.data().CONCEPTO_PERMISO === "2") {
+        $('#goceno').prop('checked', true);
+        }
+        
+    if (row.data().DAR_BUENO == 1) { 
+            $('#VISTO_BUENO_JEFE').show();
+            $('#MOTIVO_RECHAZO_JEFE_DIV').hide();
+        } else if (row.data().DAR_BUENO == 2) {
+            $('#VISTO_BUENO_JEFE').show();
+            $('#MOTIVO_RECHAZO_JEFE_DIV').show();
+        } else {
+            $('#VISTO_BUENO_JEFE').hide();
+            $('#MOTIVO_RECHAZO_JEFE_DIV').hide();
+        }
+
+        
+        if (row.data().FIRMO_APROBACION === "1") {
+            $('#DIV_FIRMAR').hide();
+        } else  {
+            $('#DIV_FIRMAR').show();
+
+            const hoy = new Date();
+            const yyyy = hoy.getFullYear();
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dd = String(hoy.getDate()).padStart(2, '0');
+            const fechaHoy = `${yyyy}-${mm}-${dd}`;
+
+            $("#FECHA_APRUEBA_SOLICITUD").val(fechaHoy);
+        } 
+
+        if (row.data().ESTADO_APROBACION === "Aprobada") {
+        $('#SELECCIONAR_SUBIRDOCUMENTO').show();
+        } else if (row.data().ESTADO_APROBACION === "Rechazada") {
+        $('#SELECCIONAR_SUBIRDOCUMENTO').show();            
+        } else {
+        $('#SELECCIONAR_SUBIRDOCUMENTO').hide();
+
+        }
+
+            
 
         
         
@@ -1121,176 +1153,6 @@ $("#FECHA_INICIO_VACACIONES").on("change", calcularVacaciones);
 
 
 
-
-
-
-// /* ============================================================
-//    FUNCIONES FECHA LOCAL
-// ============================================================ */
-// function crearFechaLocal(ymd) {
-//     let p = ymd.split("-");
-//     return new Date(p[0], p[1] - 1, p[2]);
-// }
-
-// function formatearLocal(d) {
-//     let y = d.getFullYear();
-//     let m = (d.getMonth() + 1).toString().padStart(2, "0");
-//     let da = d.getDate().toString().padStart(2, "0");
-//     return `${y}-${m}-${da}`;
-// }
-
-// /* ============================================================
-//    VARIABLES
-// ============================================================ */
-// let diasNoLaborales = new Set();  // ← AQUÍ SE GUARDAN SÓLO FESTIVOS SELECCIONADOS
-//                                   // LOS DOMINGOS NO SE GUARDAN AQUÍ
-
-
-// /* ============================================================
-//    DATEPICKER PARA MARCAR FESTIVOS Y DOMINGOS
-// ============================================================ */
-// $(document).ready(() => {
-
-//     console.log("=== Datepicker CARGADO ===");
-
-//     $("#NO_DIAS_VACACIONES").datepicker({
-//         format: "yyyy-mm-dd",
-//         autoclose: false,
-//         language: "es"
-//     }).on("changeDate", function (e) {
-
-//         let fecha = formatearLocal(e.date);
-
-//         console.log("Click fecha:", fecha);
-
-//         let dow = e.date.getDay();
-
-//         // si es domingo NO se guarda como festivo, solo afecta regreso
-//         if (dow === 0) {
-//             console.log("Domingo → NO se agrega a festivos");
-//         } else {
-//             // Alternar selección
-//             if (diasNoLaborales.has(fecha)) {
-//                 diasNoLaborales.delete(fecha);
-//                 console.log("❌ Quitado festivo:", fecha);
-//             } else {
-//                 diasNoLaborales.add(fecha);
-//                 console.log("✔ Festivo agregado:", fecha);
-//             }
-//         }
-
-//         // Mostrar lista de festivos seleccionados
-//         $("#NO_DIAS_VACACIONES").val([...diasNoLaborales].join(", "));
-
-//         calcularVacaciones();
-//     });
-
-
-//     // Activar otros calendarios
-//     $("#FECHA_INICIO_VACACIONES, #FECHA_TERMINACION_VACACIONES, #FECHA_INICIALABORES_VACACIONES")
-//         .datepicker({
-//             format: "yyyy-mm-dd",
-//             autoclose: true,
-//             language: "es"
-//         });
-// });
-
-
-// /* ============================================================
-//    CALCULAR FECHA DE VACACIONES
-// ============================================================ */
-// function calcularVacaciones() {
-
-//     let dias = parseInt($("#DIAS_DISFRUTAR_VACACIONES").val());
-//     let inicio = $("#FECHA_INICIO_VACACIONES").val();
-//     if (!dias || !inicio) return;
-
-//     console.log("---- CALCULANDO VACACIONES ----");
-
-//     let fecha = crearFechaLocal(inicio);
-//     let usados = 1;
-
-//     console.log("Día #1 contado:", formatearLocal(fecha));
-
-//     while (usados < dias) {
-
-//         fecha.setDate(fecha.getDate() + 1);
-
-//         let ymd = formatearLocal(fecha);
-//         let dow = fecha.getDay();
-
-//         console.log("Evaluando:", ymd, " dow:", dow);
-
-//         // NO cuentan domingos
-//         if (dow === 0) {
-//             console.log("⛔ Domingo → NO cuenta");
-//             continue;
-//         }
-
-//         // NO cuentan festivos seleccionados
-//         if (diasNoLaborales.has(ymd)) {
-//             console.log("⛔ Festivo → NO cuenta");
-//             continue;
-//         }
-
-//         usados++;
-//         console.log("✔ Día contado #" + usados, ymd);
-//     }
-
-//     let fin = formatearLocal(fecha);
-//     console.log(">>> FECHA FINAL =", fin);
-
-//     $("#FECHA_TERMINACION_VACACIONES").val(fin);
-
-//     calcularRegreso(fin);
-// }
-
-
-// /* ============================================================
-//    CALCULAR FECHA DE REGRESO
-// ============================================================ */
-// function calcularRegreso(fin) {
-
-//     console.log("---- CALCULANDO REGRESO ----");
-
-//     let d = crearFechaLocal(fin);
-
-//     while (true) {
-
-//         d.setDate(d.getDate() + 1);
-
-//         let ymd = formatearLocal(d);
-//         let dow = d.getDay();
-
-//         console.log("Regreso eval:", ymd, "→", dow);
-
-//         // Domingo NO laboral
-//         if (dow === 0) {
-//             console.log("⛔ Domingo → NO laboral");
-//             continue;
-//         }
-
-//         // Festivo seleccionado = NO laboral
-//         if (diasNoLaborales.has(ymd)) {
-//             console.log("⛔ Festivo seleccionado → NO laboral");
-//             continue;
-//         }
-
-//         console.log("✔ Regresa a labores:", ymd);
-//         $("#FECHA_INICIALABORES_VACACIONES").val(ymd);
-//         break;
-//     }
-// }
-
-
-
-
-
-// /* ============================================================
-//    EVENTOS
-// ============================================================ */
-// $("#DIAS_DISFRUTAR_VACACIONES").on("input", calcularVacaciones);
-// $("#FECHA_INICIO_VACACIONES").on("change", calcularVacaciones);
 
 
 
