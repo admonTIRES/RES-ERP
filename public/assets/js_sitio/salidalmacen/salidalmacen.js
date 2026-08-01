@@ -248,19 +248,21 @@ $("#guardaRECEMPLEADOS").click(function (e) {
 
 
 var Tablasalidalmacen = $("#Tablasalidalmacen").DataTable({
-    language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
-    lengthChange: true,
-    lengthMenu: [
-        [10, 25, 50, -1],
-        [10, 25, 50, 'All']
-    ],
-    info: false,
+   language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+    },
+    scrollX: true,
+    autoWidth: false,
+    responsive: false,
     paging: true,
     searching: true,
     filtering: true,
-    scrollY: '65vh',
-    scrollCollapse: true,
-    responsive: true,
+    lengthChange: true,
+    info: true,   
+    scrollY: false,
+    scrollCollapse: false,
+    fixedHeader: false,    
+    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
     ajax: {
         dataType: 'json',
         data: {},
@@ -316,12 +318,53 @@ columnDefs: [
         $(row).addClass(data.COLOR_FILA);
     }
 },
-
+ infoCallback: function (settings, start, end, max, total, pre) {
+            return `Total de ${total} registros`;
+    },
 
 
 });
 
 
+
+let colorSeleccionado = null;
+
+$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+
+    if (settings.nTable.id !== 'Tablasalidalmacen') {
+        return true;
+    }
+
+    if (!colorSeleccionado) return true;
+
+    let row = Tablasalidalmacen.row(dataIndex).node();
+
+    return $(row).hasClass(colorSeleccionado);
+});
+
+
+$(document).on('click', '.filtro-color', function () {
+
+    let color = $(this).data('color');
+
+    if (colorSeleccionado === color) {
+        colorSeleccionado = null;
+        $('.filtro-color').removeClass('active');
+    } else {
+        colorSeleccionado = color;
+        $('.filtro-color').removeClass('active');
+        $(this).addClass('active');
+    }
+
+    Tablasalidalmacen.draw();
+});
+
+
+$('#limpiarFiltro').on('click', function () {
+    colorSeleccionado = null;
+    $('.filtro-color').removeClass('active');
+    Tablasalidalmacen.draw();
+});
 
 
 $(document).ready(function() {

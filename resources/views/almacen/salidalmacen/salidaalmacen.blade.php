@@ -12,6 +12,11 @@
         background-color: #d4edda !important;
     }
 
+    .bg-rojo-suave {
+        background-color: #f8d7da !important;
+    }
+
+
     .select2-dropdown-fixed {
         position: absolute !important;
         top: unset !important;
@@ -23,13 +28,84 @@
         color: #fcba6fff !important;
         font-style: italic;
     }
+
+
+    .progress {
+        background-color: #eee;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress div {
+        height: 100%;
+        transition: width 0.5s ease;
+    }
+
+
+    .filtro-color {
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .filtro-color:hover {
+        opacity: 0.7;
+    }
+
+    .filtro-color.active {
+        border: 2px solid #000;
+    }
+
+    .progress {
+        background-color: #eee;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 </style>
 
 <div class="contenedor-contenido">
     <ol class="breadcrumb mb-5" style="display: flex; justify-content: center; align-items: center;">
         <h3 style="color: #ffffff; margin: 0;"><i class="bi bi-box-arrow-right"></i>&nbsp;Salida de almacén de materiales y/o equipos</h3>
-
     </ol>
+
+
+    <div class="mb-3">
+
+        <div class="mb-2 filtro-color" data-color="bg-verde-suave">
+            <div class="d-flex justify-content-between">
+                <span>Finalizada</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-verde-suave" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="mb-2 filtro-color" data-color="bg-amarillo-suave">
+            <div class="d-flex justify-content-between">
+                <span>Pendiente por retornar</span>
+            </div>
+
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-amarillo-suave" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="mb-2 filtro-color" data-color="bg-rojo-suave">
+            <div class="d-flex justify-content-between">
+                <span>Retorno vencido</span>
+            </div>
+
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-rojo-suave" style="width: 100%;"></div>
+            </div>
+        </div>
+        <div class="text-end mt-2">
+            <button id="limpiarFiltro" class="btn btn-secondary btn-sm">
+                Mostrar todo
+            </button>
+        </div>
+
+    </div>
+
 
     <div class="card-body">
         <table id="Tablasalidalmacen" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
