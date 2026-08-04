@@ -46,11 +46,14 @@ class listaasignacionController extends Controller
             $tabla = inventarioModel::where('ASIGNADO', 1)->get();
 
             foreach ($tabla as $value) {
+
                 if ($value->ACTIVO == 0) {
+
                     $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
                     $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_INVENTARIO . '"><span class="slider round"></span></label>';
                     $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
                 } else {
+
                     $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_INVENTARIO . '" checked><span class="slider round"></span></label>';
                     $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
                     $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
@@ -75,18 +78,21 @@ class listaasignacionController extends Controller
                     'OBSERVACION_EQUIPO'
                 ];
 
-
                 $completo = true;
+
                 foreach ($campos as $campo) {
+
                     if (empty($value->$campo)) {
+
                         $completo = false;
                         break;
                     }
                 }
 
-                if (!is_null($value->LIMITEMINIMO_EQUIPO) && $value->LIMITEMINIMO_EQUIPO !== '') {
-                    $cantidad = (float)$value->CANTIDAD_EQUIPO;
-                    $minimo = (float)$value->LIMITEMINIMO_EQUIPO;
+                if (!is_null($value->LIMITEMINIMO_EQUIPO) && $value->LIMITEMINIMO_EQUIPO !== '') 
+                {
+                    $cantidad = (float) $value->CANTIDAD_EQUIPO;
+                    $minimo = (float) $value->LIMITEMINIMO_EQUIPO;
 
                     if ($cantidad <= $minimo) {
                         $value->ROW_CLASS = 'bg-amarrillo-suave';
@@ -98,51 +104,90 @@ class listaasignacionController extends Controller
                 }
 
                 if ($value->ASIGNADO == 1) {
+
                     $value->ROW_CLASS = 'bg-naranja-suave';
                 }
-               
 
-                $asignacion = DB::table('asignaciones_inventario')
-                    ->where('INVENTARIO_ID', $value->ID_FORMULARIO_INVENTARIO)
-                    ->orderBy('ID_ASIGNACION_FORMULARIO', 'desc')
-                    ->first();
+                
+                $asignaciones = DB::table('asignaciones_inventario')
+                    ->where('INVENTARIO_ID',$value->ID_FORMULARIO_INVENTARIO)
+                    ->orderBy('ID_ASIGNACION_FORMULARIO','desc')
+                    ->get();
 
-                if ($asignacion) {
+                $personasAsignadas = [];
+
+                foreach ($asignaciones as $asignacion) {
 
                     $asignadoID = trim($asignacion->ASIGNADO_ID);
-                    $textoAsignado = '';
 
+                    if ($asignadoID == '') {
+
+                        continue;
+                    }
+
+                   
                     $colaborador = DB::table('formulario_contratacion')
                         ->where('CURP', $asignadoID)
                         ->first();
 
                     if ($colaborador) {
-                        $textoAsignado = "Colaborador: {$colaborador->NOMBRE_COLABORADOR} {$colaborador->PRIMER_APELLIDO} {$colaborador->SEGUNDO_APELLIDO}";
-                    } else {
-                        $proveedor = DB::table('formulario_directorio')
-                            ->where('RFC_PROVEEDOR', $asignadoID)
-                            ->first();
 
-                        if ($proveedor) {
-                            $textoAsignado = "Proveedor: {$proveedor->NOMBRE_DIRECTORIO} ({$proveedor->RFC_PROVEEDOR})";
-                        } else {
-                            $textoAsignado = "No encontrado";
-                        }
+                        $nombreColaborador = trim(
+                            $colaborador->NOMBRE_COLABORADOR . ' ' .
+                                $colaborador->PRIMER_APELLIDO . ' ' .
+                                $colaborador->SEGUNDO_APELLIDO
+                        );
+
+                        $personasAsignadas[] = 'Colaborador: ' . $nombreColaborador;
+
+                        continue;
                     }
 
-                    $value->ASIGNADO_USUARIO = $textoAsignado;
+        
+                    $proveedor = DB::table('formulario_directorio')
+                        ->where('RFC_PROVEEDOR', $asignadoID)
+                        ->first();
+
+                    if ($proveedor) {
+
+                        $personasAsignadas[] ='Proveedor: ' .$proveedor->NOMBRE_DIRECTORIO .' (' .$proveedor->RFC_PROVEEDOR .')';
+                    } else {
+
+                        $personasAsignadas[] =
+                            'No encontrado: ' . $asignadoID;
+                    }
+                }
+
+             
+                $personasAsignadas = array_unique(
+                    $personasAsignadas
+                );
+
+                if (count($personasAsignadas) > 0) {
+
+                    $listaAsignados = '<ul style="margin: 0; padding-left: 20px;">';
+
+                    foreach ($personasAsignadas as $personaAsignada) {
+
+                        $listaAsignados .=
+                            '<li>' .htmlspecialchars($personaAsignada,ENT_QUOTES,'UTF-8') .'</li>';
+                    }
+
+                    $listaAsignados .= '</ul>';
+
+                    $value->ASIGNADO_USUARIO = $listaAsignados;
                 } else {
-                    $value->ASIGNADO_USUARIO = "SIN ASIGNACIÓN";
+
+                    $value->ASIGNADO_USUARIO = 'SIN ASIGNACIÓN';
                 }
             }
 
-
-            // Respuesta
             return response()->json([
                 'data' => $tabla,
                 'msj' => 'Información consultada correctamente'
             ]);
         } catch (Exception $e) {
+
             return response()->json([
                 'msj' => 'Error ' . $e->getMessage(),
                 'data' => 0
