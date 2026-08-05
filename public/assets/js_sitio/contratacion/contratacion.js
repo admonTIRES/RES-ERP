@@ -5529,7 +5529,9 @@ const equiposPorCategoria = {
     ],
     "Extremidades superiores": [
         "Guante de nitrilo",
-        "Guante punto PVC"
+        "Guante punto PVC",
+        "Guantes anti corte",
+
     ],
     "Tronco": [
         "Chaleco salvavidas tipo V",
@@ -5918,15 +5920,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.value == '13') {
             nombreDocumento.removeAttribute('readonly');
             nombreDocumento.value = ''; 
-        } else {
-            nombreDocumento.value = selectedOption; 
-        }
-    });
-});
+        } else {        nombreDocumento.value = selectedOption; 
+     }
+    });});
 
-
-
-$("#guardarSOPORTECONTRATO").click(function (e) {
+$("#guardarSOPORTECONTRATO").click(function (e)
     e.preventDefault();
 
     formularioValido = validarFormularioV1('formularioSOPORTECONTRATO');
@@ -6024,20 +6022,11 @@ MiModal_SOPORTECONTRATO.addEventListener('hidden.bs.modal', event => {
     
     ID_DOCUMENTO_COLABORADOR_CONTRATO = 0
     document.getElementById('formularioSOPORTECONTRATO').reset();
-   
     $('#miModal_SOPORTECONTRATO .modal-title').html('Documentos de soporte contrato');
-
     document.getElementById('quitar_soportecontrato').style.display = 'none';
-
     document.getElementById('DOCUEMNTO_ERROR_SOPORTECONTRATO').style.display = 'none';
-
-
-    document.getElementById('FECHAS_SOPORTEDOCUMENTOSCONTRATO').style.display = 'none';
-
-
+    document.getElementById('FECHAS_SOPORTEDUMENTOSCONTRATO').style.display = 'none';
     document.getElementById('DIV_FOTO_FIRMA').style.display = 'none';
-
-
 
 })
 
@@ -6077,10 +6066,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
-
-
-
 
 
 function cargarTablaDocumentoscolaboradorcontrato() {
