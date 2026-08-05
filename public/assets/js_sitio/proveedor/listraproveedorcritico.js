@@ -3075,7 +3075,9 @@ const equiposPorCategoria = {
     ],
     "Extremidades superiores": [
         "Guante de nitrilo",
-        "Guante punto PVC"
+        "Guante punto PVC",
+        "Guantes anti corte",
+
     ],
     "Tronco": [
         "Chaleco salvavidas tipo V",
