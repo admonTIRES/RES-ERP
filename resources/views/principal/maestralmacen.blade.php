@@ -506,7 +506,7 @@
     @endif
 
     @if(request()->is('listadeinfraestructura'))
-    <script src="/assets/js_sitio/listadeinfraestructura/listadeinfraestructura.js?v=1"></script>
+    <script src="/assets/js_sitio/listadeinfraestructura/listadeinfraestructura.js?v=2"></script>
     @endif
 
     @if(request()->is('catalogokits'))

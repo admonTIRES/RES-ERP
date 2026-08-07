@@ -1,10 +1,12 @@
 ID_FORMULARIO_INVENTARIO = 0
 ID_ENTRADA_FORMULARIO = 0
 ID_DOCUMENTO_ARTICULO = 0
+ID_DETALLE_ARTICULO = 0
 
 
 
 var inventario_id = null; 
+
 
 const Modalinventario = document.getElementById('Modal_inventario')
 Modalinventario.addEventListener('hidden.bs.modal', event => {
@@ -12,21 +14,16 @@ Modalinventario.addEventListener('hidden.bs.modal', event => {
     ID_FORMULARIO_INVENTARIO = 0
     document.getElementById('formularioINVENTARIO').reset();
    
+    $('#CANTIDAD_EQUIPO').prop('readonly', false);
+
     $('#Modal_inventario .modal-title').html('Equipo');
 
+    inventario_id = 0; 
 
 })
 
 
-function limpiarFormularioUsuario() {
-    $('#formularioINVENTARIO')[0].reset(); 
 
-    var drEvent = $('#FOTO_EQUIPO').data('dropify');
-    if (drEvent) {
-        drEvent.resetPreview();
-        drEvent.clearElement();
-    }
-}
 
 function obtenerModalPadre(elemento) {
     const modalBody = $(elemento).closest(".modal-body");
@@ -63,10 +60,65 @@ function initSelectProveedor() {
 }
 
 
+
+
+$(document).ready(function() {
+    $('#NUEVO_EQUIPO').on('click', function() {
+        limpiarFormularioInventario(); 
+
+        initSelectProveedor();
+
+        
+        $('#FOTO_EQUIPO').dropify({
+            messages: {
+                'default': 'Arrastre la imagen aquí o haga clic',
+                'replace': 'Arrastre la imagen aquí o haga clic para reemplazar',
+                'remove':  'Quitar',
+                'error':   'Ooops, ha ocurrido un error.'
+            },
+            error: {
+                'fileSize': 'El archivo es demasiado grande (máx. {{ value }}).',
+                'minWidth': 'El ancho de la imagen es demasiado pequeño (mín. {{ value }}px).',
+                'maxWidth': 'El ancho de la imagen es demasiado grande (máx. {{ value }}px).',
+                'minHeight': 'La altura de la imagen es demasiado pequeña (mín. {{ value }}px).',
+                'maxHeight': 'La altura de la imagen es demasiado grande (máx. {{ value }}px).',
+                'imageFormat': 'Formato no permitido, sólo se aceptan: ({{ value }}).'
+            }
+        });
+
+        $('#Modal_inventario').modal('show');
+        $("#tab1-info").click();
+        $("#tab2-entrada").prop("disabled", true);
+        $("#tab2-entrada").hide();
+        $("#tab3-documentos").hide();
+        $("#tab5-detalle").hide();
+        $("#PROVEEDORES_ACTIVOS").show();
+        $("#ESCRIBIR_PROVEEDOR").hide();
+        $("#MOSTRAR_ALERTA_DOCUMENTOS").hide();
+        $("#DATOS_VEHICULOS").hide();
+        $('#CANTIDAD_EQUIPO').attr('readonly', false);
+
+        inventario_id = 0; 
+
+    });
+
+});
+
+function limpiarFormularioInventario() {
+    $('#formularioINVENTARIO')[0].reset(); 
+
+    var drEvent = $('#FOTO_EQUIPO').data('dropify');
+    if (drEvent) {
+        drEvent.resetPreview();
+        drEvent.clearElement();
+    }
+}
+
 $("#guardarINVENTARIO").click(function (e) {
     e.preventDefault();
 
-        formularioValido = validarFormulario3($('#formularioINVENTARIO'))
+
+            formularioValido = validarFormulario3($('#formularioINVENTARIO'))
 
     if (formularioValido) {
 
@@ -95,13 +147,12 @@ $("#guardarINVENTARIO").click(function (e) {
                 
             }, function (data) {
                     
-
-                ID_FORMULARIO_INVENTARIO = data.inventario.ID_FORMULARIO_INVENTARIO
+                    inventario_id = data.inventario.ID_FORMULARIO_INVENTARIO;
+                    ID_FORMULARIO_INVENTARIO = data.inventario.ID_FORMULARIO_INVENTARIO
                     alertMensaje('success','Información guardada correctamente', 'Esta información esta lista para usarse',null,null, 1500)
-                     $('#Modal_inventario').modal('hide')
-                    document.getElementById('formularioINVENTARIO').reset();
+                    //  $('#Modal_inventario').modal('hide')
+                    // document.getElementById('formularioINVENTARIO').reset();
                     Tablalistainfraestructura.ajax.reload()
-
         
             })
             
@@ -140,7 +191,6 @@ $("#guardarINVENTARIO").click(function (e) {
                     document.getElementById('formularioINVENTARIO').reset();
                     Tablalistainfraestructura.ajax.reload()
 
-
                 }, 300);  
             })
         }, 1)
@@ -153,6 +203,10 @@ $("#guardarINVENTARIO").click(function (e) {
 }
     
 });
+
+
+
+
 
 
 
@@ -266,13 +320,22 @@ drawCallback: function () {
 
 
 
+document.getElementById('TIPO_EQUIPO').addEventListener('change', function () {
+    const tipo = this.value;
+    const divVehiculos = document.getElementById('DATOS_VEHICULOS');
+
+    if (tipo === 'Vehículos') {
+        divVehiculos.style.display = 'block';
+    } else {
+        divVehiculos.style.display = 'none';
+    }
+});
 
 
 $('#Tablalistainfraestructura tbody').on('click', 'td>button.EDITAR', function () {
     var tr = $(this).closest('tr');
     var row = Tablalistainfraestructura.row(tr);
     ID_FORMULARIO_INVENTARIO = row.data().ID_FORMULARIO_INVENTARIO;
-
 
     inventario_id = row.data().ID_FORMULARIO_INVENTARIO;
 
@@ -334,9 +397,7 @@ $('#Tablalistainfraestructura tbody').on('click', 'td>button.EDITAR', function (
     cantidad.addEventListener("input", calcularTotal);
     unitario.addEventListener("input", calcularTotal);
 
-
-
-     calcularTotal();
+    calcularTotal();
    
     $("#tab2-entrada").show();
             
@@ -385,21 +446,33 @@ $('#Tablalistainfraestructura tbody').on('click', 'td>button.EDITAR', function (
         cargarTablaDocumentosEquipo();
     });
 
+  
+
 
     $.get('/cantidadEquipoReadonly', function (resp) {
 
     if (resp.readonly === true) {
         $('#CANTIDAD_EQUIPO').attr('readonly', true);
-        $('#LIMITEMINIMO_EQUIPO').attr('readonly', true);
 
     } else {
         $('#CANTIDAD_EQUIPO').removeAttr('readonly');
-        $('#LIMITEMINIMO_EQUIPO').removeAttr('readonly');
 
     }
 
     });
 
+
+     if (row.data().DETALLAR_ARTICULOS === "1") {
+       $("#tab5-detalle").show();
+      
+    } else {
+       $("#tab5-detalle").hide();
+
+    }
+
+    $("#tab5-detalle").off("click").on("click", function () {
+        cargarTablaDetallaArticulo();
+    });
 
     initSelectProveedor();
 
@@ -408,94 +481,88 @@ $('#Tablalistainfraestructura tbody').on('click', 'td>button.EDITAR', function (
         .val(row.data().PROVEEDOR_EQUIPO)
         .trigger('change');
     }
-
-
-
-
     
 
 });
 
-
 $(document).ready(function() {
     $('#Tablalistainfraestructura tbody').on('click', 'td>button.VISUALIZAR', function () {
-    var tr = $(this).closest('tr');
-    var row = Tablalistainfraestructura.row(tr);
+        var tr = $(this).closest('tr');
+        var row = Tablalistainfraestructura.row(tr);
+        
+        hacerSoloLecturainventario(row.data(), '#Modal_inventario');
+
+        ID_FORMULARIO_INVENTARIO = row.data().ID_FORMULARIO_INVENTARIO;
+
+        inventario_id = row.data().ID_FORMULARIO_INVENTARIO;
     
-    hacerSoloLecturainventario(row.data(), '#Modal_inventario');
-
-    ID_FORMULARIO_INVENTARIO = row.data().ID_FORMULARIO_INVENTARIO;
-
-    inventario_id = row.data().ID_FORMULARIO_INVENTARIO;
-
-    $("#tab1-info").click();
-
-    $("#tab2-entrada").off("click").on("click", function () {
-        cargartablaentradainventario();
-    });
-
-
-    editarDatoTablainventario(row.data(), 'formularioINVENTARIO', 'Modal_inventario', 1);
+        $("#tab1-info").click();
     
-
-    if (row.data().FOTO_EQUIPO) {
-    var archivo = row.data().FOTO_EQUIPO;
-    var extension = archivo.substring(archivo.lastIndexOf("."));
-    var imagenUrl = '/equipofoto/' + row.data().ID_FORMULARIO_INVENTARIO + extension;
-
-    if ($('#FOTO_EQUIPO').data('dropify')) {
-        $('#FOTO_EQUIPO').dropify().data('dropify').destroy();
-        $('#FOTO_EQUIPO').dropify().data('dropify').settings.defaultFile = imagenUrl;
-        $('#FOTO_EQUIPO').dropify().data('dropify').init();
-    } else {
-        $('#FOTO_EQUIPO').attr('data-default-file', imagenUrl);
-        $('#FOTO_EQUIPO').dropify({
-            messages: {
-                'default': 'Arrastre la imagen aquí o haga click',
-                'replace': 'Arrastre la imagen o haga clic para reemplazar',
-                'remove': 'Quitar',
-                'error': 'Ooops, ha ocurrido un error.'
-            },
-            error: {
-                'fileSize': 'Demasiado grande ({{ value }} max).',
-                'minWidth': 'Ancho demasiado pequeño (min {{ value }}}px).',
-                'maxWidth': 'Ancho demasiado grande (max {{ value }}}px).',
-                'minHeight': 'Alto demasiado pequeño (min {{ value }}}px).',
-                'maxHeight': 'Alto demasiado grande (max {{ value }}px).',
-                'imageFormat': 'Formato no permitido, sólo ({{ value }}).'
-            }
+        $("#tab2-entrada").off("click").on("click", function () {
+            cargartablaentradainventario();
         });
-    }
-} else {
-    $('#FOTO_EQUIPO').dropify().data('dropify').resetPreview();
-    $('#FOTO_EQUIPO').dropify().data('dropify').clearElement();
-    }
-    
-    $('#Modal_inventario .modal-title').html(row.data().DESCRIPCION_EQUIPO);
-    
+
+
+        editarDatoTablainventario(row.data(), 'formularioINVENTARIO', 'Modal_inventario', 1);
+        
+
+        if (row.data().FOTO_EQUIPO) {
+        var archivo = row.data().FOTO_EQUIPO;
+        var extension = archivo.substring(archivo.lastIndexOf("."));
+        var imagenUrl = '/equipofoto/' + row.data().ID_FORMULARIO_INVENTARIO + extension;
+
+        if ($('#FOTO_EQUIPO').data('dropify')) {
+            $('#FOTO_EQUIPO').dropify().data('dropify').destroy();
+            $('#FOTO_EQUIPO').dropify().data('dropify').settings.defaultFile = imagenUrl;
+            $('#FOTO_EQUIPO').dropify().data('dropify').init();
+        } else {
+            $('#FOTO_EQUIPO').attr('data-default-file', imagenUrl);
+            $('#FOTO_EQUIPO').dropify({
+                messages: {
+                    'default': 'Arrastre la imagen aquí o haga click',
+                    'replace': 'Arrastre la imagen o haga clic para reemplazar',
+                    'remove': 'Quitar',
+                    'error': 'Ooops, ha ocurrido un error.'
+                },
+                error: {
+                    'fileSize': 'Demasiado grande ({{ value }} max).',
+                    'minWidth': 'Ancho demasiado pequeño (min {{ value }}}px).',
+                    'maxWidth': 'Ancho demasiado grande (max {{ value }}}px).',
+                    'minHeight': 'Alto demasiado pequeño (min {{ value }}}px).',
+                    'maxHeight': 'Alto demasiado grande (max {{ value }}px).',
+                    'imageFormat': 'Formato no permitido, sólo ({{ value }}).'
+                }
+            });
+        }
+    } else {
+        $('#FOTO_EQUIPO').dropify().data('dropify').resetPreview();
+        $('#FOTO_EQUIPO').dropify().data('dropify').clearElement();
+        }
+        
+        $('#Modal_inventario .modal-title').html(row.data().DESCRIPCION_EQUIPO);
+        
         
                 
-    const cantidad = document.getElementById("CANTIDAD_EQUIPO");
-    const unitario = document.getElementById("UNITARIO_EQUIPO");
-    const total = document.getElementById("TOTAL_EQUIPO");
+        const cantidad = document.getElementById("CANTIDAD_EQUIPO");
+        const unitario = document.getElementById("UNITARIO_EQUIPO");
+        const total = document.getElementById("TOTAL_EQUIPO");
 
-    function calcularTotal() {
-        let cant = parseFloat(cantidad.value) || 0;
-        let precio = parseFloat(unitario.value) || 0;
+        function calcularTotal() {
+            let cant = parseFloat(cantidad.value) || 0;
+            let precio = parseFloat(unitario.value) || 0;
 
-        if (cant === 0 || precio === 0) {
-            total.value = "0.00";
-        } else {
-            total.value = (cant * precio).toFixed(2);
+            if (cant === 0 || precio === 0) {
+                total.value = "0.00";
+            } else {
+                total.value = (cant * precio).toFixed(2);
+            }
         }
-    }
 
-    cantidad.removeEventListener("input", calcularTotal); 
-    unitario.removeEventListener("input", calcularTotal);
-    cantidad.addEventListener("input", calcularTotal);
-    unitario.addEventListener("input", calcularTotal);
+        cantidad.removeEventListener("input", calcularTotal); 
+        unitario.removeEventListener("input", calcularTotal);
+        cantidad.addEventListener("input", calcularTotal);
+        unitario.addEventListener("input", calcularTotal);
 
-   
         calcularTotal();
                    
         
@@ -551,8 +618,20 @@ $(document).ready(function() {
         cargarTablaDocumentosEquipo();
     });
 
+   
         
-        
+    if (row.data().DETALLAR_ARTICULOS === "1") {
+       $("#tab5-detalle").show();
+      
+    } else {
+       $("#tab5-detalle").hide();
+
+    }
+
+    $("#tab5-detalle").off("click").on("click", function () {
+        cargarTablaDetallaArticulo();
+    });
+
         
     initSelectProveedor();
 
@@ -569,8 +648,6 @@ $(document).ready(function() {
     });
 });
 
-
-
 $('#Tablalistainfraestructura tbody').on('change', 'td>label>input.ELIMINAR', function () {
     var tr = $(this).closest('tr');
     var row = Tablalistainfraestructura.row(tr);
@@ -585,7 +662,6 @@ $('#Tablalistainfraestructura tbody').on('change', 'td>label>input.ELIMINAR', fu
 
     eliminarDatoTabla(data, [Tablalistainfraestructura], 'inventarioDelete');
 });
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const cantidad = document.getElementById("CANTIDAD_EQUIPO");
@@ -603,7 +679,6 @@ document.addEventListener("DOMContentLoaded", function () {
     cantidad.addEventListener("input", calcularTotal);
     unitario.addEventListener("input", calcularTotal);
 });
-
 
 $('#TIPO_EQUIPO').on('change', function () {
     const tipo = $(this).val();
@@ -645,14 +720,37 @@ $('#TIPO_EQUIPO').on('change', function () {
             }
         });
     } else {
-        $('#CODIGO_EQUIPO').val('');
+        $('#CODIGO_EQUIPO').val('N/A');
     }
 });
 
 
+document.addEventListener("DOMContentLoaded", function () {
+
+    const proveedorAlta = document.getElementById("PROVEEDOR_ALTA");
+    const proveedoresActivos = document.getElementById("PROVEEDORES_ACTIVOS");
+    const escribirProveedor = document.getElementById("ESCRIBIR_PROVEEDOR");
+
+    proveedoresActivos.style.display = "none";
+    escribirProveedor.style.display = "none";
+
+    proveedorAlta.addEventListener("change", function () {
+
+        if (this.value === "1") {
+            proveedoresActivos.style.display = "block";
+            escribirProveedor.style.display = "none";
+        }
+
+        if (this.value === "2") {
+            proveedoresActivos.style.display = "none";
+            escribirProveedor.style.display = "block";
+        }
+
+    });
+});
+
 
 ////////////////////////  ENTRADA INVENTARIO TAB 2 ////////////////////////
-
 
 function cargartablaentradainventario() {
     if ($.fn.DataTable.isDataTable('#Tablaentradainventario')) {
@@ -753,8 +851,153 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+////////////////////////////////// SUBIR EXCEL //////////////////////////////////
+
+$(document).ready(function () {
+
+    $('#boton_cargarExcelEquipos').on('click', function (e) {
+        e.preventDefault();
+
+        $('#divCargaEquipos').css('display', 'none');
+        $('#alertaVerificacion').css('display', 'none');
+
+        $('#formExcelEquipos')[0].reset();
+
+        $('#modal_excel_equipo').modal({
+            backdrop: false,
+            keyboard: true
+        }).modal('show');
+    });
+
+    $('#modal_excel_equipo').on('hidden.bs.modal', function () {
+        $('#formExcelEquipos')[0].reset();
+        $('#divCargaEquipos').css('display', 'none');
+        $('#alertaVerificacion').css('display', 'none');
+    });
+
+ $("#botonCargarExcelEquipos").click(function (e) {
+    e.preventDefault();
+
+    let form = $('#formExcelEquipos')[0];
+    let formData = new FormData(form);
+    formData.append("api", 2);
+
+    $.ajax({
+        url: "/InventarioSave",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        beforeSend: function () {
+            $('#botonCargarExcelEquipos').prop('disabled', true);
+            $('#divCargaEquipos').css('display', 'block');
+        },
+        success: function (dato) {
+            $('#botonCargarExcelEquipos').prop('disabled', false);
+            $('#divCargaEquipos').css('display', 'none');
+
+            if (dato.code == 200) {
+                Tablalistainfraestructura.ajax.reload();
+                $('#modal_excel_equipo').modal('hide');
+
+                swal({
+                    title: "Equipos cargados",
+                    text: dato.msj,
+                    type: "success",
+                    showConfirmButton: true
+                });
+            } else {
+                swal({
+                    title: "Error",
+                    text: dato.msj,
+                    type: "error",
+                    showConfirmButton: true
+                });
+            }
+        },
+        error: function (xhr) {
+            $('#botonCargarExcelEquipos').prop('disabled', false);
+            $('#divCargaEquipos').css('display', 'none');
+
+            swal({
+                title: "Error",
+                text: xhr.responseText,
+                type: "error"
+            });
+        }
+    });
+});
+
+
+  $('#excelEquipos').change(function() {
+        if ($(this).val()) {
+            
+            $('#alertaVerificacion').css('display', 'block');
+
+        } else {
+            $('#alertaVerificacion').css('display', 'none');
+            
+        }
+    });
+
+});
 
 ////////////////////////////////// DOCUMENTOS ARTICULO //////////////////////////////////
+
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const selectCalibracion = document.getElementById('REQUIERE_ARTICULO');
+    const tabCalibracion = document.getElementById('tab3-documentos');
+
+    selectCalibracion.addEventListener('change', function () {
+
+        if (this.value === "1") {
+            tabCalibracion.style.display = 'block';
+        } else {
+            tabCalibracion.style.display = 'none';
+        }
+
+    });
+
+});
+
+
+function guardarRequiereItem() {
+
+    const valor = document.getElementById('REQUIERE_ARTICULO').value;
+
+    if (!inventario_id || !valor) {
+        return;
+    }
+
+    fetch('/guardarRequiereItem', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            ID_FORMULARIO_INVENTARIO: inventario_id,
+            REQUIERE_ARTICULO: valor
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.code === 1) {
+            Tablalistainfraestructura.ajax.reload(null, false);
+        } else {
+            alert('Error al guardar calibración');
+        }
+
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
 
 
 const Modaldocumento = document.getElementById('miModal_DOCUMENTOS')
@@ -813,7 +1056,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
 $(document).ready(function() {
     $('input[name="INDETERMINADO_DOCUMENTO"]').on('change', function() {
         if ($(this).val() === '1') { 
@@ -826,7 +1068,6 @@ $(document).ready(function() {
         }
     });
 });
-
 
 $("#guardarDOCUMENTACION").click(function (e) {
     e.preventDefault();
@@ -1012,7 +1253,6 @@ $('#Tabladocumentosinventario').on('click', 'td>button.EDITAR', function () {
 
 });
 
-
 $('#Tabladocumentosinventario').on('click', '.ver-archivo-documentosequipo', function (e) {
     e.preventDefault(); 
     e.stopPropagation(); 
@@ -1034,8 +1274,6 @@ $('#Tabladocumentosinventario').on('click', '.ver-archivo-documentosequipo', fun
 
     window.open(url, '_blank');
 });
-
-
 
 ////////////////////////////////// FECHAS DOCUMENTOS //////////////////////////////////
 
@@ -1094,3 +1332,281 @@ function cargarDocumentos(inventario_id) {
     });
 }
 
+////////////////////////////////// DETALLE ARTICULO //////////////////////////////////
+
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const selectCalibracion = document.getElementById('DETALLAR_ARTICULOS');
+    const tabCalibracion = document.getElementById('tab5-detalle');
+
+    selectCalibracion.addEventListener('change', function () {
+
+        if (this.value === "1") {
+            tabCalibracion.style.display = 'block';
+        } else {
+            tabCalibracion.style.display = 'none';
+        }
+
+    });
+
+});
+
+
+function guardarDetallearticulo() {
+
+    const valor = document.getElementById('DETALLAR_ARTICULOS').value;
+
+    if (!inventario_id || !valor) {
+        return;
+    }
+
+    fetch('/guardarDetallearticulo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            ID_FORMULARIO_INVENTARIO: inventario_id,
+            DETALLAR_ARTICULOS: valor
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.code === 1) {
+            Tablalistainfraestructura.ajax.reload(null, false);
+        } else {
+            alert('Error al guardar calibración');
+        }
+
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
+
+//////////////////////////////////  DETALLE ARTICULO //////////////////////////////////
+
+const Modaldetalle= document.getElementById('miModal_DETALLE')
+Modaldetalle.addEventListener('hidden.bs.modal', event => {
+     
+    ID_DETALLE_ARTICULO = 0
+
+    document.getElementById('formularioDETALLE').reset();
+
+    $('#miModal_DETALLE .modal-title').html('Nuevo detalle');
+   
+
+})
+
+$("#NUEVO_DETALLE").click(function (e) {
+    e.preventDefault();
+
+    $('#formularioDETALLE').each(function(){
+        this.reset();
+    });
+
+    $("#miModal_DETALLE").modal("show");
+   
+});
+
+$("#guardarDETALLEARTICULO").click(function (e) {
+    e.preventDefault();
+
+    formularioValido = validarFormulario3($('#formularioDETALLE'))
+
+    if (formularioValido) {
+
+    if (ID_DETALLE_ARTICULO == 0) {
+        
+        alertMensajeConfirm({
+            title: "¿Desea guardar la información?",
+            text: "Al guardarla, se podra usar",
+            icon: "question",
+        },async function () { 
+
+            await loaderbtn('guardarDETALLEARTICULO')
+            await ajaxAwaitFormData({ api: 4,INVENTARIO_ID:inventario_id, ID_DETALLE_ARTICULO: ID_DETALLE_ARTICULO }, 'InventarioSave', 'formularioDETALLE', 'guardarDETALLEARTICULO', { callbackAfter: true, callbackBefore: true }, () => {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Espere un momento',
+                    text: 'Estamos guardando la información',
+                    showConfirmButton: false
+                })
+
+                $('.swal2-popup').addClass('ld ld-breath')
+                
+            }, function (data) {
+                    
+                ID_DETALLE_ARTICULO = data.cliente.ID_DETALLE_ARTICULO
+                    alertMensaje('success','Información guardada correctamente', 'Esta información esta lista para usarse',null,null, 1500)
+                     $('#miModal_DETALLE').modal('hide')
+                    document.getElementById('formularioDETALLE').reset();
+
+
+                    
+                    if ($.fn.DataTable.isDataTable('#Tabladetallearticulos')) {
+                        Tabladetallearticulos.ajax.reload(null, false); 
+                    }
+
+            })
+            
+        }, 1)
+        
+    } else {
+            alertMensajeConfirm({
+            title: "¿Desea editar la información de este formulario?",
+            text: "Al guardarla, se podra usar",
+            icon: "question",
+        },async function () { 
+
+            await loaderbtn('guardarDETALLEARTICULO')
+            await ajaxAwaitFormData({ api: 4,INVENTARIO_ID:inventario_id ,ID_DETALLE_ARTICULO: ID_DETALLE_ARTICULO }, 'InventarioSave', 'formularioDETALLE', 'guardarDETALLEARTICULO', { callbackAfter: true, callbackBefore: true }, () => {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Espere un momento',
+                    text: 'Estamos guardando la información',
+                    showConfirmButton: false
+                })
+
+                $('.swal2-popup').addClass('ld ld-breath')
+        
+            }, function (data) {
+                    
+                setTimeout(() => {
+
+                    ID_DETALLE_ARTICULO = data.cliente.ID_DETALLE_ARTICULO
+                    alertMensaje('success', 'Información editada correctamente', 'Información guardada')
+                     $('#miModal_DETALLE').modal('hide')
+                    document.getElementById('formularioDETALLE').reset();
+
+
+                    
+                    if ($.fn.DataTable.isDataTable('#Tabladetallearticulos')) {
+                        Tabladetallearticulos.ajax.reload(null, false); 
+                    }
+
+                }, 300);  
+            })
+        }, 1)
+    }
+
+    } else {
+        alertToast('Por favor, complete todos los campos del formulario.', 'error', 2000)
+
+    }
+    
+});
+
+function cargarTablaDetallaArticulo() {
+    if ($.fn.DataTable.isDataTable('#Tabladetallearticulos')) {
+        Tabladetallearticulos.clear().destroy();
+    }
+
+    Tabladetallearticulos = $("#Tabladetallearticulos").DataTable({
+        language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
+        lengthChange: true,
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All']
+        ],
+        info: false,
+        paging: true,
+        searching: true,
+        filtering: true,
+        scrollY: '65vh',
+        scrollCollapse: true,
+        responsive: true,
+        ajax: {
+            dataType: 'json',
+            data: { equipo: inventario_id }, 
+            method: 'GET',
+            cache: false,
+            url: '/Tabladetallearticulos',  
+            beforeSend: function () {
+                $('#loadingIcon2').css('display', 'inline-block');
+            },
+            complete: function () {
+                $('#loadingIcon2').css('display', 'none');
+                Tabladetallearticulos.columns.adjust().draw(); 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $('#loadingIcon2').css('display', 'none');
+                alertErrorAJAX(jqXHR, textStatus, errorThrown);
+            },
+            dataSrc: 'data'
+        },
+        columns: [
+            { data: null, render: function(data, type, row, meta) { return meta.row + 1; }, className: 'text-center' },
+            { data: 'NOMBRE_COMPONENTE', className: 'text-center' },
+            { data: 'CODIGO_PARTE' },
+            { data: 'CANTIDAD_DETALLE' },
+            { data: 'FECHA_COMPRA' },
+            { data: 'BTN_EDITAR', className: 'text-center' },
+            { data: 'BTN_VISUALIZAR', className: 'text-center' },
+            { data: 'BTN_ELIMINAR', className: 'text-center' },
+
+        ],
+        columnDefs: [
+            { targets: 0, title: '#', className: 'all text-center' },
+            { targets: 1, title: 'Nombre componente', className: 'all text-center' },  
+            { targets: 2, title: 'Código / parte', className: 'all text-center' },  
+            { targets: 3, title: 'Cantidad', className: 'all text-center' },  
+            { targets: 4, title: 'Fecha de compra ', className: 'all text-center' },  
+            { targets: 5, title: 'Editar', className: 'all text-center' }, 
+            { targets: 6, title: 'Visualizar', className: 'all text-center' }, 
+            { targets: 7, title: 'Activo', className: 'all text-center' }, 
+
+        ],
+       
+    });
+}
+
+$('#Tabladetallearticulos').on('click', 'td>button.EDITAR', function () {
+    var tr = $(this).closest('tr');
+    var row = Tabladetallearticulos.row(tr);
+
+    ID_DETALLE_ARTICULO = row.data().ID_DETALLE_ARTICULO;
+
+    editarDatoTabla(row.data(), 'formularioDETALLE', 'miModal_DETALLE', 1);
+
+    $('#miModal_DETALLE .modal-title').html(row.data().NOMBRE_COMPONENTE);
+});
+
+$(document).ready(function() {
+    $('#Tabladetallearticulos').on('click', 'td>button.VISUALIZAR', function () {
+        var tr = $(this).closest('tr');
+        var row = Tabladetallearticulos.row(tr);
+        
+        hacerSoloLectura(row.data(), '#miModal_DETALLE');
+
+        ID_DETALLE_ARTICULO = row.data().ID_DETALLE_ARTICULO;
+        editarDatoTabla(row.data(), 'formularioDETALLE', 'miModal_DETALLE',1);
+
+    $('#miModal_DETALLE .modal-title').html(row.data().NOMBRE_COMPONENTE);
+
+    });
+
+    $('#miModal_DETALLE').on('hidden.bs.modal', function () {
+        resetFormulario('#miModal_DETALLE');
+    });
+});
+
+
+$('#Tabladetallearticulos').on('change', 'td>label>input.ELIMINAR', function () {
+    var tr = $(this).closest('tr');
+    var row = Tabladetallearticulos.row(tr);
+
+    var estado = $(this).is(':checked') ? 1 : 0;
+
+    data = {
+        api: 4,
+        ELIMINAR: estado == 0 ? 1 : 0, 
+        ID_DETALLE_ARTICULO: row.data().ID_DETALLE_ARTICULO
+    };
+
+    eliminarDatoTabla(data, [Tabladetallearticulos], 'inventarioDelete');
+});

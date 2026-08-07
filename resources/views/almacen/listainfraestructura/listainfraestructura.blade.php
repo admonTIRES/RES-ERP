@@ -116,7 +116,11 @@
 </div>
 
 
-<div id="Modal_inventario" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+
+
+
+
+<div id="Modal_inventario" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
     <div class="modal-dialog modal-lg" style="min-width: 86%;">
         <div class="modal-content">
             <form method="post" enctype="multipart/form-data" id="formularioINVENTARIO" style="background-color: #ffffff;">
@@ -138,7 +142,9 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="tab2-entrada" data-bs-toggle="tab" data-bs-target="#contenido-entrada" type="button" role="tab" style="display: none;">Bitácora</button>
                         </li>
-
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab5-detalle" data-bs-toggle="tab" data-bs-target="#contenido-detalle" type="button" role="tab" style="display: none;">Detalle artículo</button>
+                        </li>
                     </ul>
 
 
@@ -189,9 +195,104 @@
                                                     </div>
                                                 </div>
 
-                                              
-                                              
-                                    
+                                                <div class="col-3 mt-2">
+                                                    <div class="form-group">
+                                                        <label> Marca *</label>
+                                                        <input type="text" class="form-control" id="MARCA_EQUIPO" name="MARCA_EQUIPO" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 mt-2">
+                                                    <div class="form-group">
+                                                        <label> Modelo *</label>
+                                                        <input type="text" class="form-control" id="MODELO_EQUIPO" name="MODELO_EQUIPO" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 mt-2">
+                                                    <div class="form-group">
+                                                        <label> Serie *</label>
+                                                        <input type="text" class="form-control" id="SERIE_EQUIPO" name="SERIE_EQUIPO" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 mt-2">
+                                                    <div class="form-group">
+                                                        <label>Código de Identificación *</label>
+                                                        <input type="text" class="form-control" id="CODIGO_EQUIPO" name="CODIGO_EQUIPO" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 mt-2" id="DATOS_VEHICULOS" style="display: none;">
+                                                    <div class="row">
+                                                        <div class="col-6 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Placas *</label>
+                                                                <input type="text" class="form-control" id="PLACAS_VEHICULOS" name="PLACAS_VEHICULOS" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-6 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Color *</label>
+                                                                <input type="text" class="form-control" id="COLOR_VEHICULO" name="COLOR_VEHICULO" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Entidad póliza *</label>
+                                                                <input type="text" class="form-control" id="ENTIDAD_POLIZA" name="ENTIDAD_POLIZA" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Número de póliza *</label>
+                                                                <input type="text" class="form-control" id="NUMERO_POLIZA" name="NUMERO_POLIZA" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Inicio de Vigencia *</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="INICIOVIGENCIA_POLIZA" name="INICIOVIGENCIA_POLIZA" required>
+                                                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Fin de Vigencia *</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FINVIGENCIA_POLIZA" name="FINVIGENCIA_POLIZA" required>
+                                                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 text-center mt-2">
+                                                            <h5>Marca de llantas </h5>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <label>Frente derecha *</label>
+                                                                <textarea class="form-control" id="FRENTE_DERECHA" name="FRENTE_DERECHA" rows="3" required></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <label>Frente izquierda *</label>
+                                                                <textarea class="form-control" id="FRENTE_IZQUIERDA" name="FRENTE_IZQUIERDA" rows="3" required></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <label>Trasera derecha *</label>
+                                                                <textarea class="form-control" id="TRASERA_DERECHA" name="TRASERA_DERECHA" rows="3" required></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <label>Trasera izquierda *</label>
+                                                                <textarea class="form-control" id="TRASERA_IZQUIERDA" name="TRASERA_IZQUIERDA" rows="3" required></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
                                                 <div class="col-2 mt-2">
                                                     <div class="form-group">
                                                         <label> Cantidad *</label>
@@ -199,7 +300,15 @@
                                                     </div>
                                                 </div>
 
-                                             
+                                                <div class="col-2 mt-2">
+                                                    <div class="form-group">
+                                                        <label>Límite mínimo *</label>
+                                                        <input type="Number" step="any" class="form-control" id="LIMITEMINIMO_EQUIPO" name="LIMITEMINIMO_EQUIPO" required>
+                                                    </div>
+                                                </div>
+
+
+
                                                 <div class="col-2 mt-2">
                                                     <div class="form-group">
                                                         <label> U.M. *</label>
@@ -209,7 +318,7 @@
 
 
 
-                                                <div class="col-8 mt-2">
+                                                <div class="col-6 mt-2">
                                                     <div class="form-group">
                                                         <label> Ubicación *</label>
                                                         <input type="text" step="any" class="form-control" id="UBICACION_EQUIPO" name="UBICACION_EQUIPO" required>
@@ -217,17 +326,24 @@
                                                 </div>
 
 
-                                                <div class="col-6 mt-2">
+                                                <div class="col-4 mt-2">
                                                     <div class="form-group">
                                                         <label> Estado *</label>
                                                         <input type="text" step="any" class="form-control" id="ESTADO_EQUIPO" name="ESTADO_EQUIPO" required>
                                                     </div>
                                                 </div>
 
-                                            
+                                                <div class="col-4 mt-2">
+                                                    <label>¿El ítem es crítico? *</label>
+                                                    <select class="form-control" name="ITEM_CRITICO" id="ITEM_CRITICO" required>
+                                                        <option value="" selected disabled>Seleccione una opción</option>
+                                                        <option value="1">Sí</option>
+                                                        <option value="2">No</option>
+                                                    </select>
+                                                </div>
 
 
-                                                <div class="col-6 mt-2">
+                                                <div class="col-4 mt-2">
                                                     <div class="form-group">
                                                         <label>Fecha de adquisición *</label>
                                                         <div class="input-group">
@@ -236,6 +352,27 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+
+
+                                                <div class="col-4 mt-2">
+                                                    <label>¿El proveedor está dado de alta? *</label>
+                                                    <select class="form-control" name="PROVEEDOR_ALTA" id="PROVEEDOR_ALTA" required>
+                                                        <option value="" selected disabled>Seleccione una opción</option>
+                                                        <option value="1">Sí</option>
+                                                        <option value="2">No</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-8 mt-2">
+                                                    <label>¿Requiere detallar los componentes del artículo? *</label>
+                                                    <select class="form-control" name="DETALLAR_ARTICULOS" id="DETALLAR_ARTICULOS" onchange="guardarDetallearticulo()" required>
+                                                        <option value="" selected disabled>Seleccione una opción</option>
+                                                        <option value="1">Sí</option>
+                                                        <option value="2">No</option>
+                                                    </select>
+                                                </div>
+
 
                                                 <div class="col-12 mt-2" id="PROVEEDORES_ACTIVOS" style="display: block;">
                                                     <label class="form-label">Proveedor</label>
@@ -265,22 +402,24 @@
                                                 </div>
 
 
-                                              
-                                                <div class="col-4 mt-2">
+                                                <div class="col-12 mt-2" id="ESCRIBIR_PROVEEDOR" style="display: none;">
+                                                    <label class="form-label">Proveedor</label>
+                                                    <input type="text" class="form-control" id="NOMBRE_PROVEEDOR" name="NOMBRE_PROVEEDOR" required>
+                                                </div>
+
+                                                <div class="col-3 mt-2">
                                                     <div class="form-group">
                                                         <label> Precio Unitario (MXN)</label>
                                                         <input type="text" step="any" class="form-control" id="UNITARIO_EQUIPO" name="UNITARIO_EQUIPO">
                                                     </div>
                                                 </div>
-                                                <div class="col-4 mt-2">
+                                                <div class="col-3 mt-2">
                                                     <div class="form-group">
                                                         <label> Precio Total</label>
                                                         <input type="text" class="form-control" id="TOTAL_EQUIPO" name="TOTAL_EQUIPO">
                                                     </div>
                                                 </div>
-
-
-                                                <div class="col-4 mt-2">
+                                                <div class="col-3 mt-2">
                                                     <div class="form-group">
                                                         <label>Tipo *</label>
                                                         <select class="form-select" id="TIPO_EQUIPO" name="TIPO_EQUIPO" required>
@@ -288,11 +427,29 @@
                                                             @foreach ($tipoinventario as $tipos)
                                                             <option value="{{ $tipos->DESCRIPCION_TIPO }}">{{ $tipos->DESCRIPCION_TIPO }}</option>
                                                             @endforeach
-
-
                                                         </select>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-3 mt-2">
+                                                    <label>Marcar si el ítem. requiere *</label>
+                                                    <select class="form-control" id="REQUIERE_ARTICULO" name="REQUIERE_ARTICULO" onchange="guardarRequiereItem()" required>
+                                                        <option value="" selected disabled>Seleccione una opción</option>
+                                                        <option value="1">Documentación</option>
+                                                        <option value="2">Mantenimiento</option>
+                                                        <option value="3">N/A</option>
+                                                    </select>
+                                                </div>
+
+
+                                                <div class="col-12 mt-3">
+                                                    <div class="form-group">
+                                                        <label> Observación</label>
+                                                        <textarea class="form-control" id="OBSERVACION_EQUIPO" name="OBSERVACION_EQUIPO" rows="5" required></textarea>
+                                                    </div>
+                                                </div>
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -331,6 +488,24 @@
                             </div>
                         </div>
 
+                        <!-- TAB 5: Detalle artículo  -->
+
+                        <div class="tab-pane fade" id="contenido-detalle" role="tabpanel">
+                            <ol class="breadcrumb mb-5">
+                                <h3 style="color: #ffffff; margin: 0;">&nbsp;Detalle</h3>
+                                <button type="button" class="btn btn-light waves-effect waves-light" id="NUEVO_DETALLE" style="margin-left: auto;">
+                                    Nuevo &nbsp;<i class="bi bi-plus-circle"></i>
+                                </button>
+                            </ol>
+
+                            <div class="card-body">
+                                <div class="card-body position-relative" id="tabla_activo" style="display: block;">
+                                    <i id="loadingIcon2" class="bi bi-arrow-repeat position-absolute spin" style="top: 10px; left: 10px; font-size: 24px; display: none;"></i>
+                                    <table id="Tabladetallearticulos" class="table table-hover bg-white table-bordered text-center w-100 TableCustom"></table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer mt-5">
@@ -342,7 +517,86 @@
     </div>
 </div>
 
+<!-- ============================================================== -->
+<!-- MODAL CARGAR EXCEL  -->
+<!-- ============================================================== -->
 
+<div id="modal_excel_equipo" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form enctype="multipart/form-data" method="post" name="formExcelEquipos" id="formExcelEquipos">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Carga de Equipos por medio de un Excel</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        {!! csrf_field() !!}
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label> Documento Excel *</label>
+                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                    <div class="form-control" data-trigger="fileinput" id="input_file_excel_documento_equipo">
+                                        <i class="fa fa-file fileinput-exists"></i>
+                                        <span class="fileinput-filename"></span>
+                                    </div>
+                                    <span class="input-group-text btn btn-secondary btn-file">
+                                        <span class="fileinput-new">Seleccione</span>
+                                        <span class="fileinput-exists">Cambiar</span>
+                                        <input type="file" accept=".xls,.xlsx" name="excelEquipos" id="excelEquipos" required>
+                                    </span>
+                                    <a href="#" class="input-group-text btn btn-secondary fileinput-exists" data-dismiss="fileinput">Quitar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="row mx-2" id="alertaVerificacion" style="display:none">
+                        <p class="text-danger">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            Por favor, asegúrese de que el archivo Excel contenga la fecha en el formato válido:
+                            <b>'2024-01-01'</b> (no se admiten fechas con texto) y también que el campo
+                            <b>tipo</b> contenga únicamente uno de los siguientes valores, escritos <b>tal y como están</b>:
+                            <u>Consumible</u>, <u>AF</u>, <u>ANF</u>, <u>Comercialización</u>,
+                            <u>Material para curso</u>, <u>EPP</u>, <u>Vehículos</u>, <u>Donación</u>.
+                        </p>
+                    </div> -->
+
+                    <div class="row mx-2" id="alertaVerificacion" style="display:none">
+                        <p class="text-danger">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            Por favor, asegúrese de que el archivo Excel contenga la fecha en el formato válido:
+                            <b>'2024-01-01'</b> (no se admiten fechas con texto) y también que el campo
+                            <b>tipo</b> contenga únicamente uno de los siguientes valores, escritos <b>tal y como están</b>:
+                            @foreach($tipoinventario as $tipo)
+                            <u>{{ $tipo->DESCRIPCION_TIPO }}</u>@if(!$loop->last),@endif
+                            @endforeach
+                            .
+                        </p>
+                    </div>
+
+                    <div class="row mt-3" id="divCargaEquipos" style="display: none;">
+
+                        <div class="col-12 text-center">
+                            <h2>Cargando equipos espere un momento...</h2>
+                        </div>
+                        <div class="col-12 text-center">
+                            <i class='fa fa-spin fa-spinner fa-5x'></i>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+
+
+                    <button type="submit" class="btn btn-success" id="botonCargarExcelEquipos">Guardar</button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- ============================================================== -->
 <!-- MODAL DOCUMENTACION  -->
@@ -439,6 +693,68 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn btn-success" id="guardarDOCUMENTACION">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================================== -->
+<!-- MODAL DETALLE  -->
+<!-- ============================================================== -->
+
+<div class="modal fade" id="miModal_DETALLE" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data" id="formularioDETALLE" style="background-color: #ffffff;">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo detalle</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {!! csrf_field() !!}
+                    <div class="col-12">
+                        <div class="row">
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Nombre componente</label>
+                                <input type="text" class="form-control" name="NOMBRE_COMPONENTE" id="NOMBRE_COMPONENTE" required>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Código / parte </label>
+                                <input type="text" class="form-control" name="CODIGO_PARTE" id="CODIGO_PARTE">
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Cantidad </label>
+                                <input type="number" class="form-control" name="CANTIDAD_DETALLE" id="CANTIDAD_DETALLE" required>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Fecha de compra </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_COMPRA" name="FECHA_COMPRA">
+                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Requiere reemplazo </label>
+                                <select class="form-control" id="REQUIERE_REEMPLAZO" name="REQUIERE_REEMPLAZO">
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="1">Sí</option>
+                                    <option value="2">No</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success" id="guardarDETALLEARTICULO">Guardar</button>
                 </div>
             </form>
         </div>
