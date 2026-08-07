@@ -353,98 +353,6 @@ class mrController extends Controller
     /////////////////////////////////////////////////////////// BITACORA REQUISICION //////////////////////////////////////////////////////////////
 
 
-
-    // public function Tablabitacora()
-    // {
-    //     try {
-    //         $tabla = mrModel::where('ESTADO_APROBACION', 'Aprobada')->get();
-
-    //         foreach ($tabla as $value) {
-    //             $no_mr = $value->NO_MR;
-
-    //             $bitacoras = DB::table('formulario_bitacoragr')
-    //                 ->where('NO_MR', $no_mr)
-    //                 ->select('NO_RECEPCION', 'FECHA_ENTREGA_GR')
-    //                 ->get();
-
-    //             if ($bitacoras->count() > 0) {
-    //                 $value->NO_GR = $bitacoras
-    //                     ->map(fn($item) => '• ' . $item->NO_RECEPCION)
-    //                     ->implode('<br>');
-
-    //                 $value->FECHA_GR = $bitacoras
-    //                     ->map(fn($item) => '• ' . $item->FECHA_ENTREGA_GR)
-    //                     ->implode('<br>');
-    //             } else {
-    //                 $value->NO_GR = '—';
-    //                 $value->FECHA_GR = '—';
-    //             }
-    //             $hojas = DB::table('hoja_trabajo')->where('NO_MR', $no_mr)->get();
-    //             $total = $hojas->count();
-
-    //             if ($total === 0) {
-    //                 $value->ESTADO_FINAL = 'Sin datos';
-    //                 $value->COLOR = null;
-    //                 $value->DISABLED_SELECT = true;
-    //             } else {
-    //                 $aprobadas = $hojas->whereIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada'])->count();
-    //                 $requiere_po = $hojas->where('REQUIERE_PO', 'Sí')->count();
-    //                 $po_aprobada_o_rechazada = false;
-
-    //                 foreach ($hojas as $hoja) {
-    //                     $hoja_id = $hoja->id;
-    //                     $po_relacionadas = DB::table('formulario_ordencompra')
-    //                         ->whereJsonContains('HOJA_ID', (string)$hoja_id)
-    //                         ->whereIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada'])
-    //                         ->count();
-
-    //                     if ($po_relacionadas > 0) {
-    //                         $po_aprobada_o_rechazada = true;
-    //                         break;
-    //                     }
-    //                 }
-
-    //                 if ($aprobadas === $total && ($requiere_po === 0 || $po_aprobada_o_rechazada)) {
-    //                     $value->ESTADO_FINAL = 'Finalizada';
-    //                     $value->COLOR = '#d4edda';
-    //                     $value->DISABLED_SELECT = false;
-    //                 } else {
-    //                     $value->ESTADO_FINAL = 'En proceso';
-    //                     $value->COLOR = '#fff3cd';
-    //                     $value->DISABLED_SELECT = false;
-    //                 }
-    //             }
-
-
-    //             if ($value->ACTIVO == 0) {
-    //                 $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-    //                 $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_MR . '"><span class="slider round"></span></label>';
-    //                 $value->BTN_EDITAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-eye"></i></button>';
-    //             } else {
-    //                 $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_MR . '" checked><span class="slider round"></span></label>';
-    //                 $value->BTN_EDITAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill EDITAR"><i class="bi bi-eye"></i></button>';
-    //                 $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-    //             }
-
-    //             $value->BTN_NO_MR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-    //         }
-
-    //         return response()->json([
-    //             'data' => $tabla,
-    //             'msj' => 'Información consultada correctamente'
-    //         ]);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             'msj' => 'Error ' . $e->getMessage(),
-    //             'data' => 0
-    //         ]);
-    //     }
-    // }
-
-
-
-
-
     public function Tablabitacora()
     {
         try {
@@ -821,14 +729,34 @@ class mrController extends Controller
                         ];
                     }
 
-                    $año = now()->format('y');
-                    $ultimo = DB::table('formulario_ordencompra')
-                        ->where('NO_PO', 'like', "RES-PO$año-%")
-                        ->orderByDesc('ID_FORMULARIO_PO')
-                        ->value('NO_PO');
+                    // $año = now()->format('y');
+                    // $ultimo = DB::table('formulario_ordencompra')
+                    //     ->where('NO_PO', 'like', "RES-PO$año-%")
+                    //     ->orderByDesc('ID_FORMULARIO_PO')
+                    //     ->value('NO_PO');
 
-                    $consecutivo = $ultimo ? (int)substr($ultimo, -3) + 1 : 1;
-                    $numeroOrden = sprintf("RES-PO%s-%03d", $año, $consecutivo);
+                    // $consecutivo = $ultimo ? (int)substr($ultimo, -3) + 1 : 1;
+                    // $numeroOrden = sprintf("RES-PO%s-%03d", $año, $consecutivo);
+
+
+                    $año = now()->format('y');
+
+                    $ultimoConsecutivo = DB::table('formulario_ordencompra')
+                        ->where('NO_PO', 'like', "RES-PO$año-%")
+                        ->selectRaw("
+                            MAX(
+                                CAST(
+                                    SUBSTRING_INDEX(NO_PO, '-', -1)
+                                    AS UNSIGNED
+                                )
+                            ) AS consecutivo
+                        ")
+                        ->value('consecutivo');
+
+                    $consecutivo = ((int) $ultimoConsecutivo) + 1;
+
+                    $numeroOrden = sprintf("RES-PO%s-%03d",$año,$consecutivo);
+
 
                     DB::table('formulario_ordencompra')->insert([
                         'HOJA_ID'                 => json_encode([(string) $id]),
@@ -842,102 +770,6 @@ class mrController extends Controller
                     ]);
                 }
             }
-
-
-            // $proveedores = [
-            //     1 => $proveedor_q1[0] ?? null,
-            //     2 => $proveedor_q2[0] ?? null,
-            //     3 => $proveedor_q3[0] ?? null,
-            // ];
-
-            // $subtotales = [
-            //     1 => $subtotal_q1[0] ?? 0,
-            //     2 => $subtotal_q2[0] ?? 0,
-            //     3 => $subtotal_q3[0] ?? 0,
-            // ];
-
-            // $materiales_json = json_decode($materiales_hoja_json ?? '[]', true);
-
-            // $proveedores_detectados = [];
-            // $materiales_detectados = [];
-
-            // foreach ([1, 2, 3] as $q) {
-            //     $prov = $proveedores[$q];
-            //     $subt = $subtotales[$q];
-
-            //     if ($subt > 10001 && !empty($prov)) {
-            //         $proveedores_detectados["PROVEEDOR{$q}"] = $prov;
-
-            //         $materialesPorProveedor = [];
-
-            //         foreach ($materiales_json as $m) {
-            //             $cantidadCampo = 'CANTIDAD_REAL';
-            //             $precioCampo   = $q === 1 ? 'PRECIO_UNITARIO' : "PRECIO_UNITARIO_Q{$q}";
-
-            //             if (empty($m[$cantidadCampo]) || $m[$cantidadCampo] == 0) {
-            //                 continue;
-            //             }
-
-            //             $materialesPorProveedor[] = [
-            //                 'DESCRIPCION'     => $m['DESCRIPCION'] ?? '',
-            //                 'CANTIDAD_'       => $m[$cantidadCampo],
-            //                 'PRECIO_UNITARIO' => $m[$precioCampo] ?? '',
-            //                 'UNIDAD_MEDIDA'   => $m['UNIDAD_MEDIDA'] ?? '', 
-            //             ];
-            //         }
-
-            //         $materiales_detectados["MATERIALES_JSON_PROVEEDOR{$q}"] = json_encode($materialesPorProveedor, JSON_UNESCAPED_UNICODE);
-            //     }
-            // }
-
-            // if (!empty($proveedores_detectados)) {
-            //     $proveedores_set = array_values(array_filter($proveedores_detectados));
-            //     sort($proveedores_set, SORT_STRING);
-
-
-            //     $registroExistente = DB::table('formulario_matrizcomparativa')
-            //         ->where('NO_MR', $no_mr)
-            //         ->get()
-            //         ->filter(function ($registro) use ($id) {
-            //             $hoja_ids = json_decode($registro->HOJA_ID ?? '[]', true);
-            //             return in_array((string) $id, $hoja_ids);
-            //         })
-            //         ->values()
-            //         ->first();
-
-            //     if ($registroExistente) {
-            //         $proveedores_actuales = [
-            //             'PROVEEDOR1' => $registroExistente->PROVEEDOR1 ?? null,
-            //             'PROVEEDOR2' => $registroExistente->PROVEEDOR2 ?? null,
-            //             'PROVEEDOR3' => $registroExistente->PROVEEDOR3 ?? null,
-            //         ];
-
-            //         $materiales_actuales = [
-            //             'MATERIALES_JSON_PROVEEDOR1' => $registroExistente->MATERIALES_JSON_PROVEEDOR1 ?? null,
-            //             'MATERIALES_JSON_PROVEEDOR2' => $registroExistente->MATERIALES_JSON_PROVEEDOR2 ?? null,
-            //             'MATERIALES_JSON_PROVEEDOR3' => $registroExistente->MATERIALES_JSON_PROVEEDOR3 ?? null,
-            //         ];
-
-            //         $proveedores_finales = array_replace($proveedores_actuales, $proveedores_detectados);
-            //         $materiales_finales = array_replace($materiales_actuales, $materiales_detectados);
-
-            //         DB::table('formulario_matrizcomparativa')
-            //             ->where('ID_FORMULARIO_MATRIZ', $registroExistente->ID_FORMULARIO_MATRIZ)
-            //             ->update(array_merge([
-            //                 'updated_at' => now(),
-            //             ], $proveedores_finales, $materiales_finales));
-            //     } else {
-            //         HojaTrabajo::where('id', $id)->update(['REQUIERE_MATRIZ' => 'Sí']);
-
-            //         DB::table('formulario_matrizcomparativa')->insert(array_merge([
-            //             'HOJA_ID'    => json_encode([(string) $id], JSON_UNESCAPED_UNICODE),
-            //             'NO_MR'      => $no_mr,
-            //             'created_at' => now(),
-            //             'updated_at' => now(),
-            //         ], $proveedores_detectados, $materiales_detectados));
-            //     }
-            // }
-
 
             $proveedores = [
                 1 => $proveedor_q1[0] ?? null,
@@ -956,11 +788,6 @@ class mrController extends Controller
             $proveedores_detectados = [];
             $materiales_detectados = [];
 
-            /*
-|--------------------------------------------------------------------------
-| VALIDAR SI ALGÚN PROVEEDOR SUPERA 10,001
-|--------------------------------------------------------------------------
-*/
             $requiere_matriz = false;
 
             foreach ([1, 2, 3] as $q) {
@@ -970,11 +797,6 @@ class mrController extends Controller
                 }
             }
 
-            /*
-|--------------------------------------------------------------------------
-| SI ALGUNO SUPERA 10,001, ENTONCES PASAR TODOS
-|--------------------------------------------------------------------------
-*/
             if ($requiere_matriz) {
 
                 foreach ([1, 2, 3] as $q) {
@@ -1193,7 +1015,6 @@ class mrController extends Controller
                             ];
                         }
 
-                      
 
                         if (!in_array((string)$ids[$i], $grupos[$proveedorSeleccionado]['ids'])) {
                             $grupos[$proveedorSeleccionado]['ids'][] = (string)$ids[$i];
@@ -1233,13 +1054,29 @@ class mrController extends Controller
                     });
 
                 if (!$registroExistente) {
-                    $año = now()->format('y');
-                    $ultimo = DB::table('formulario_ordencompra')
-                        ->where('NO_PO', 'like', "RES-PO$año-%")
-                        ->orderByDesc('ID_FORMULARIO_PO')
-                        ->value('NO_PO');
 
-                    $consecutivo = $ultimo ? (int)substr($ultimo, -3) + 1 : 1;
+                    $año = now()->format('y');
+
+                    // $ultimo = DB::table('formulario_ordencompra')
+                    //     ->where('NO_PO', 'like', "RES-PO$año-%")
+                    //     ->orderByDesc('ID_FORMULARIO_PO')
+                    //     ->value('NO_PO');
+
+                    // $consecutivo = $ultimo ? (int)substr($ultimo, -3) + 1 : 1;
+
+                    $ultimoConsecutivo = DB::table('formulario_ordencompra')
+                        ->where('NO_PO', 'like', "RES-PO$año-%")
+                        ->selectRaw("
+                                MAX(
+                                    CAST(
+                                        SUBSTRING_INDEX(NO_PO, '-', -1)
+                                        AS UNSIGNED
+                                    )
+                                ) AS consecutivo
+                            ")
+                        ->value('consecutivo');
+
+                    $consecutivo = ((int) $ultimoConsecutivo) + 1;
                     $numeroOrden = sprintf("RES-PO%s-%03d", $año, $consecutivo);
 
                     DB::table('formulario_ordencompra')->insert([
@@ -1256,146 +1093,6 @@ class mrController extends Controller
             }
 
             // ================== MATRIZ COMPARATIVA ==================
-            // $grupos = [];
-            // for ($i = 0; $i < $total; $i++) {
-            //     $subtotalQ1 = $subtotal_q1[$i] ?? 0;
-            //     $subtotalQ2 = $subtotal_q2[$i] ?? 0;
-            //     $subtotalQ3 = $subtotal_q3[$i] ?? 0;
-
-            //     if ($subtotalQ1 <= 10001 && $subtotalQ2 <= 10001 && $subtotalQ3 <= 10001) {
-            //         continue;
-            //     }
-
-            //     $proveedoresRaw = [
-            //         $proveedor_q1[$i] ?? '',
-            //         $proveedor_q2[$i] ?? '',
-            //         $proveedor_q3[$i] ?? '',
-            //     ];
-
-            //     $proveedoresOrdenados = array_values(array_filter($proveedoresRaw));
-            //     sort($proveedoresOrdenados, SORT_STRING);
-            //     $grupoKey = implode('|', $proveedoresOrdenados);
-
-            //     if (!isset($grupos[$grupoKey])) {
-            //         $grupos[$grupoKey] = [
-            //             'proveedores_set' => $proveedoresOrdenados,
-            //             'proveedor_map' => [],
-            //             'ids' => [],
-            //             'materiales_por_proveedor' => [],
-            //             'subtotales' => [],
-            //             'ivas' => [],
-            //             'importes' => [],
-            //         ];
-            //     }
-
-
-
-
-            //     if (!empty($ids[$i]) && !in_array((string)$ids[$i], $grupos[$grupoKey]['ids'])) {
-            //         $grupos[$grupoKey]['ids'][] = (string)$ids[$i];
-            //     }
-
-
-            //     foreach ([1, 2, 3] as $q) {
-            //         $prov = ${"proveedor_q$q"}[$i] ?? null;
-            //         $subt = ${"subtotal_q$q"}[$i] ?? 0;
-            //         $iva = ${"iva_q$q"}[$i] ?? 0;
-            //         $imp = ${"importe_q$q"}[$i] ?? 0;
-            //         $cant = ${"cantidadrealq$q"}[$i] ?? '';
-            //         $prec = ${"preciounitarioq$q"}[$i] ?? '';
-
-            //         if (!empty($prov) && $cant > 0) {
-            //             $grupos[$grupoKey]['proveedor_map'][$prov] = true;
-            //             $grupos[$grupoKey]['subtotales'][$prov][] = $subt;
-            //             $grupos[$grupoKey]['ivas'][$prov][] = $iva;
-            //             $grupos[$grupoKey]['importes'][$prov][] = $imp;
-            //             $grupos[$grupoKey]['materiales_por_proveedor'][$prov][] = [
-            //                 'DESCRIPCION'     => $descripciones[$i] ?? '',
-            //                 'CANTIDAD_'       => $cant,
-            //                 'PRECIO_UNITARIO' => $prec,
-            //                 'UNIDAD_MEDIDA'   => $unidades[$i] ?? '', 
-
-            //             ];
-            //         }
-            //     }
-            // }
-
-            // foreach ($grupos as $grupo) {
-            //     $superaLimite = false;
-            //     foreach ($grupo['subtotales'] as $subtotales) {
-            //         foreach ($subtotales as $subt) {
-            //             if ($subt > 10001) {
-            //                 $superaLimite = true;
-            //                 break 2;
-            //             }
-            //         }
-            //     }
-
-            //     if ($superaLimite) {
-            //         $registroExistente = DB::table('formulario_matrizcomparativa')
-            //             ->where('NO_MR', $no_mr)
-            //             ->get()
-            //             ->filter(function ($registro) use ($grupo) {
-            //                 $existentes = array_filter([
-            //                     $registro->PROVEEDOR1 ?? null,
-            //                     $registro->PROVEEDOR2 ?? null,
-            //                     $registro->PROVEEDOR3 ?? null,
-            //                 ]);
-            //                 sort($existentes, SORT_STRING);
-            //                 return $existentes === $grupo['proveedores_set'];
-            //             })
-            //             ->values()
-            //             ->first();
-
-            //         if ($registroExistente) {
-            //             $hojasActuales = json_decode($registroExistente->HOJA_ID ?? '[]', true);
-            //             $hojasNuevas = array_values(array_unique(array_merge($hojasActuales, $grupo['ids'])));
-
-            //             $datosUpdate = [
-            //                 'HOJA_ID'    => json_encode($hojasNuevas),
-            //                 'updated_at' => now(),
-            //             ];
-
-            //             foreach ($grupo['proveedores_set'] as $idx => $prov) {
-            //                 $num = $idx + 1;
-            //                 $materialesNuevos = $grupo['materiales_por_proveedor'][$prov] ?? [];
-            //                 $datosUpdate["MATERIALES_JSON_PROVEEDOR{$num}"] = json_encode($materialesNuevos, JSON_UNESCAPED_UNICODE);
-            //                 $datosUpdate["SUBTOTAL_PROVEEDOR{$num}"] = array_sum($grupo['subtotales'][$prov] ?? []);
-            //                 $datosUpdate["IVA_PROVEEDOR{$num}"] = array_sum($grupo['ivas'][$prov] ?? []);
-            //                 $datosUpdate["IMPORTE_PROVEEDOR{$num}"] = array_sum($grupo['importes'][$prov] ?? []);
-            //             }
-
-            //             DB::table('formulario_matrizcomparativa')
-            //                 ->where('ID_FORMULARIO_MATRIZ', $registroExistente->ID_FORMULARIO_MATRIZ)
-            //                 ->update($datosUpdate);
-
-            //             HojaTrabajo::whereIn('id', $grupo['ids'])
-            //                 ->update(['REQUIERE_MATRIZ' => 'Sí']);
-            //         } else {
-            //             HojaTrabajo::whereIn('id', $grupo['ids'])
-            //                 ->update(['REQUIERE_MATRIZ' => 'Sí']);
-
-            //             $dataInsert = [
-            //                 'HOJA_ID'    => json_encode(array_values($grupo['ids'])),
-            //                 'NO_MR'      => $no_mr,
-            //                 'created_at' => now(),
-            //                 'updated_at' => now(),
-            //             ];
-
-            //             $proveedoresUnicos = array_values($grupo['proveedores_set']);
-            //             foreach ($proveedoresUnicos as $idx => $prov) {
-            //                 $num = $idx + 1;
-            //                 $dataInsert["PROVEEDOR{$num}"] = $prov;
-            //                 $dataInsert["MATERIALES_JSON_PROVEEDOR{$num}"] = json_encode($grupo['materiales_por_proveedor'][$prov], JSON_UNESCAPED_UNICODE);
-            //                 $dataInsert["SUBTOTAL_PROVEEDOR{$num}"] = array_sum($grupo['subtotales'][$prov] ?? []);
-            //                 $dataInsert["IVA_PROVEEDOR{$num}"] = array_sum($grupo['ivas'][$prov] ?? []);
-            //                 $dataInsert["IMPORTE_PROVEEDOR{$num}"] = array_sum($grupo['importes'][$prov] ?? []);
-            //             }
-
-            //             DB::table('formulario_matrizcomparativa')->insert($dataInsert);
-            //         }
-            //     }
-            // }
 
 
             $grupos = [];
@@ -1406,11 +1103,6 @@ class mrController extends Controller
                 $subtotalQ2 = $subtotal_q2[$i] ?? 0;
                 $subtotalQ3 = $subtotal_q3[$i] ?? 0;
 
-                /*
-    |--------------------------------------------------------------------------
-    | SI NINGUNO SUPERA 10,001 NO CONTINUAR
-    |--------------------------------------------------------------------------
-    */
                 if (
                     $subtotalQ1 <= 10001 &&
                     $subtotalQ2 <= 10001 &&
@@ -1451,11 +1143,7 @@ class mrController extends Controller
                     $grupos[$grupoKey]['ids'][] = (string)$ids[$i];
                 }
 
-                /*
-    |--------------------------------------------------------------------------
-    | SI UNO SUPERA 10,001 SE PASAN TODOS LOS PROVEEDORES
-    |--------------------------------------------------------------------------
-    */
+
                 $superaLimiteFila = (
                     $subtotalQ1 > 10001 ||
                     $subtotalQ2 > 10001 ||
@@ -1471,11 +1159,7 @@ class mrController extends Controller
                     $cant = ${"cantidadrealq$q"}[$i] ?? '';
                     $prec = ${"preciounitarioq$q"}[$i] ?? '';
 
-                    /*
-        |--------------------------------------------------------------------------
-        | SOLO VALIDAR QUE EXISTA PROVEEDOR
-        |--------------------------------------------------------------------------
-        */
+                   
                     if (!empty($prov) && $superaLimiteFila) {
 
                         $grupos[$grupoKey]['proveedor_map'][$prov] = true;
@@ -1484,11 +1168,6 @@ class mrController extends Controller
                         $grupos[$grupoKey]['ivas'][$prov][] = $iva;
                         $grupos[$grupoKey]['importes'][$prov][] = $imp;
 
-                        /*
-            |--------------------------------------------------------------------------
-            | AGREGAR MATERIAL SOLO SI TIENE CANTIDAD
-            |--------------------------------------------------------------------------
-            */
                         if ($cant > 0) {
 
                             $grupos[$grupoKey]['materiales_por_proveedor'][$prov][] = [
