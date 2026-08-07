@@ -211,35 +211,54 @@ class matrizController extends Controller
                     }
 
                     if ($request->REQUIERE_PO === 'Sí' && is_array($hojas)) {
-                        $existe = DB::table('formulario_ordencompra')->where('HOJA_ID', json_encode($hojas))->first();
+
+                        $hojasJson = json_encode($hojas);
+
+                        $existe = DB::table('formulario_ordencompra')
+                            ->where('HOJA_ID', $hojasJson)
+                            ->first();
 
                         if (!$existe) {
-                            $año = now()->format('y');
-                            $ultimo = DB::table('formulario_ordencompra')
-                                ->where('NO_PO', 'like', "RES-PO$año-%")
-                                ->orderByDesc('ID_FORMULARIO_PO')
-                                ->value('NO_PO');
 
-                            $consecutivo = $ultimo ? (int)substr($ultimo, -3) + 1 : 1;
-                            $numeroOrden = sprintf("RES-PO%s-%03d", $año, $consecutivo);
+                            $anio = now()->format('y');
+                            $prefijo = "RES-PO{$anio}-";
+                            $ultimoConsecutivo = DB::table('formulario_ordencompra')
+                                ->where('NO_PO', 'like', $prefijo . '%')
+                                ->selectRaw("
+                                        MAX(
+                                            CAST(
+                                                SUBSTRING_INDEX(NO_PO, '-', -1)
+                                                AS UNSIGNED
+                                            )
+                                        ) AS consecutivo
+                                    ")
+                                ->value('consecutivo');
+
+                            $consecutivo = ((int) $ultimoConsecutivo) + 1;
+
+                            $numeroOrden = sprintf('RES-PO%s-%03d',$anio,$consecutivo);
 
                             $proveedor = $request->PROVEEDOR_SELECCIONADO;
+
                             $materialesJson = null;
                             $subtotal = null;
                             $iva = null;
                             $importe = null;
 
                             if ($proveedor === $matrizes->PROVEEDOR1) {
+
                                 $materialesJson = $matrizes->MATERIALES_JSON_PROVEEDOR1;
                                 $subtotal = $matrizes->SUBTOTAL_PROVEEDOR1;
                                 $iva = $matrizes->IVA_PROVEEDOR1;
                                 $importe = $matrizes->IMPORTE_PROVEEDOR1;
                             } elseif ($proveedor === $matrizes->PROVEEDOR2) {
+
                                 $materialesJson = $matrizes->MATERIALES_JSON_PROVEEDOR2;
                                 $subtotal = $matrizes->SUBTOTAL_PROVEEDOR2;
                                 $iva = $matrizes->IVA_PROVEEDOR2;
                                 $importe = $matrizes->IMPORTE_PROVEEDOR2;
                             } elseif ($proveedor === $matrizes->PROVEEDOR3) {
+
                                 $materialesJson = $matrizes->MATERIALES_JSON_PROVEEDOR3;
                                 $subtotal = $matrizes->SUBTOTAL_PROVEEDOR3;
                                 $iva = $matrizes->IVA_PROVEEDOR3;
@@ -249,7 +268,7 @@ class matrizController extends Controller
                             DB::table('formulario_ordencompra')->insert([
                                 'NO_PO'                  => $numeroOrden,
                                 'NO_MR'                  => $matrizes->NO_MR,
-                                'HOJA_ID'                => json_encode($hojas), 
+                                'HOJA_ID'                => $hojasJson,
                                 'MATERIALES_JSON'        => $materialesJson,
                                 'PROVEEDOR_SELECCIONADO' => $proveedor,
                                 'SUBTOTAL'               => $subtotal,
