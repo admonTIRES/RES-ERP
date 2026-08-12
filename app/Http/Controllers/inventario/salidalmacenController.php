@@ -394,7 +394,6 @@ class salidalmacenController extends Controller
                                         'PROVEEDOR_ALTA' => $inventarioPrincipal ->PROVEEDOR_ALTA,
                                         'NOMBRE_PROVEEDOR' => $inventarioPrincipal ->NOMBRE_PROVEEDOR,
                                         'REQUIERE_CALIBRACION' => $inventarioPrincipal ->REQUIERE_CALIBRACION,
-                                        'ES_INFRAESTRUCTURA' => $inventarioPrincipal ->ES_INFRAESTRUCTURA,
                                         'DETALLAR_ARTICULOS' => $inventarioPrincipal ->DETALLAR_ARTICULOS,
                                         'FRENTE_DERECHA' => $inventarioPrincipal ->FRENTE_DERECHA,
                                         'FRENTE_IZQUIERDA' => $inventarioPrincipal ->FRENTE_IZQUIERDA,
