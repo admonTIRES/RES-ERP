@@ -58,7 +58,7 @@
 
 
 
-    #Tablainventario td.col-justificacion {
+    #Tablainventariomantenimiento td.col-justificacion {
         white-space: normal !important;
         overflow: visible !important;
         text-overflow: unset !important;
@@ -70,7 +70,7 @@
     }
 
 
-    #Tablainventario td {
+    #Tablainventariomantenimiento td {
         word-wrap: break-word;
         white-space: normal !important;
     }
