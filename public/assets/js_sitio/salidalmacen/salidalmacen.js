@@ -22,6 +22,7 @@ Modalmr.addEventListener('hidden.bs.modal', event => {
     contadorMateriales = 1;
 
     const inputFecha = document.getElementById("FECHA_ALMACEN_SOLICITUD");
+
     if (inputFecha) {
         inputFecha.classList.remove("is-invalid"); 
     }
@@ -29,13 +30,8 @@ Modalmr.addEventListener('hidden.bs.modal', event => {
     if (typeof Swal !== "undefined") {
         Swal.close();
     }
+
 });
-
-
-
-
-
-
 
 $("#NUEVO_RECUROSEMPLEADO").click(function (e) {
     e.preventDefault();
@@ -108,6 +104,9 @@ $("#guardaRECEMPLEADOS").click(function (e) {
                 'UNIDAD_SALIDA': $(this).find("input[name='UNIDAD_SALIDA']").val(),
                 'ES_ASIGNACION': $(this).find("select[name='ES_ASIGNACION']").val(),
                 'NOMBRE_ASIGNACION': $(this).find("select[name='NOMBRE_ASIGNACION']").val(),
+                'ES_INVENTARIO_TALLER': $(this).find("select[name='ES_INVENTARIO_TALLER']").val(),
+                'TIPO_ARTICULO_TALLER': $(this).find("select[name='TIPO_ARTICULO_TALLER']").val(),
+                'INVENTARIO_TALLER_ID': $(this).find("select[name='INVENTARIO_TALLER_ID']").val(),
 
                 'ARTICULOS': [] 
             };
@@ -123,7 +122,10 @@ $("#guardaRECEMPLEADOS").click(function (e) {
                         'CANTIDAD_RETORNO_DETALLE': $(this).find("input[name='CANTIDAD_RETORNO_DETALLE[]']").val(),
                         'UNIDAD_DETALLE': $(this).find("input[name='UNIDAD_DETALLE[]']").val(),
                         'ES_ASIGNACION_DETALLE': $(this).find("select[name='ES_ASIGNACION_DETALLE[]']").val(),
-                        'NOMBRE_ASIGNACION_DETALLE': $(this).find("select[name='NOMBRE_ASIGNACION_DETALLE[]']").val(),       
+                        'NOMBRE_ASIGNACION_DETALLE': $(this).find("select[name='NOMBRE_ASIGNACION_DETALLE[]']").val(),      
+                        'ES_INVENTARIO_TALLER': $(this).find("select[name='ES_INVENTARIO_TALLER_DETALLE[]']").val(),
+                        'TIPO_ARTICULO_TALLER': $(this).find("select[name='TIPO_ARTICULO_TALLER_DETALLE[]']").val(),
+                        'INVENTARIO_TALLER_ID': $(this).find("select[name='INVENTARIO_TALLER_ID_DETALLE[]']").val()
 
                     };
                     documento.ARTICULOS.push(articulo);
@@ -291,7 +293,6 @@ columnDefs: [
  infoCallback: function (settings, start, end, max, total, pre) {
             return `Total de ${total} registros`;
     },
-
 
 });
 
@@ -538,20 +539,22 @@ function cargarMaterialesDesdeJSON(materialesJson) {
 
             divMaterial.innerHTML = `
                 <div class="row p-3 rounded">
-                    <div class="col-1 mt-2">
+                    <div class="col-1 mt-3">
                         <label class="form-label">N°</label>
                         <input type="text" class="form-control" name="NUMERO_ORDEN" value="${contadorMateriales}" readonly>
                     </div>
-                    <div class="col-4 mt-2">
+
+                    <div class="col-4 mt-3">
                         <label class="form-label">Descripción</label>
                         <input type="text" class="form-control" name="DESCRIPCION" value="${escapeHtml(material.DESCRIPCION)}" readonly required>
                     </div>
-                    <div class="col-1 mt-2">
+
+                    <div class="col-1 mt-3">
                         <label class="form-label">Cantidad</label>
                         <input type="number" class="form-control cantidad_original" name="CANTIDAD" value="${material.CANTIDAD}" readonly required>
                     </div>
                     
-                    <div class="col-2 mt-2  retorna_wrap">
+                    <div class="col-2 mt-3 retorna_wrap">
                         <label class="form-label">¿El ítem retorna?*</label>
                         <select class="form-control retorna_material" name="RETORNA_EQUIPO" required>
                             <option value="0" disabled>Seleccione una opción</option>
@@ -560,7 +563,7 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                         </select>
                     </div>
                   
-                    <div class="col-2 mt-2 campo_unico">
+                    <div class="col-2 mt-3 campo_unico">
                         <label class="form-label">En existencia</label>
                         <select class="form-control en_existencia" name="EN_EXISTENCIA" required>
                             <option value="" ${!material.EN_EXISTENCIA ? "selected" : ""} disabled>Seleccione</option>
@@ -568,7 +571,8 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                             <option value="0" ${material.EN_EXISTENCIA === "0" ? "selected" : ""}>No</option>
                         </select>
                     </div>
-                    <div class="col-2 mt-2">
+
+                    <div class="col-2 mt-3">
                         <label class="form-label">Varios ítem</label>
                         <select class="form-control varios_articulos" name="VARIOS_ARTICULOS" required>
                             <option value="" ${!material.VARIOS_ARTICULOS ? "selected" : ""} disabled>Seleccione</option>
@@ -577,10 +581,11 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                         </select>
                     </div>
 
-                    <div class="col-2 mt-2 campo_unico">
+                    <div class="col-2 mt-3 campo_unico">
                         <label class="form-label">Tipo inventario</label>
                         <select class="form-control tipo_inventario" name="TIPO_INVENTARIO" required>
                             <option value="" ${!material.TIPO_INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
+
                             ${window.tipoinventario.map(t => `
                                 <option value="${t.DESCRIPCION_TIPO}" ${material.TIPO_INVENTARIO === t.DESCRIPCION_TIPO ? "selected" : ""}>
                                     ${t.DESCRIPCION_TIPO}
@@ -589,23 +594,70 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                         </select>
                     </div>
 
-                    <div class="col-5 mt-2 campo_unico">
+                    <div class="col-5 mt-3 campo_unico">
                         <label class="form-label">Inventario</label>
                         <select class="form-control inventario select2-inventario" name="INVENTARIO" required>
-                             <option value="" ${!material.INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
-                         </select>
-                     </div>
+                            <option value="" ${!material.INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
+                        </select>
+                    </div>
 
-                    <div class="col-3 mt-2 campo_unico">
+                    <div class="col-3 mt-3 campo_unico">
                         <label class="form-label">Cantidad sale de almacén</label>
                         <input type="number" class="form-control cantidad_salida" name="CANTIDAD_SALIDA" value="${material.CANTIDAD_SALIDA || ''}" required>
                     </div>
-                    <div class="col-2 mt-2 campo_unico">
+
+                    <div class="col-2 mt-3 campo_unico">
                         <label class="form-label">U.M.</label>
                         <input type="text" class="form-control unidad_salida" name="UNIDAD_SALIDA" value="${material.UNIDAD_SALIDA || ''}" required>
                     </div>
 
-                    <div class="col-6 mt-2 campo_unico">
+                    <div class="col-4 mt-3 campo_unico">
+                        <label class="form-label">¿Es para el inventario del Taller Contraincendio?</label>
+                        <select class="form-control es_inventario_taller" name="ES_INVENTARIO_TALLER" required>
+                            <option value="" ${!material.ES_INVENTARIO_TALLER ? "selected" : ""} disabled>Seleccione</option>
+                            <option value="1" ${material.ES_INVENTARIO_TALLER === "1" ? "selected" : ""}>Sí</option>
+                            <option value="0" ${material.ES_INVENTARIO_TALLER === "0" ? "selected" : ""}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-4 mt-3 taller_tipo_articulo_wrap" style="display:none;">
+                        <label class="form-label">¿El artículo ya existe en el inventario del Taller?</label>
+                        <select class="form-control tipo_articulo_taller" name="TIPO_ARTICULO_TALLER" required>
+                            <option value="" ${!material.TIPO_ARTICULO_TALLER ? "selected" : ""} disabled>Seleccione</option>
+                            <option value="EXISTENTE" ${material.TIPO_ARTICULO_TALLER === "EXISTENTE" ? "selected" : ""}>Sí</option>
+                            <option value="NUEVO" ${material.TIPO_ARTICULO_TALLER === "NUEVO" ? "selected" : ""}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-4 mt-3 taller_inventario_wrap" style="display:none;">
+                        <label class="form-label">Artículo existente en Taller Contraincendio</label>
+                        <select class="form-control inventario_taller select2-inventario-taller" name="INVENTARIO_TALLER_ID" required>
+                            <option value="" ${!material.INVENTARIO_TALLER_ID ? "selected" : ""} disabled>Seleccione inventario</option>
+
+                            ${(window.inventariomantenimiento || [])
+                                .filter(inv => inv.TIPO_EQUIPO === material.TIPO_INVENTARIO)
+                                .sort((a, b) => (a.DESCRIPCION_EQUIPO || '').localeCompare(b.DESCRIPCION_EQUIPO || ''))
+                                .map(inv => {
+                                    const texto = (material.TIPO_INVENTARIO === "AF" || material.TIPO_INVENTARIO === "ANF")
+                                        ? `${inv.DESCRIPCION_EQUIPO || ''} (${inv.CODIGO_EQUIPO || ''})`
+                                        : [
+                                            inv.DESCRIPCION_EQUIPO,
+                                            inv.MARCA_EQUIPO,
+                                            inv.MODELO_EQUIPO,
+                                            inv.SERIE_EQUIPO
+                                        ].filter(Boolean).join(' | ');
+
+                                    const seleccionado = String(material.INVENTARIO_TALLER_ID || '') === String(inv.ID_FORMULARIO_INVENTARIO_MANTENIMIENTO)
+                                        ? 'selected'
+                                        : '';
+
+                                    return `<option value="${inv.ID_FORMULARIO_INVENTARIO_MANTENIMIENTO}" ${seleccionado}>${texto}</option>`;
+                                })
+                                .join('')}
+                        </select>
+                    </div>
+
+                    <div class="col-6 mt-3 campo_unico">
                         <label class="form-label">Es asignación</label>
                         <select class="form-control asignacion_articulos" name="ES_ASIGNACION" required>
                             <option value="" ${!material.ES_ASIGNACION ? "selected" : ""} disabled>Seleccione</option>
@@ -614,16 +666,14 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                         </select>
                     </div>
 
-                  <div class="col-6 mt-2 div_nombreasignacion text-center"  style="display: none;">
+                    <div class="col-6 mt-3 div_nombreasignacion text-center" style="display:none;">
                         <label class="form-label">Nombre colaborador/proveedor</label>
                         <select class="form-control nombre_asignacion text-center" name="NOMBRE_ASIGNACION" required>
-
                             <option value="">Seleccione</option>
 
                             <optgroup label="Colaboradores">
                                 ${window.colaboradores.map(c => `
-                                    <option value="${c.CURP}"
-                                        ${material.NOMBRE_ASIGNACION === c.CURP ? "selected" : ""}>
+                                    <option value="${c.CURP}" ${material.NOMBRE_ASIGNACION === c.CURP ? "selected" : ""}>
                                         ${c.NOMBRE_COLABORADOR} ${c.PRIMER_APELLIDO} ${c.SEGUNDO_APELLIDO}
                                     </option>
                                 `).join('')}
@@ -631,18 +681,15 @@ function cargarMaterialesDesdeJSON(materialesJson) {
 
                             <optgroup label="Proveedores">
                                 ${window.proveedores.map(p => `
-                                    <option value="${p.RFC_ALTA}"
-                                        ${material.NOMBRE_ASIGNACION === p.RFC_ALTA ? "selected" : ""}>
+                                    <option value="${p.RFC_ALTA}" ${material.NOMBRE_ASIGNACION === p.RFC_ALTA ? "selected" : ""}>
                                         ${p.NOMBRE_DIRECTORIO ?? "SIN NOMBRE"} (${p.RFC_ALTA})
                                     </option>
                                 `).join('')}
                             </optgroup>
-
                         </select>
                     </div>
 
-
-                    <div class="col-4 mt-2 div_articulo_retorno campo_unico" style="display: none;">
+                    <div class="col-4 mt-3 div_articulo_retorno campo_unico" style="display:none;">
                         <label class="form-label">Artículo ya retorno</label>
                         <select class="form-control articulo_retorno" name="ARTICULO_RETORNO" required>
                             <option value="" ${!material.ARTICULO_RETORNO ? "selected" : ""} disabled>Seleccione</option>
@@ -650,22 +697,23 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                             <option value="0" ${material.ARTICULO_RETORNO === "0" ? "selected" : ""}>No</option>
                         </select>
                     </div>
-                    <div class="col-4 mt-2 div_fecha_retorno" style="display: none;">
+
+                    <div class="col-4 mt-3 div_fecha_retorno" style="display:none;">
                         <label class="form-label">Fecha que retorno</label>
                         <div class="input-group">
-                            <input type="text" class="form-control mydatepicker fecha_retorno"  placeholder="aaaa-mm-dd"  name="FECHA_RETORNO" value="${material.FECHA_RETORNO || ''}" required>
+                            <input type="text" class="form-control mydatepicker fecha_retorno" placeholder="aaaa-mm-dd" name="FECHA_RETORNO" value="${material.FECHA_RETORNO || ''}" required>
                             <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                         </div>
                     </div>
-                    <div class="col-4 mt-2 div_cantidad_retorno" style="display: none;">
+
+                    <div class="col-4 mt-3 div_cantidad_retorno" style="display:none;">
                         <label class="form-label">Cantidad que retorna a almacén</label>
-                        <input type="number" class="form-control cantidad_retorno" name="CANTIDAD_RETORNO"  value="${material.CANTIDAD_RETORNO || ''}" required>
+                        <input type="number" class="form-control cantidad_retorno" name="CANTIDAD_RETORNO" value="${material.CANTIDAD_RETORNO || ''}" required>
                     </div>
 
-                    <div class="col-12 mt-2 contenedor_articulos" style="display: none;">
-                    </div>
+                    <div class="col-12 mt-3 contenedor_articulos" style="display:none;"></div>
 
-                    <div class="col-12 mt-2 nota_div" style="display: none;">
+                    <div class="col-12 mt-3 nota_div" style="display:none;">
                         <label class="form-label">Nota (explique por qué no es la misma cantidad)</label>
                         <textarea class="form-control nota_cantidad" name="NOTA_CANTIDAD">${material.NOTA_CANTIDAD || ''}</textarea>
                     </div>
@@ -674,48 +722,287 @@ function cargarMaterialesDesdeJSON(materialesJson) {
 
             contenedorMateriales.appendChild(divMaterial);
 
-           
-            
             contadorMateriales++;
 
-         
 
+
+
+            function obtenerSelectInventarioPrincipal(inputCantidad) {
+                if (inputCantidad.classList.contains('cantidad_salida')) {
+                    const materialItem = inputCantidad.closest('.material-item');
+
+                    if (!materialItem) {
+                        return null;
+                    }
+
+                    return materialItem.querySelector('.inventario');
+                }
+
+                if (inputCantidad.classList.contains('cantidad_detalle')) {
+                    const articuloItem = inputCantidad.closest('.articulo-item');
+
+                    if (!articuloItem) {
+                        return null;
+                    }
+
+                    return articuloItem.querySelector('.inventario_detalle');
+                }
+
+                return null;
+            }
+
+            function cantidadInventarioPrincipalActiva(inputCantidad) {
+                const materialItem = inputCantidad.closest('.material-item');
+
+                if (!materialItem) {
+                    return false;
+                }
+
+                const selectVarios = materialItem.querySelector('.varios_articulos');
+                const selectEnExistencia = materialItem.querySelector('.en_existencia');
+
+                if (!selectVarios) {
+                    return false;
+                }
+
+                if (inputCantidad.classList.contains('cantidad_salida')) {
+                    return selectVarios.value !== "1" && (!selectEnExistencia || selectEnExistencia.value === "1");
+                }
+
+                if (inputCantidad.classList.contains('cantidad_detalle')) {
+                    return selectVarios.value === "1";
+                }
+
+                return false;
+            }
+
+            function obtenerStockInventarioPrincipal(selectInventario) {
+                if (!selectInventario || !selectInventario.value) {
+                    return 0;
+                }
+
+                const opcionSeleccionada = selectInventario.options[selectInventario.selectedIndex];
+
+                if (!opcionSeleccionada) {
+                    return 0;
+                }
+
+                return parseFloat(opcionSeleccionada.dataset.stock || 0);
+            }
+
+            function obtenerCantidadUsadaInventarioPrincipal(inventarioId, inputExcluir) {
+                let cantidadUtilizada = 0;
+
+                contenedorMateriales.querySelectorAll('.cantidad_salida, .cantidad_detalle').forEach(function (inputCantidad) {
+                    if (inputCantidad === inputExcluir) {
+                        return;
+                    }
+
+                    if (!cantidadInventarioPrincipalActiva(inputCantidad)) {
+                        return;
+                    }
+
+                    const selectInventario = obtenerSelectInventarioPrincipal(inputCantidad);
+
+                    if (!selectInventario || !selectInventario.value) {
+                        return;
+                    }
+
+                    if (String(selectInventario.value) === String(inventarioId)) {
+                        cantidadUtilizada += parseFloat(inputCantidad.value || 0);
+                    }
+                });
+
+                return cantidadUtilizada;
+            }
+
+            function validarCantidadAcumuladaInventarioPrincipal(inputCantidad, mostrarAlerta) {
+                if (!inputCantidad || !cantidadInventarioPrincipalActiva(inputCantidad)) {
+                    return true;
+                }
+
+                const selectInventario = obtenerSelectInventarioPrincipal(inputCantidad);
+
+                if (!selectInventario || !selectInventario.value) {
+                    inputCantidad.removeAttribute('max');
+                    return true;
+                }
+
+                const stock = obtenerStockInventarioPrincipal(selectInventario);
+                const cantidadUtilizada = obtenerCantidadUsadaInventarioPrincipal(selectInventario.value, inputCantidad);
+                const cantidadDisponible = Math.max(stock - cantidadUtilizada, 0);
+                const cantidadActual = parseFloat(inputCantidad.value || 0);
+
+                inputCantidad.setAttribute('max', cantidadDisponible);
+
+                if (cantidadActual > cantidadDisponible) {
+                    if (mostrarAlerta !== false) {
+                        if (cantidadDisponible > 0) {
+                            alert(`Solo quedan ${cantidadDisponible} unidades disponibles de este artículo. El stock total es de ${stock} unidades.`);
+                        } else {
+                            alert(`Ya se utilizaron las ${stock} unidades disponibles de este artículo.`);
+                        }
+                    }
+
+                    inputCantidad.value = cantidadDisponible > 0 ? cantidadDisponible : "";
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            function actualizarLimitesInventarioPrincipal() {
+                contenedorMateriales.querySelectorAll('.cantidad_salida, .cantidad_detalle').forEach(function (inputCantidad) {
+                    if (!cantidadInventarioPrincipalActiva(inputCantidad)) {
+                        inputCantidad.removeAttribute('max');
+                        return;
+                    }
+
+                    const selectInventario = obtenerSelectInventarioPrincipal(inputCantidad);
+
+                    if (!selectInventario || !selectInventario.value) {
+                        inputCantidad.removeAttribute('max');
+                        return;
+                    }
+
+                    const stock = obtenerStockInventarioPrincipal(selectInventario);
+                    const cantidadUtilizada = obtenerCantidadUsadaInventarioPrincipal(selectInventario.value, inputCantidad);
+                    const cantidadDisponible = Math.max(stock - cantidadUtilizada, 0);
+
+                    inputCantidad.setAttribute('max', cantidadDisponible);
+                });
+            }
+
+            $(contenedorMateriales).off('.validacionStockPrincipal');
+
+            $(contenedorMateriales).on('input.validacionStockPrincipal', '.cantidad_salida, .cantidad_detalle', function () {
+                validarCantidadAcumuladaInventarioPrincipal(this, true);
+                actualizarLimitesInventarioPrincipal();
+            });
+
+            $(contenedorMateriales).on('change.validacionStockPrincipal', '.inventario, .inventario_detalle', function () {
+                const contenedorActual = this.closest('.articulo-item') || this.closest('.material-item');
+
+                if (!contenedorActual) {
+                    return;
+                }
+
+                const inputCantidad = this.classList.contains('inventario_detalle')
+                    ? contenedorActual.querySelector('.cantidad_detalle')
+                    : contenedorActual.querySelector('.cantidad_salida');
+
+                if (inputCantidad) {
+                    validarCantidadAcumuladaInventarioPrincipal(inputCantidad, true);
+                }
+
+                actualizarLimitesInventarioPrincipal();
+            });
+
+            $(contenedorMateriales).on('change.validacionStockPrincipal', '.varios_articulos, .en_existencia, .tipo_inventario, .tipo_inventario_detalle', function () {
+                setTimeout(function () {
+                    actualizarLimitesInventarioPrincipal();
+                }, 0);
+            });
+
+            setTimeout(function () {
+                actualizarLimitesInventarioPrincipal();
+            }, 0);
+            
             const selectVarios = divMaterial.querySelector('.varios_articulos');
             const contenedorArticulos = divMaterial.querySelector('.contenedor_articulos');
             const inputCantidadTotal = divMaterial.querySelector('.cantidad_original');
             const divNota = divMaterial.querySelector('.nota_div');
             const textareaNota = divMaterial.querySelector('.nota_cantidad');
 
-           function agregarArticulo(valor = {}) {
-            const divArticulo = document.createElement('div');
-            divArticulo.classList.add('row', 'g-2', 'mb-2', 'articulo-item');
-            divArticulo.innerHTML = `
-                <div class="col-2">
-                    <label class="form-label">Tipo inventario</label>
-                    <select class="form-control tipo_inventario_detalle" name="TIPO_INVENTARIO_DETALLE[]" >
-                        <option value="" ${!valor.TIPO_INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
-                        ${window.tipoinventario.map(t => `
-                            <option value="${t.DESCRIPCION_TIPO}" ${valor.TIPO_INVENTARIO === t.DESCRIPCION_TIPO ? "selected" : ""}>
-                                ${t.DESCRIPCION_TIPO}
-                            </option>
-                        `).join('')}
-                    </select>
-                </div>
-                <div class="col-5">
-                    <label class="form-label">Inventario</label>
-                    <select class="form-control inventario_detalle select2-inventario-detalee" name="INVENTARIO_DETALLE[]">
-                        <option value="" ${!valor.INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
-                    </select>
-                </div>
-                <div class="col-3">
-                    <label class="form-label">Cantidad salida</label>
-                    <input type="number" class="form-control cantidad_detalle" name="CANTIDAD_DETALLE[]" value="${valor.CANTIDAD_DETALLE || ''}" >
-                </div>
-                <div class="col-2">
-                    <label class="form-label">U.M.</label>
-                    <input type="text" class="form-control " name="UNIDAD_DETALLE[]" value="${valor.UNIDAD_DETALLE || ''}" >
-                </div>
-                  <div class="col-6 mt-2">
+            function agregarArticulo(valor = {}) {
+                const divArticulo = document.createElement('div');
+
+                divArticulo.classList.add(
+                    'row',
+                    'g-2',
+                    'mb-2',
+                    'articulo-item'
+                );
+
+                divArticulo.innerHTML = `
+                    <div class="col-2 mt-3">
+                        <label class="form-label">Tipo inventario</label>
+                        <select class="form-control tipo_inventario_detalle" name="TIPO_INVENTARIO_DETALLE[]" required>
+                            <option value="" ${!valor.TIPO_INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
+
+                            ${window.tipoinventario.map(t => `
+                                <option value="${t.DESCRIPCION_TIPO}" ${valor.TIPO_INVENTARIO === t.DESCRIPCION_TIPO ? "selected" : ""}>
+                                    ${t.DESCRIPCION_TIPO}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+
+                    <div class="col-5 mt-3">
+                        <label class="form-label">Inventario</label>
+                        <select class="form-control inventario_detalle select2-inventario-detalee" name="INVENTARIO_DETALLE[]" required>
+                            <option value="" ${!valor.INVENTARIO ? "selected" : ""} disabled>Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="col-3 mt-3">
+                        <label class="form-label">Cantidad salida</label>
+                        <input type="number" class="form-control cantidad_detalle" name="CANTIDAD_DETALLE[]" value="${valor.CANTIDAD_DETALLE || ''}" required>
+                    </div>
+
+                    <div class="col-2 mt-3">
+                        <label class="form-label">U.M.</label>
+                        <input type="text" class="form-control unidad_detalle" name="UNIDAD_DETALLE[]" value="${valor.UNIDAD_DETALLE || ''}"  required>
+                    </div>
+
+                    <div class="col-4 mt-3 taller_detalle_principal_wrap">
+                        <label class="form-label">¿Es para el inventario del Taller Contraincendio?</label>
+                        <select class="form-control es_inventario_taller_detalle" name="ES_INVENTARIO_TALLER_DETALLE[]" required>
+                            <option value="" ${!valor.ES_INVENTARIO_TALLER ? "selected" : ""} disabled>Seleccione</option>
+                            <option value="1" ${valor.ES_INVENTARIO_TALLER === "1" ? "selected" : ""}>Sí</option>
+                            <option value="0" ${valor.ES_INVENTARIO_TALLER === "0" ? "selected" : ""}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-4 mt-3 taller_tipo_articulo_detalle_wrap" style="display:none;">
+                        <label class="form-label">¿El artículo ya existe en el inventario del Taller?</label>
+                        <select class="form-control tipo_articulo_taller_detalle" name="TIPO_ARTICULO_TALLER_DETALLE[]" required>
+                            <option value="" ${!valor.TIPO_ARTICULO_TALLER ? "selected" : ""} disabled>Seleccione</option>
+                            <option value="EXISTENTE" ${valor.TIPO_ARTICULO_TALLER === "EXISTENTE" ? "selected" : ""}>Sí</option>
+                            <option value="NUEVO" ${valor.TIPO_ARTICULO_TALLER === "NUEVO" ? "selected" : ""}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-4 mt-3 taller_inventario_detalle_wrap" style="display:none;">
+                        <label class="form-label">Artículo existente en Taller Contraincendio</label>
+                        <select class="form-control inventario_taller_detalle select2-inventario-taller-detalle" name="INVENTARIO_TALLER_ID_DETALLE[]" required>
+                            <option value="" ${!valor.INVENTARIO_TALLER_ID ? "selected" : ""} disabled>Seleccione inventario</option>
+
+                            ${(window.inventariomantenimiento || [])
+                                .filter(inv => inv.TIPO_EQUIPO === valor.TIPO_INVENTARIO)
+                                .sort((a, b) => (a.DESCRIPCION_EQUIPO || '').localeCompare(b.DESCRIPCION_EQUIPO || ''))
+                                .map(inv => {
+                                    const texto = (valor.TIPO_INVENTARIO === "AF" || valor.TIPO_INVENTARIO === "ANF")
+                                        ? `${inv.DESCRIPCION_EQUIPO || ''} (${inv.CODIGO_EQUIPO || ''})`
+                                        : [
+                                            inv.DESCRIPCION_EQUIPO,
+                                            inv.MARCA_EQUIPO,
+                                            inv.MODELO_EQUIPO,
+                                            inv.SERIE_EQUIPO
+                                        ].filter(Boolean).join(' | ');
+
+                                    const seleccionado = String(valor.INVENTARIO_TALLER_ID || '') === String(inv.ID_FORMULARIO_INVENTARIO_MANTENIMIENTO)
+                                        ? 'selected'
+                                        : '';
+
+                                    return `<option value="${inv.ID_FORMULARIO_INVENTARIO_MANTENIMIENTO}" ${seleccionado}>${texto}</option>`;
+                                })
+                                .join('')}
+                        </select>
+                    </div>
+
+                    <div class="col-6 mt-3">
                         <label class="form-label">Es asignación</label>
                         <select class="form-control asignacion_detalle" name="ES_ASIGNACION_DETALLE[]" required>
                             <option value="" ${!valor.ES_ASIGNACION_DETALLE ? "selected" : ""} disabled>Seleccione</option>
@@ -724,16 +1011,14 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                         </select>
                     </div>
 
-                  <div class="col-6 mt-2 detalle_asignacion_div text-center" style="display:none;">
+                    <div class="col-6 mt-3 detalle_asignacion_div text-center" style="display:none;">
                         <label class="form-label">Nombre colaborador/proveedor</label>
                         <select class="form-control nombreasignacion_detalle text-center" name="NOMBRE_ASIGNACION_DETALLE[]" required>
-
                             <option value="">Seleccione</option>
 
                             <optgroup label="Colaboradores">
                                 ${window.colaboradores.map(c => `
-                                    <option value="${c.CURP}"
-                                        ${valor.NOMBRE_ASIGNACION_DETALLE === c.CURP ? "selected" : ""}>
+                                    <option value="${c.CURP}" ${valor.NOMBRE_ASIGNACION_DETALLE === c.CURP ? "selected" : ""}>
                                         ${c.NOMBRE_COLABORADOR} ${c.PRIMER_APELLIDO} ${c.SEGUNDO_APELLIDO}
                                     </option>
                                 `).join('')}
@@ -741,50 +1026,51 @@ function cargarMaterialesDesdeJSON(materialesJson) {
 
                             <optgroup label="Proveedores">
                                 ${window.proveedores.map(p => `
-                                    <option value="${p.RFC_ALTA}"
-                                        ${valor.NOMBRE_ASIGNACION_DETALLE === p.RFC_ALTA ? "selected" : ""}>
+                                    <option value="${p.RFC_ALTA}" ${valor.NOMBRE_ASIGNACION_DETALLE === p.RFC_ALTA ? "selected" : ""}>
                                         ${p.NOMBRE_DIRECTORIO ?? "SIN NOMBRE"} (${p.RFC_ALTA})
                                     </option>
                                 `).join('')}
                             </optgroup>
-
                         </select>
                     </div>
 
-                <div class="col-4 mt-2 retorna_detalle_wrap">
-                    <label class="form-label">Artículo ya retorno</label>
-                    <select class="form-control retorna_detalle" name="RETORNA_DETALLE[]" required>
-                        <option value="" ${!valor.RETORNA_DETALLE ? "selected" : ""}>Seleccione</option>
-                        <option value="1" ${valor.RETORNA_DETALLE === "1" ? "selected" : ""}>Sí</option>
-                        <option value="2" ${valor.RETORNA_DETALLE === "2" ? "selected" : ""}>No</option>
-                    </select>
-                </div>
-                <div class="col-4 mt-2 fecha_detalle_div" style="display:none;">
-                    <label class="form-label">Fecha retorno</label>
-                    <input type="text" class="form-control mydatepicker fecha_detalle" placeholder="aaaa-mm-dd" name="FECHA_DETALLE[]" value="${valor.FECHA_DETALLE || ''}" required>
-                </div>
-                <div class="col-4 mt-2 cantidad_retorno_div" style="display:none;">
-                    <label class="form-label">Cantidad retorno</label>
-                    <input type="number" class="form-control cantidad_retorno_detalle" name="CANTIDAD_RETORNO_DETALLE[]" value="${valor.CANTIDAD_RETORNO_DETALLE || ''}" required>
-                </div>
-            `;
-            contenedorArticulos.appendChild(divArticulo);
+                    <div class="col-4 mt-3 retorna_detalle_wrap">
+                        <label class="form-label">Artículo ya retorno</label>
+                        <select class="form-control retorna_detalle" name="RETORNA_DETALLE[]" required>
+                            <option value="" ${!valor.RETORNA_DETALLE ? "selected" : ""}>Seleccione</option>
+                            <option value="1" ${valor.RETORNA_DETALLE === "1" ? "selected" : ""}>Sí</option>
+                            <option value="2" ${valor.RETORNA_DETALLE === "2" ? "selected" : ""}>No</option>
+                        </select>
+                    </div>
 
-            const selectTipoDetalle = divArticulo.querySelector('.tipo_inventario_detalle');
-            const selectInvDetalle = divArticulo.querySelector('.inventario_detalle');
+                    <div class="col-4 mt-3 fecha_detalle_div" style="display:none;">
+                        <label class="form-label">Fecha retorno</label>
+                        <input type="text" class="form-control mydatepicker fecha_detalle" placeholder="aaaa-mm-dd" name="FECHA_DETALLE[]" value="${valor.FECHA_DETALLE || ''}" required>
+                    </div>
 
-         
-          function cargarInventarioDetalle(tipoSeleccionado, valorGuardado = null) {
+                    <div class="col-4 mt-3 cantidad_retorno_div" style="display:none;">
+                        <label class="form-label">Cantidad retorno</label>
+                        <input type="number" class="form-control cantidad_retorno_detalle" name="CANTIDAD_RETORNO_DETALLE[]" value="${valor.CANTIDAD_RETORNO_DETALLE || ''}" required>
+                    </div>
+                `;
 
+                contenedorArticulos.appendChild(divArticulo);
+
+                const selectTipoDetalle = divArticulo.querySelector('.tipo_inventario_detalle');
+                const selectInvDetalle = divArticulo.querySelector('.inventario_detalle');
+
+               function cargarInventarioDetalle(tipoSeleccionado, valorGuardado = null) {
                     if (!tipoSeleccionado) return;
 
-                    const opciones = window.inventario
-                        .filter(inv => inv.TIPO_EQUIPO === tipoSeleccionado)
-                        .sort((a, b) => a.DESCRIPCION_EQUIPO.localeCompare(b.DESCRIPCION_EQUIPO))
-                        .map(inv => {
+                    const inputCantDetalle = divArticulo.querySelector('.cantidad_detalle');
+                    const inputUnidadDetalle = divArticulo.querySelector('.unidad_detalle');
 
+                    const opciones = (window.inventario || [])
+                        .filter(inv => inv.TIPO_EQUIPO === tipoSeleccionado)
+                        .sort((a, b) => (a.DESCRIPCION_EQUIPO || '').localeCompare(b.DESCRIPCION_EQUIPO || ''))
+                        .map(inv => {
                             const mostrarTexto = (tipoSeleccionado === "AF" || tipoSeleccionado === "ANF")
-                                ? `${inv.DESCRIPCION_EQUIPO} (${inv.CODIGO_EQUIPO || ""})`
+                                ? `${inv.DESCRIPCION_EQUIPO || ''} (${inv.CODIGO_EQUIPO || ""})`
                                 : [
                                     inv.DESCRIPCION_EQUIPO,
                                     inv.MARCA_EQUIPO,
@@ -792,9 +1078,8 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                                     inv.SERIE_EQUIPO
                                 ].filter(Boolean).join(" | ");
 
-
                             const estaAsignado = inv.ASIGNADO == 2;
-                            const esElGuardado = valorGuardado == inv.ID_FORMULARIO_INVENTARIO;
+                            const esElGuardado = String(valorGuardado || '') === String(inv.ID_FORMULARIO_INVENTARIO);
 
                             const textoFinal = estaAsignado
                                 ? `${mostrarTexto} - Asignado`
@@ -805,10 +1090,7 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                                 : "";
 
                             return `
-                                <option value="${inv.ID_FORMULARIO_INVENTARIO}"
-                                    data-stock="${inv.CANTIDAD_EQUIPO || 0}"
-                                    ${esElGuardado ? "selected" : ""}
-                                    ${disabledAttr}>
+                                <option value="${inv.ID_FORMULARIO_INVENTARIO}" data-stock="${inv.CANTIDAD_EQUIPO || 0}" data-unidad="${inv.UNIDAD_MEDIDA || ''}" ${esElGuardado ? "selected" : ""} ${disabledAttr}>
                                     ${textoFinal}
                                 </option>
                             `;
@@ -832,30 +1114,181 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                         dropdownPosition: 'below'
                     });
 
-                    const inputCantDetalle = divArticulo.querySelector('.cantidad_detalle');
+                    $(selectInvDetalle).off('change.unidadDetalle').on('change.unidadDetalle', function () {
+                        const inventarioSeleccionado = (window.inventario || []).find(function (inv) {
+                            return String(inv.ID_FORMULARIO_INVENTARIO) === String(selectInvDetalle.value);
+                        });
 
-                    selectInvDetalle.addEventListener('change', function () {
-                        const stock = parseInt(this.options[this.selectedIndex]?.dataset.stock || 0);
+                        const stock = inventarioSeleccionado
+                            ? parseFloat(inventarioSeleccionado.CANTIDAD_EQUIPO || 0)
+                            : 0;
+
                         inputCantDetalle.setAttribute('max', stock);
+
+                        inputUnidadDetalle.value = inventarioSeleccionado
+                            ? inventarioSeleccionado.UNIDAD_MEDIDA || ''
+                            : '';
                     });
 
-                    inputCantDetalle.addEventListener('input', function () {
-                        const stock = parseInt(selectInvDetalle.options[selectInvDetalle.selectedIndex]?.dataset.stock || 0);
-                        if (parseInt(this.value || 0) > stock) {
+                    inputCantDetalle.removeEventListener('input', inputCantDetalle._validarStockDetalle);
+
+                    inputCantDetalle._validarStockDetalle = function () {
+                        const inventarioSeleccionado = (window.inventario || []).find(function (inv) {
+                            return String(inv.ID_FORMULARIO_INVENTARIO) === String(selectInvDetalle.value);
+                        });
+
+                        const stock = inventarioSeleccionado
+                            ? parseFloat(inventarioSeleccionado.CANTIDAD_EQUIPO || 0)
+                            : 0;
+
+                        if (parseFloat(this.value || 0) > stock) {
                             alert(`Solo hay ${stock} unidades disponibles en inventario.`);
                             this.value = stock;
                         }
-                    });
+                    };
+
+                    inputCantDetalle.addEventListener('input', inputCantDetalle._validarStockDetalle);
+
+                    if (valorGuardado !== null && valorGuardado !== undefined && valorGuardado !== '') {
+                        $(selectInvDetalle).val(String(valorGuardado)).trigger('change');
+                    } else {
+                        inputUnidadDetalle.value = '';
+                    }
                 }
 
+                if (valor.TIPO_INVENTARIO) {
+                    cargarInventarioDetalle(
+                        valor.TIPO_INVENTARIO,
+                        valor.INVENTARIO
+                    );
+                }
 
-             
-            if (valor.TIPO_INVENTARIO) {
-                cargarInventarioDetalle(valor.TIPO_INVENTARIO, valor.INVENTARIO);
-            }
-            selectTipoDetalle.addEventListener('change', function () {
-                cargarInventarioDetalle(this.value);
-            });
+                const selectEsTallerDetalle = divArticulo.querySelector('.es_inventario_taller_detalle');
+                const selectTipoArticuloTallerDetalle = divArticulo.querySelector('.tipo_articulo_taller_detalle');
+                const selectInventarioTallerDetalle = divArticulo.querySelector('.inventario_taller_detalle');
+                const divTipoArticuloTallerDetalle = divArticulo.querySelector('.taller_tipo_articulo_detalle_wrap');
+                const divInventarioTallerDetalle = divArticulo.querySelector('.taller_inventario_detalle_wrap');
+
+                function cargarInventarioTallerDetalle(tipoSeleccionado, valorGuardado = null) {
+                    const inventarioTaller = Array.isArray(window.inventariomantenimiento)
+                        ? window.inventariomantenimiento
+                        : [];
+
+                    const valorSeleccionado = valorGuardado !== null && valorGuardado !== undefined && valorGuardado !== ''
+                        ? String(valorGuardado)
+                        : '';
+
+                    const opciones = inventarioTaller
+                        .filter(inv => inv.TIPO_EQUIPO === tipoSeleccionado)
+                        .sort((a, b) => (a.DESCRIPCION_EQUIPO || '').localeCompare(b.DESCRIPCION_EQUIPO || ''))
+                        .map(inv => {
+                            const idInventario = String(inv.ID_FORMULARIO_INVENTARIO_MANTENIMIENTO);
+
+                            const texto = (tipoSeleccionado === 'AF' || tipoSeleccionado === 'ANF')
+                                ? `${inv.DESCRIPCION_EQUIPO || ''} (${inv.CODIGO_EQUIPO || ''})`
+                                : [
+                                    inv.DESCRIPCION_EQUIPO,
+                                    inv.MARCA_EQUIPO,
+                                    inv.MODELO_EQUIPO,
+                                    inv.SERIE_EQUIPO
+                                ].filter(Boolean).join(' | ');
+
+                            const seleccionado = idInventario === valorSeleccionado
+                                ? 'selected'
+                                : '';
+
+                            return `<option value="${idInventario}" ${seleccionado}>${texto}</option>`;
+                        })
+                        .join('');
+
+                    selectInventarioTallerDetalle.innerHTML = `
+                        <option value="" disabled ${valorSeleccionado === '' ? 'selected' : ''}>Seleccione inventario</option>
+                        ${opciones}
+                    `;
+
+                    if ($(selectInventarioTallerDetalle).hasClass('select2-hidden-accessible')) {
+                        $(selectInventarioTallerDetalle).select2('destroy');
+                    }
+
+                    $(selectInventarioTallerDetalle).select2({
+                        width: '100%',
+                        placeholder: 'Seleccione inventario del taller',
+                        allowClear: true,
+                        dropdownParent: obtenerModalPadre(selectInventarioTallerDetalle),
+                        dropdownPosition: 'below'
+                    });
+
+                    if (valorSeleccionado !== '') {
+                        $(selectInventarioTallerDetalle)
+                            .val(valorSeleccionado)
+                            .trigger('change');
+                    }
+                }
+
+                function actualizarTallerDetalle(limpiar = false) {
+                    const esParaTaller = selectEsTallerDetalle.value === '1';
+                    const esExistente = selectTipoArticuloTallerDetalle.value === 'EXISTENTE';
+
+                    divTipoArticuloTallerDetalle.style.display = esParaTaller
+                        ? 'block'
+                        : 'none';
+
+                    selectTipoArticuloTallerDetalle.required = esParaTaller;
+
+                    if (!esParaTaller) {
+                        divInventarioTallerDetalle.style.display = 'none';
+                        selectInventarioTallerDetalle.required = false;
+
+                        if (limpiar) {
+                            selectTipoArticuloTallerDetalle.value = '';
+
+                            $(selectInventarioTallerDetalle)
+                                .val(null)
+                                .trigger('change');
+                        }
+
+                        return;
+                    }
+
+                    divInventarioTallerDetalle.style.display = esExistente
+                        ? 'block'
+                        : 'none';
+
+                    selectInventarioTallerDetalle.required = esExistente;
+
+                    if (esExistente) {
+                        cargarInventarioTallerDetalle(
+                            selectTipoDetalle.value,
+                            limpiar ? null : valor.INVENTARIO_TALLER_ID
+                        );
+
+                    } else if (limpiar) {
+                        $(selectInventarioTallerDetalle)
+                            .val(null)
+                            .trigger('change');
+                    }
+                }
+
+                selectTipoDetalle.addEventListener('change', function () {
+                    cargarInventarioDetalle(this.value);
+
+                    if (
+                        selectEsTallerDetalle.value === '1' &&
+                        selectTipoArticuloTallerDetalle.value === 'EXISTENTE'
+                    ) {
+                        cargarInventarioTallerDetalle(this.value, null);
+                    }
+                });
+
+                selectEsTallerDetalle.addEventListener('change', function () {
+                    actualizarTallerDetalle(true);
+                });
+
+                selectTipoArticuloTallerDetalle.addEventListener('change', function () {
+                    actualizarTallerDetalle(true);
+                });
+
+                actualizarTallerDetalle(false);
 
                 $(divArticulo).find('.mydatepicker').datepicker({
                     format: 'yyyy-mm-dd',
@@ -864,75 +1297,89 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                     language: 'es'
                 });
 
-             
-           
-                const wrapRetornaDetalle     = divArticulo.querySelector('.retorna_detalle_wrap'); 
-                const selectRetornaDetalle   = divArticulo.querySelector('select.retorna_detalle'); 
-                const divFechaDetalle        = divArticulo.querySelector('.fecha_detalle_div');
-                const divCantRetDetalle      = divArticulo.querySelector('.cantidad_retorno_div');
-
+                const wrapRetornaDetalle = divArticulo.querySelector('.retorna_detalle_wrap');
+                const selectRetornaDetalle = divArticulo.querySelector('select.retorna_detalle');
+                const divFechaDetalle = divArticulo.querySelector('.fecha_detalle_div');
+                const divCantRetDetalle = divArticulo.querySelector('.cantidad_retorno_div');
                 const selectPrincipalRetorna = divMaterial.querySelector('.retorna_material');
 
                 selectRetornaDetalle.value = (valor.RETORNA_DETALLE ?? "").toString();
 
                 function actualizarRetornoDetalle() {
-                if (String(selectPrincipalRetorna.value) !== "1") {
-                    wrapRetornaDetalle.style.display = "none";
-                    divFechaDetalle.style.display = "none";
-                    divCantRetDetalle.style.display = "none";
-                    return;
+                    if (String(selectPrincipalRetorna.value) !== "1") {
+                        wrapRetornaDetalle.style.display = "none";
+                        divFechaDetalle.style.display = "none";
+                        divCantRetDetalle.style.display = "none";
+                        return;
+                    }
+
+                    wrapRetornaDetalle.style.display = "block";
+
+                    if (String(selectRetornaDetalle.value) === "1") {
+                        divFechaDetalle.style.display = "block";
+                        divCantRetDetalle.style.display = "block";
+
+                    } else {
+                        divFechaDetalle.style.display = "none";
+                        divCantRetDetalle.style.display = "none";
+                    }
                 }
 
-                wrapRetornaDetalle.style.display = "block";
+                selectPrincipalRetorna.addEventListener(
+                    'change',
+                    actualizarRetornoDetalle
+                );
 
-                if (String(selectRetornaDetalle.value) === "1") {
-                    divFechaDetalle.style.display = "block";
-                    divCantRetDetalle.style.display = "block";
-                } else {
-                    divFechaDetalle.style.display = "none";
-                    divCantRetDetalle.style.display = "none";
-                }
-                }
+                selectRetornaDetalle.addEventListener(
+                    'change',
+                    actualizarRetornoDetalle
+                );
 
-                selectPrincipalRetorna.addEventListener('change', actualizarRetornoDetalle);
-                selectRetornaDetalle.addEventListener('change', actualizarRetornoDetalle);
+                setTimeout(
+                    actualizarRetornoDetalle,
+                    0
+                );
 
-                setTimeout(actualizarRetornoDetalle, 0);
-
-              
-            
                 const divnombreasignaciondetalle = divArticulo.querySelector('.detalle_asignacion_div');
                 const selectAsignacionarticulosdetalle = divArticulo.querySelector('.asignacion_detalle');
                 const selectNombredetalle = divArticulo.querySelector('.nombreasignacion_detalle');
 
-        
                 function actualizarNombreAsignacionDetalle() {
                     if (selectAsignacionarticulosdetalle.value === "1") {
                         divnombreasignaciondetalle.style.display = "block";
+
                     } else {
                         divnombreasignaciondetalle.style.display = "none";
                     }
-                    }
+                }
 
-                selectAsignacionarticulosdetalle.value = (valor.ES_ASIGNACION_DETALLE ?? "").toString();
-                selectNombredetalle.value = (valor.NOMBRE_ASIGNACION_DETALLE ?? "").toString();
+                selectAsignacionarticulosdetalle.value =
+                    (valor.ES_ASIGNACION_DETALLE ?? "").toString();
 
-            actualizarNombreAsignacionDetalle();
+                selectNombredetalle.value =
+                    (valor.NOMBRE_ASIGNACION_DETALLE ?? "").toString();
 
-            selectAsignacionarticulosdetalle.addEventListener("change", actualizarNombreAsignacionDetalle);
-               
+                actualizarNombreAsignacionDetalle();
 
-             
+                selectAsignacionarticulosdetalle.addEventListener(
+                    "change",
+                    actualizarNombreAsignacionDetalle
+                );
             }
 
-        
             function validarCantidades() {
                 const cantidades = contenedorArticulos.querySelectorAll('.cantidad_detalle');
+
                 let suma = 0;
-                cantidades.forEach(c => suma += parseInt(c.value || 0));
+
+                cantidades.forEach(c => {
+                    suma += parseInt(c.value || 0);
+                });
+
                 if (suma !== parseInt(inputCantidadTotal.value || 0)) {
                     divNota.style.display = "block";
                     textareaNota.required = true;
+
                 } else {
                     divNota.style.display = "none";
                     textareaNota.required = false;
@@ -940,33 +1387,67 @@ function cargarMaterialesDesdeJSON(materialesJson) {
             }
 
             if (material.VARIOS_ARTICULOS === "1") {
+                divMaterial.querySelectorAll('.campo_unico').forEach(el => {
+                    el.style.display = "none";
+                });
 
-                divMaterial.querySelectorAll('.campo_unico').forEach(el => el.style.display = "none");
                 contenedorArticulos.style.display = "block";
 
-                if (material.ARTICULOS && Array.isArray(material.ARTICULOS)) {
-                    material.ARTICULOS.forEach(a => agregarArticulo(a));
+                if (
+                    material.ARTICULOS &&
+                    Array.isArray(material.ARTICULOS)
+                ) {
+                    material.ARTICULOS.forEach(a => {
+                        agregarArticulo(a);
+                    });
+
                 } else {
-                    for (let i = 0; i < parseInt(material.CANTIDAD || 1); i++) {
+                    for (
+                        let i = 0;
+                        i < parseInt(material.CANTIDAD || 1);
+                        i++
+                    ) {
                         agregarArticulo();
                     }
                 }
+
                 validarCantidades();
-                contenedorArticulos.addEventListener('input', validarCantidades);
+
+                contenedorArticulos.addEventListener(
+                    'input',
+                    validarCantidades
+                );
             }
 
             selectVarios.addEventListener('change', function () {
                 if (this.value === "1") {
-                    divMaterial.querySelectorAll('.campo_unico').forEach(el => el.style.display = "none");
+                    divMaterial.querySelectorAll('.campo_unico').forEach(el => {
+                        el.style.display = "none";
+                    });
+
                     contenedorArticulos.style.display = "block";
                     contenedorArticulos.innerHTML = '';
-                    for (let i = 0; i < parseInt(inputCantidadTotal.value || 1); i++) {
+
+                    for (
+                        let i = 0;
+                        i < parseInt(inputCantidadTotal.value || 1);
+                        i++
+                    ) {
                         agregarArticulo();
                     }
+
                     validarCantidades();
-                    contenedorArticulos.addEventListener('input', validarCantidades);
+
+                    contenedorArticulos.addEventListener(
+                        'input',
+                        validarCantidades
+                    );
+
                 } else {
-                    divMaterial.querySelectorAll('.campo_unico').forEach(el => el.style.display = "block");
+                    divMaterial.querySelectorAll('.campo_unico').forEach(el => {
+                        el.style.display = "block";
+                    });
+
                     contenedorArticulos.style.display = "none";
                     contenedorArticulos.innerHTML = '';
                     divNota.style.display = "none";
@@ -974,286 +1455,422 @@ function cargarMaterialesDesdeJSON(materialesJson) {
                 }
             });
 
+            const selectEnExistencia = divMaterial.querySelector('.en_existencia');
+            const selectTipo = divMaterial.querySelector('.tipo_inventario');
+            const selectInv = divMaterial.querySelector('.inventario');
+            const inputCantidad = divMaterial.querySelector('.cantidad_original');
+            const inputSalida = divMaterial.querySelector('.cantidad_salida');
+            const inputunidad = divMaterial.querySelector('.unidad_salida');
+            const selectRetorna = divMaterial.querySelector('.retorna_material');
+            const divArticuloRetorno = divMaterial.querySelector('.div_articulo_retorno');
+            const selectArticuloRetorno = divMaterial.querySelector('.articulo_retorno');
+            const divFechaRetorno = divMaterial.querySelector('.div_fecha_retorno');
+            const divCantidadRetorno = divMaterial.querySelector('.div_cantidad_retorno');
+            const divnombreasignacion = divMaterial.querySelector('.div_nombreasignacion');
+            const selectAsignacionarticulos = divMaterial.querySelector('.asignacion_articulos');
+            const selectEsTaller = divMaterial.querySelector('.es_inventario_taller');
+            const selectTipoArticuloTaller = divMaterial.querySelector('.tipo_articulo_taller');
+            const selectInventarioTaller = divMaterial.querySelector('.inventario_taller');
+            const divTipoArticuloTaller = divMaterial.querySelector('.taller_tipo_articulo_wrap');
+            const divInventarioTaller = divMaterial.querySelector('.taller_inventario_wrap');
 
-        
+            function cargarInventarioTaller(tipoSeleccionado, valorGuardado = null) {
+                const inventarioTaller = Array.isArray(window.inventariomantenimiento)
+                    ? window.inventariomantenimiento
+                    : [];
 
-        const selectEnExistencia = divMaterial.querySelector('.en_existencia');
-        const selectTipo =  divMaterial.querySelector('.tipo_inventario');
-        const selectInv = divMaterial.querySelector('.inventario');
-        const inputCantidad = divMaterial.querySelector('.cantidad_original');
-        const inputSalida = divMaterial.querySelector('.cantidad_salida');
-        const inputunidad = divMaterial.querySelector('.unidad_salida');
-        const selectRetorna = divMaterial.querySelector('.retorna_material');
-        const divArticuloRetorno = divMaterial.querySelector('.div_articulo_retorno');
-        const selectArticuloRetorno = divMaterial.querySelector('.articulo_retorno');
-        const divFechaRetorno = divMaterial.querySelector('.div_fecha_retorno');
-        const divCantidadRetorno = divMaterial.querySelector('.div_cantidad_retorno');
-        const divnombreasignacion = divMaterial.querySelector('.div_nombreasignacion');
-        const selectAsignacionarticulos = divMaterial.querySelector('.asignacion_articulos');
+                const valorSeleccionado =
+                    valorGuardado !== null &&
+                    valorGuardado !== undefined &&
+                    valorGuardado !== ''
+                        ? String(valorGuardado)
+                        : '';
 
-        function actualizarNombreAsignacion() {
-            if (selectAsignacionarticulos.value === "1") {
-                divnombreasignacion.style.display = "block";
-            } else {
-                divnombreasignacion.style.display = "none";
-            }
-        }
-
-        actualizarNombreAsignacion();
-        selectAsignacionarticulos.addEventListener("change", actualizarNombreAsignacion);
-
-
-        if (material.VARIOS_ARTICULOS !== "1") {
-        
-            $(divMaterial).find('.mydatepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                weekStart: 1,
-                autoclose: true,
-                todayHighlight: true,
-                language: 'es'
-            }).on('click', function () {
-                $(this).datepicker('setDate', $(this).val());
-            });
-
-            
-            function cargarInventario(tipoSeleccionado, valorGuardado = null) {
-
-                if (!tipoSeleccionado) return;
-
-                const opciones = window.inventario
+                const opciones = inventarioTaller
                     .filter(inv => inv.TIPO_EQUIPO === tipoSeleccionado)
-                    .sort((a, b) => a.DESCRIPCION_EQUIPO.localeCompare(b.DESCRIPCION_EQUIPO))
-                        .map(inv => {
+                    .sort((a, b) => (a.DESCRIPCION_EQUIPO || '').localeCompare(b.DESCRIPCION_EQUIPO || ''))
+                    .map(inv => {
+                        const idInventario = String(
+                            inv.ID_FORMULARIO_INVENTARIO_MANTENIMIENTO
+                        );
 
-                      const mostrarTexto = (tipoSeleccionado === "AF" || tipoSeleccionado === "ANF")
-                    ? `${inv.DESCRIPCION_EQUIPO} (${inv.CODIGO_EQUIPO || ""})`
-                    : [
-                        inv.DESCRIPCION_EQUIPO,
-                        inv.MARCA_EQUIPO,
-                        inv.MODELO_EQUIPO,
-                        inv.SERIE_EQUIPO
-                    ].filter(Boolean).join(" | ");
+                        const texto =
+                            tipoSeleccionado === 'AF' ||
+                            tipoSeleccionado === 'ANF'
+                                ? `${inv.DESCRIPCION_EQUIPO || ''} (${inv.CODIGO_EQUIPO || ''})`
+                                : [
+                                    inv.DESCRIPCION_EQUIPO,
+                                    inv.MARCA_EQUIPO,
+                                    inv.MODELO_EQUIPO,
+                                    inv.SERIE_EQUIPO
+                                ].filter(Boolean).join(' | ');
 
-                        const estaAsignado = inv.ASIGNADO == 2;
+                        const seleccionado =
+                            idInventario === valorSeleccionado
+                                ? 'selected'
+                                : '';
 
-                        const esElGuardado = valorGuardado == inv.ID_FORMULARIO_INVENTARIO;
+                        return `<option value="${idInventario}" ${seleccionado}>${texto}</option>`;
+                    })
+                    .join('');
 
-                        const textoFinal = estaAsignado
-                            ? `${mostrarTexto} - Asignado`
-                            : mostrarTexto;
-
-                        const disabledAttr = (estaAsignado && !esElGuardado)
-                            ? "disabled class='opcion-asignada'"
-                            : "";
-
-                        return `
-                            <option value="${inv.ID_FORMULARIO_INVENTARIO}"
-                                data-stock="${inv.CANTIDAD_EQUIPO || 0}"
-                                ${esElGuardado ? "selected" : ""}
-                                ${disabledAttr}>
-                                ${textoFinal}
-                            </option>
-                        `;
-                            }).join('');
-
-                selectInv.innerHTML = `
-                    <option value="" disabled ${!valorGuardado ? "selected" : ""}>Seleccione inventario</option>
+                selectInventarioTaller.innerHTML = `
+                    <option value="" disabled ${valorSeleccionado === '' ? 'selected' : ''}>Seleccione inventario</option>
                     ${opciones}
                 `;
 
-                if ($(selectInv).hasClass("select2-hidden-accessible")) {
-                    $(selectInv).select2('destroy');
+                if ($(selectInventarioTaller).hasClass('select2-hidden-accessible')) {
+                    $(selectInventarioTaller).select2('destroy');
                 }
 
-                $(selectInv).select2({
-                    width: "100%",
-                    placeholder: "Seleccione inventario",
+                $(selectInventarioTaller).select2({
+                    width: '100%',
+                    placeholder: 'Seleccione inventario del taller',
                     allowClear: true,
-                    dropdownParent: obtenerModalPadre(selectInv),
+                    dropdownParent: obtenerModalPadre(selectInventarioTaller),
                     dropdownPosition: 'below'
                 });
 
-                inputSalida.addEventListener("input", function () {
-                    const stock = parseInt(selectInv.options[selectInv.selectedIndex]?.dataset.stock || 0);
-                    if (parseInt(this.value || 0) > stock) {
-                        alert(`Solo hay ${stock} unidades disponibles.`);
-                        this.value = stock;
+                if (valorSeleccionado !== '') {
+                    $(selectInventarioTaller)
+                        .val(valorSeleccionado)
+                        .trigger('change');
+                }
+            }
+
+            function actualizarTallerPrincipal(limpiar = false) {
+                const mostrarPreguntaTaller = selectEnExistencia.value === '1' && selectVarios.value !== '1';
+                const esParaTaller = mostrarPreguntaTaller && selectEsTaller.value === '1';
+                const esExistente = selectTipoArticuloTaller.value === 'EXISTENTE';
+                divTipoArticuloTaller.style.display = esParaTaller ? 'block' : 'none';
+                selectTipoArticuloTaller.required = esParaTaller;
+
+                if (!esParaTaller) {
+                    divInventarioTaller.style.display = 'none';
+                    selectInventarioTaller.required = false;
+
+                    if (limpiar) {
+                        selectTipoArticuloTaller.value = '';
+
+                        $(selectInventarioTaller).val(null).trigger('change');
                     }
-                });
+
+                    return;
+                }
+
+                divInventarioTaller.style.display = esExistente ? 'block' : 'none';
+                selectInventarioTaller.required = esExistente;
+
+                if (esExistente) {
+                    cargarInventarioTaller(
+                        selectTipo.value,
+                        limpiar
+                            ? null
+                            : material.INVENTARIO_TALLER_ID
+                    );
+
+                } else if (limpiar) {
+                    $(selectInventarioTaller)
+                        .val(null)
+                        .trigger('change');
+                }
             }
 
-
-            if (material.TIPO_INVENTARIO) {
-                cargarInventario(material.TIPO_INVENTARIO, material.INVENTARIO);
-            }
-
-            selectTipo.addEventListener('change', function () {
-                cargarInventario(this.value);
+            selectEsTaller.addEventListener('change', function () {
+                actualizarTallerPrincipal(true);
             });
 
-           
-         function actualizarEstadoInventario() {
+            selectTipoArticuloTaller.addEventListener('change', function () {
+                actualizarTallerPrincipal(true);
+            });
 
-            const divVariosArticulos = selectVarios.parentElement;
-            const divTipoInventario = selectTipo.parentElement;
-            const divInventario = selectInv.parentElement;
-            const divCantidadSalida = inputSalida.parentElement;
-            const divUnidadSalida = inputunidad.parentElement;
-            const divAsignacion = selectAsignacionarticulos.parentElement;
+            selectVarios.addEventListener('change', function () {
+                actualizarTallerPrincipal(true);
+            });
 
-             
-             
-            if (selectEnExistencia.value === "0") {
+            function actualizarNombreAsignacion() {
+                if (selectAsignacionarticulos.value === "1") {
+                    divnombreasignacion.style.display = "block";
 
-                // Ocultar todos los campos
-                divVariosArticulos.style.display = "none";
-                divTipoInventario.style.display = "none";
-                divInventario.style.display = "none";
-                divCantidadSalida.style.display = "none";
-                divUnidadSalida.style.display = "none";
-                divAsignacion.style.display = "none";
-
-                // Ocultar campos adicionales
-                divnombreasignacion.style.display = "none";
-                contenedorArticulos.style.display = "none";
-                divArticuloRetorno.style.display = "none";
-                // Limpiar valores
-                selectVarios.value = "";
-                selectTipo.value = "";
-                selectInv.value = "";
-                inputSalida.value = "";
-                inputunidad.value = "";
-                selectAsignacionarticulos.value = "";
-
-                // Actualizar Select2
-                $(selectInv).val(null).trigger("change");
-
-                // Quitar required porque están ocultos
-                selectVarios.required = false;
-                selectAsignacionarticulos.required = false;
-                inputSalida.required = false;
-
-                divNota.style.display = "none";
-                textareaNota.required = false;
-
-            } else {
-
-                // Mostrar todos los campos
-                divVariosArticulos.style.display = "block";
-                divTipoInventario.style.display = "block";
-                divInventario.style.display = "block";
-                divCantidadSalida.style.display = "block";
-                divUnidadSalida.style.display = "block";
-                divAsignacion.style.display = "block";
-
-                // Restaurar required
-                selectVarios.required = true;
-                selectAsignacionarticulos.required = true;
-
-                actualizarNombreAsignacion();
-                revisarCantidadSalida();
-            }
-        }
-
-            
-            actualizarEstadoInventario();
-            selectEnExistencia.addEventListener('change', actualizarEstadoInventario);
-
-            function revisarCantidadSalida() {
-                if (
-                    selectEnExistencia.value === "1" &&
-                    parseInt(inputSalida.value || 0) !== parseInt(inputCantidad.value || 0)
-                ) {
-                    divNota.style.display = "block";
-                    textareaNota.required = true;
                 } else {
-                    divNota.style.display = "none";
-                    textareaNota.required = false;
+                    divnombreasignacion.style.display = "none";
                 }
             }
 
-            revisarCantidadSalida();
-            inputSalida.addEventListener('input', revisarCantidadSalida);
-        }
+            actualizarNombreAsignacion();
 
-            function actualizarRetorno() {
+            selectAsignacionarticulos.addEventListener(
+                "change",
+                actualizarNombreAsignacion
+            );
 
-                if (selectVarios.value === "1") {
-                        divArticuloRetorno.style.display = "none";
-                        divFechaRetorno.style.display = "none";
-                        divCantidadRetorno.style.display = "none";
-                        return;
+            if (material.VARIOS_ARTICULOS !== "1") {
+                $(divMaterial).find('.mydatepicker').datepicker({
+                    format: 'yyyy-mm-dd',
+                    weekStart: 1,
+                    autoclose: true,
+                    todayHighlight: true,
+                    language: 'es'
+                }).on('click', function () {
+                    $(this).datepicker(
+                        'setDate',
+                        $(this).val()
+                    );
+                });
+
+                function cargarInventario(tipoSeleccionado, valorGuardado = null) {
+                    if (!tipoSeleccionado) return;
+
+                    const opciones = (window.inventario || [])
+                        .filter(inv => inv.TIPO_EQUIPO === tipoSeleccionado)
+                        .sort((a, b) => (a.DESCRIPCION_EQUIPO || '').localeCompare(b.DESCRIPCION_EQUIPO || ''))
+                        .map(inv => {
+                            const mostrarTexto =
+                                tipoSeleccionado === "AF" ||
+                                tipoSeleccionado === "ANF"
+                                    ? `${inv.DESCRIPCION_EQUIPO || ''} (${inv.CODIGO_EQUIPO || ""})`
+                                    : [
+                                        inv.DESCRIPCION_EQUIPO,
+                                        inv.MARCA_EQUIPO,
+                                        inv.MODELO_EQUIPO,
+                                        inv.SERIE_EQUIPO
+                                    ].filter(Boolean).join(" | ");
+
+                            const estaAsignado = inv.ASIGNADO == 2;
+
+                            const esElGuardado =
+                                String(valorGuardado || '') ===
+                                String(inv.ID_FORMULARIO_INVENTARIO);
+
+                            const textoFinal = estaAsignado
+                                ? `${mostrarTexto} - Asignado`
+                                : mostrarTexto;
+
+                            const disabledAttr =
+                                estaAsignado &&
+                                !esElGuardado
+                                    ? "disabled class='opcion-asignada'"
+                                    : "";
+
+                            return `
+                                <option value="${inv.ID_FORMULARIO_INVENTARIO}" data-stock="${inv.CANTIDAD_EQUIPO || 0}" data-unidad="${inv.UNIDAD_MEDIDA || ''}" ${esElGuardado ? "selected" : ""} ${disabledAttr}>
+                                    ${textoFinal}
+                                </option>
+                            `;
+                        })
+                        .join('');
+
+                    selectInv.innerHTML = `
+                        <option value="" disabled ${!valorGuardado ? "selected" : ""}>Seleccione inventario</option>
+                        ${opciones}
+                    `;
+
+                    if ($(selectInv).hasClass("select2-hidden-accessible")) {
+                        $(selectInv).select2('destroy');
                     }
 
-                    if (selectRetorna.value === "1") {
-                        divArticuloRetorno.style.display = "block";
+                    $(selectInv).select2({
+                        width: "100%",
+                        placeholder: "Seleccione inventario",
+                        allowClear: true,
+                        dropdownParent: obtenerModalPadre(selectInv),
+                        dropdownPosition: 'below'
+                    });
 
-                        if (selectArticuloRetorno.value === "1") {
-                            divFechaRetorno.style.display = "block";
-                            divCantidadRetorno.style.display = "block";
-                        } else {
-                            divFechaRetorno.style.display = "none";
-                            divCantidadRetorno.style.display = "none";
+                    $(selectInv).off('change.unidadPrincipal').on('change.unidadPrincipal', function () {
+                        const inventarioSeleccionado = (window.inventario || []).find(function (inv) {
+                            return String(inv.ID_FORMULARIO_INVENTARIO) === String(selectInv.value);
+                        });
+
+                        inputunidad.value = inventarioSeleccionado
+                            ? inventarioSeleccionado.UNIDAD_MEDIDA || ''
+                            : '';
+
+                        const stock = inventarioSeleccionado
+                            ? parseFloat(inventarioSeleccionado.CANTIDAD_EQUIPO || 0)
+                            : 0;
+
+                        inputSalida.setAttribute('max', stock);
+                    });
+
+                    inputSalida.removeEventListener('input', inputSalida._validarStockPrincipal);
+
+                    inputSalida._validarStockPrincipal = function () {
+                        const inventarioSeleccionado = (window.inventario || []).find(function (inv) {
+                            return String(inv.ID_FORMULARIO_INVENTARIO) === String(selectInv.value);
+                        });
+
+                        const stock = inventarioSeleccionado
+                            ? parseFloat(inventarioSeleccionado.CANTIDAD_EQUIPO || 0)
+                            : 0;
+
+                        if (parseFloat(this.value || 0) > stock) {
+                            alert(`Solo hay ${stock} unidades disponibles en inventario.`);
+                            this.value = stock;
                         }
+                    };
+
+                    inputSalida.addEventListener('input', inputSalida._validarStockPrincipal);
+
+                    if (valorGuardado !== null && valorGuardado !== undefined && valorGuardado !== '') {
+                        $(selectInv).val(String(valorGuardado)).trigger('change');
                     } else {
-                        divArticuloRetorno.style.display = "none";
-                        divFechaRetorno.style.display = "none";
-                        divCantidadRetorno.style.display = "none";
+                        inputunidad.value = '';
+                    }
                 }
-                
 
+                if (material.TIPO_INVENTARIO) {
+                    cargarInventario(
+                        material.TIPO_INVENTARIO,
+                        material.INVENTARIO
+                    );
+                }
 
-                 if (selectRetorna.value === "1") {
-                        divArticuloRetorno.style.display = "block";
+                selectTipo.addEventListener('change', function () {
+                    cargarInventario(this.value);
 
-                        if (selectArticuloRetorno.value === "1") {
-                            divFechaRetorno.style.display = "block";
-                            divCantidadRetorno.style.display = "block";
-                        } else {
-                            divFechaRetorno.style.display = "none";
-                            divCantidadRetorno.style.display = "none";
-                        }
+                    if (
+                        selectEsTaller.value === '1' &&
+                        selectTipoArticuloTaller.value === 'EXISTENTE'
+                    ) {
+                        cargarInventarioTaller(
+                            this.value,
+                            null
+                        );
+                    }
+                });
+
+                function actualizarEstadoInventario() {
+                    const divVariosArticulos = selectVarios.parentElement;
+                    const divTipoInventario = selectTipo.parentElement;
+                    const divInventario = selectInv.parentElement;
+                    const divCantidadSalida = inputSalida.parentElement;
+                    const divUnidadSalida = inputunidad.parentElement;
+                    const divAsignacion = selectAsignacionarticulos.parentElement;
+                    const divselecttaller = selectEsTaller.parentElement;
+                    if (selectEnExistencia.value === "0") {
+                        divVariosArticulos.style.display = "none";
+                        divTipoInventario.style.display = "none";
+                        divInventario.style.display = "none";
+                        divCantidadSalida.style.display = "none";
+                        divUnidadSalida.style.display = "none";
+                        divAsignacion.style.display = "none";
+                        divnombreasignacion.style.display = "none";
+                        contenedorArticulos.style.display = "none";
+                        divArticuloRetorno.style.display = "none";
+                        divselecttaller.style.display = "none";
+
+                        selectVarios.value = "";
+                        selectTipo.value = "";
+                        selectInv.value = "";
+                        inputSalida.value = "";
+                        inputunidad.value = "";
+                        selectAsignacionarticulos.value = "";
+
+                        $(selectInv).val(null).trigger("change");
+
+                        selectVarios.required = false;
+                        selectAsignacionarticulos.required = false;
+                        inputSalida.required = false;
+
+                        divNota.style.display = "none";
+                        textareaNota.required = false;
+
                     } else {
-                        divArticuloRetorno.style.display = "none";
-                        divFechaRetorno.style.display = "none";
-                        divCantidadRetorno.style.display = "none";
+                        divVariosArticulos.style.display = "block";
+                        divTipoInventario.style.display = "block";
+                        divInventario.style.display = "block";
+                        divCantidadSalida.style.display = "block";
+                        divUnidadSalida.style.display = "block";
+                        divAsignacion.style.display = "block";
+                        divselecttaller.style.display = "block";
+
+                        selectVarios.required = true;
+                        selectAsignacionarticulos.required = true;
+
+                        actualizarNombreAsignacion();
+                        revisarCantidadSalida();
+                    }
                 }
-                
-                
+
+                actualizarEstadoInventario();
+
+                selectEnExistencia.addEventListener(
+                    'change',
+                    actualizarEstadoInventario
+                );
+
+                selectEnExistencia.addEventListener('change', function () {
+                    actualizarTallerPrincipal(true);
+                });
+
+                function revisarCantidadSalida() {
+                    if (
+                        selectEnExistencia.value === "1" &&
+                        parseInt(inputSalida.value || 0) !==
+                        parseInt(inputCantidad.value || 0)
+                    ) {
+                        divNota.style.display = "block";
+                        textareaNota.required = true;
+
+                    } else {
+                        divNota.style.display = "none";
+                        textareaNota.required = false;
+                    }
                 }
 
-                actualizarRetorno();
+                revisarCantidadSalida();
 
-            
-            
+                inputSalida.addEventListener('input',revisarCantidadSalida);
+            }
 
-            // Eventos
-                selectRetorna.addEventListener("change", actualizarRetorno);
-                selectArticuloRetorno.addEventListener("change", actualizarRetorno);
-                selectVarios.addEventListener("change", actualizarRetorno);
+            actualizarTallerPrincipal(false);
 
-            
-   
-    
+            function actualizarRetorno() {
+               
+                if (selectVarios.value === "1") {
+                    divArticuloRetorno.style.display = "none";
+                    divFechaRetorno.style.display = "none";
+                    divCantidadRetorno.style.display = "none";
+                    return;
+                }
+
+                if (selectRetorna.value !== "1") {
+                    divArticuloRetorno.style.display = "none";
+                    divFechaRetorno.style.display = "none";
+                    divCantidadRetorno.style.display = "none";
+                    return;
+                }
+
+               
+                divArticuloRetorno.style.display = "block";
+
+                if (selectArticuloRetorno.value === "1") {
+                    divFechaRetorno.style.display = "block";
+                    divCantidadRetorno.style.display = "block";
+
+                } else {
+                    divFechaRetorno.style.display = "none";
+                    divCantidadRetorno.style.display = "none";
+                }
+            }
+
+            actualizarRetorno();
+
+            selectRetorna.addEventListener("change",actualizarRetorno);
+            selectArticuloRetorno.addEventListener("change",actualizarRetorno);
+            selectVarios.addEventListener("change",actualizarRetorno);
         });
-
-        
-
 
         revisarSelects();
 
     } catch (e) {
-        console.error('Error al parsear MATERIALES_JSON:', e);
+        console.error(
+            'Error al parsear MATERIALES_JSON:',
+            e
+        );
     }
 }
-
-
-
-
-
-
-
-
 
 function revisarSelects() {
     const selects = document.querySelectorAll('.retorna_material');
@@ -1265,11 +1882,6 @@ function revisarSelects() {
     });
     document.getElementById("FECHA_ESTIMADA").style.display = mostrar ? "block" : "none";
 }
-
-
-
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById("TIPO_SOLICITUD");
@@ -1316,10 +1928,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const btnFirmar = document.getElementById("FIRMAR_SOLICITUD_ALMACEN");

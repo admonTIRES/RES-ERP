@@ -296,9 +296,9 @@
 <script>
     window.tipoinventario = @json($tipoinventario);
     window.inventario = @json($inventario);
-
     window.colaboradores = @json($colaboradores);
     window.proveedores = @json($proveedores);
+    window.inventariomantenimiento = @json($inventariomantenimiento);
 </script>
 
 

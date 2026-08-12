@@ -256,21 +256,35 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown" style="margin-left: -2px;">
-                        <a class="nav-link BOTON" href="{{ url('/modulos') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
+                        <a class="nav-link BOTON" href="{{ url('/modulos') }}" style="color: #fff; font-weight: bold; text-decoration: none;">
                             <i class="bi bi-grid-3x3-gap-fill" style="margin-right: 5px;"></i> <span class="d-lg-none">Inicio</span><span class="d-none d-lg-inline">Inicio</span>
                         </a>
                     </li>
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown" style="margin-left: -2px;">
-                            <a class="nav-link BOTON" href="{{ url('/mantenimientoequipos') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
+                            <a class="nav-link BOTON" href="{{ url('/mantenimientoequipos') }}" style="color: #fff; font-weight: bold; text-decoration: none;">
                                 <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Mantenimiento de equipos</span><span class="d-none d-lg-inline">Mantenimiento de equipos</span>
                             </a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown" style="margin-left: -2px;">
-                            <a class="nav-link BOTON" href="{{ url('/mantenimientoinstalaciones') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
+                            <a class="nav-link BOTON" href="{{ url('/mantenimientoinstalaciones') }}" style="color: #fff; font-weight: bold; text-decoration: none;">
                                 <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Mantenimiento de instalaciones</span><span class="d-none d-lg-inline">Mantenimiento de instalaciones</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown" style="margin-left: -2px;">
+                            <a class="nav-link BOTON" href="{{ url('/inventariomantenimiento') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
+                                <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Inventario</span><span class="d-none d-lg-inline">Inventario</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown" style="margin-left: -2px;">
+                            <a class="nav-link BOTON" href="{{ url('/salidalmacenmtto') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
+                                <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Salida de almacén</span><span class="d-none d-lg-inline">Salida de almacén</span>
                             </a>
                         </li>
                     </ul>
@@ -386,14 +400,22 @@
     <script src="/assets/js_sitio/listademantenimiento/listamantenimiento.js?v=5"></script>
     @endif
 
-
     @if(request()->is('mantenimientoinstalaciones'))
     <script src="/assets/js_sitio/listademantenimiento/listamttoinstalacion.js?v=1.0"></script>
     @endif
 
+    @if(request()->is('inventariomantenimiento'))
+    <script src="/assets/js_sitio/inventariomantenimiento/inventariomantenimiento.js"></script>
+    @endif
+
+    @if(request()->is('salidalmacenmtto'))
+    <script src="/assets/js_sitio/inventariomantenimiento/salidaalmacenmtto.js"></script>
+    @endif
+
+
     <script src="/assets/js_sitio/externo.js?v=1.0"></script>
 
-    
+
 </body>
 
 </body>

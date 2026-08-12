@@ -52,16 +52,11 @@ use App\Http\Controllers\organizacion\catalogogeneroControlller;
 use App\Http\Controllers\reclutamiento\formCVController;
 use App\Http\Controllers\reclutamiento\vacanteshistorialController;
 
-
 // CONTROLADORES DE SELECCION
 use App\Http\Controllers\seleccion\seleccionController;
 use App\Http\Controllers\seleccion\catalogopruebasController;
 use App\Http\Controllers\TestController;
-
 use App\Http\Controllers\seleccion\aprobacioninteligenciaController;
-
-
-
 
 // CONTROLADORES DE CONTRATACION 
 use App\Http\Controllers\contratacion\contratacionController;
@@ -72,12 +67,10 @@ use App\Http\Controllers\contratacion\pdfasingacionController;
 use App\Http\Controllers\contratacion\actualizaciondocsController;
 use App\Http\Controllers\contratacion\actualizaciondochistorialController;
 
-
 // CONTROLADORES DE REC.EMPLEADOS
 use App\Http\Controllers\recursosempleado\recempleadoController;
 use App\Http\Controllers\recursosempleado\pdfrecempleadoController;
 use App\Http\Controllers\recursosempleado\expedientecolabController;
-
 
 // CONTROLADORES DE CAPACITACION 
 use App\Http\Controllers\capacitacion\brechaController;
@@ -113,8 +106,6 @@ use App\Http\Controllers\ordentrabajo\otController;
 use App\Http\Controllers\ordentrabajo\othistorialController ;
 use App\Http\Controllers\ordentrabajo\pdfotController;
 
-
-
 // CONTROLADORES DE MR
 use App\Http\Controllers\requisicionmaterial\mrController;
 use App\Http\Controllers\requisicionmaterial\bitacora2025Controller;
@@ -142,9 +133,6 @@ use App\Http\Controllers\proveedor\listafacturasController;
 use App\Http\Controllers\proveedor\contratoproveedorController;
 use App\Http\Controllers\proveedor\relacionpagoController;
 
-
-
-
 // CONTROLADORES DE PO 
 use App\Http\Controllers\ordencompra\poController;
 use App\Http\Controllers\ordencompra\pdfpoController;
@@ -161,7 +149,6 @@ use App\Http\Controllers\requisicongr\grController;
 use App\Http\Controllers\requisicongr\vobogrusuarioController;
 use App\Http\Controllers\requisicongr\pdfgrController;
 use App\Http\Controllers\requisicongr\grhistorialController;
-
 
 // CONTROLADORES DE LA PAGINA WEB
 use App\Http\Controllers\paginaweb\mensajespaginaController;
@@ -180,7 +167,6 @@ use App\Http\Controllers\listaasignacion\listaasignacionController;
 use App\Http\Controllers\listainfraestructura\listainfraestructuraController;
 use App\Http\Controllers\inventario\catalogokitsController;
 
-
 //// BITACORAS INVENTARIO
 use App\Http\Controllers\bitacorasinventario\bitacoraconsumiblesController;
 use App\Http\Controllers\bitacorasinventario\bitacoraretornableController;
@@ -194,9 +180,11 @@ use App\Http\Controllers\notificacion\notificacionController;
 use App\Http\Controllers\listamantenimiento\listamantenimientoController;
 
 /// MANTENIMIENTO INSTALACIONES
-
 use App\Http\Controllers\listamantenimiento\listainstalacionController;
 
+/// MANTENIMIENTO INVENTARIO
+use App\Http\Controllers\inventariomantenimiento\inventariomantenimientoController;
+use App\Http\Controllers\inventariomantenimiento\salidaalmacenmttoController;
 
 //==============================================  login  ============================================== 
 Route::get('/', function () {
@@ -547,7 +535,6 @@ Route::post('/obtenerUltimoCargo', [contratacionController::class, 'obtenerUltim
 
 // CREAR CREDENCIAL 
 Route::get('/descargar-credencial', [PowerPointController::class, 'descargarCredencial']);
-
 
 /////////////////////////////////////// STEP 2 DOCUMENTOS DE SOPORTE
 Route::get('/Tabladocumentosoporte', [contratacionController::class, 'Tabladocumentosoporte']);
@@ -1025,9 +1012,6 @@ Route::get('/descargarExcelRelacionPagos/{ID}', [relacionpagoController::class, 
 
 //============================================== COMPROBANTE DE PAGOS   ============================================== 
 Route::get('/comprobantepagos', function () { return view('compras.comprobantedepago.comprobantepago');});
-
-
-
 Route::get('/pdfFichaErgonomica', [relacionpagoController::class, 'pdfFichaErgonomica']);
 
 //==============================================     PROVEEDORES TEMPORALES  ============================================== 
@@ -1386,7 +1370,6 @@ Route::get('/Tablacalibracionmantenimiento', [listamantenimientoController::clas
 Route::get('/mostrardocumentocalibracion/{id}', [listamantenimientoController::class, 'mostrardocumentocalibracion']);
 
 /// MTTO CRITERIO, PROGRAMACION Y BITACORA   
-
 Route::get('/obtenerInformacionMtto', [listamantenimientoController::class, 'obtenerInformacionMtto']);
 
 
@@ -1397,6 +1380,22 @@ Route::get('/mostrarFotoInstalacion/{id}', [listainstalacionController::class, '
 Route::get('/Tablalistainstalacion', [listainstalacionController::class, 'Tablalistainstalacion']);
 Route::get('/MttoInstalacionDelete', [listainstalacionController::class, 'store']);
 
+//==============================================   INVENTARIO MANTENIMIENTO    ============================================== 
+Route::get('/inventariomantenimiento', [inventariomantenimientoController::class, 'index']);
+Route::get('/Tablainventariomantenimiento', [inventariomantenimientoController::class, 'Tablainventariomantenimiento']);
+Route::get('/metricasInventariomantenimiento', [inventariomantenimientoController::class, 'metricasInventariomantenimiento']);
+Route::get('/Tablaentradainventariomantenimiento', [inventariomantenimientoController::class, 'Tablaentradainventariomantenimiento']);
+Route::get('/mostrarFotoEquipoMantenimiento/{id}', [inventariomantenimientoController::class, 'mostrarFotoEquipoMantenimiento']);
+Route::post('/InventarioSaveMantenimiento', [inventariomantenimientoController::class, 'store']);
+Route::get('/inventarioDeleteMantenimiento', [inventariomantenimientoController::class, 'store']);
+
+
+/// SALIDA ALMACEN MTTO
+
+Route::get('/salidalmacenmtto', [salidaalmacenmttoController::class, 'index']);
+Route::post('/salidalmacenmttoSave', [salidaalmacenmttoController::class, 'store']);
+Route::get('/salidalmacenmttoDelete', [salidaalmacenmttoController::class, 'store']);
+Route::get('/Tablasalidalmacenmtto', [salidaalmacenmttoController::class, 'Tablasalidalmacenmtto']);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
