@@ -205,16 +205,10 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
-
                     <div class="mt-3">
-                        <label>Observaciones *</label>
+                        <label>Motivo *</label>
                         <textarea class="form-control" id="OBSERVACIONES_SALIDA" name="OBSERVACIONES_SALIDA" rows="3" required></textarea>
                     </div>
-
                     <div class="col-12 mt-3" id="DIV_FIRMAR" style="display:block; margin-top:10px;">
                         <div class="row justify-content-center">
                             <div class="col-6 text-center">
