@@ -56,14 +56,13 @@ class inventariomantenimientoController extends Controller
     {
         try {
 
-            $query = inventariomantenimientoModel::query()
-                ->where(function ($q) {
-                    $q->where('ES_INFRAESTRUCTURA', '!=', 1)
-                        ->orWhereNull('ES_INFRAESTRUCTURA');
-                });
+            $query = inventariomantenimientoModel::query();
 
             if ($request->filled('UBICACION_EQUIPO')) {
-                $query->where('UBICACION_EQUIPO', $request->UBICACION_EQUIPO);
+                $query->where(
+                    'UBICACION_EQUIPO',
+                    $request->UBICACION_EQUIPO
+                );
             }
 
             $tabla = $query->get();
@@ -158,14 +157,13 @@ class inventariomantenimientoController extends Controller
     {
         try {
 
-            $query = inventariomantenimientoModel::query()
-                ->where(function ($q) {
-                    $q->where('ES_INFRAESTRUCTURA', '!=', 1)
-                        ->orWhereNull('ES_INFRAESTRUCTURA');
-                });
+            $query = inventariomantenimientoModel::query();
 
             if ($request->filled('UBICACION_EQUIPO')) {
-                $query->where('UBICACION_EQUIPO', $request->UBICACION_EQUIPO);
+                $query->where(
+                    'UBICACION_EQUIPO',
+                    $request->UBICACION_EQUIPO
+                );
             }
 
             $data = $query->get();
