@@ -301,10 +301,12 @@
                         @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
                         <li class="nav-item dropdown" style="margin-left: -2px;">
                             <a class="nav-link BOTON" href="{{ url('/aprobacionalmacen') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
-                                <i class="bi bi-patch-check-fill" style="margin-right: 5px;"></i> <span class="d-lg-none">Autorizar salidas de almacén</span><span class="d-none d-lg-inline">Aprobar salidas de almacén</span>
+                                <i class="bi bi-patch-check-fill" style="margin-right: 5px;"></i> <span class="d-lg-none">Aprobar salidas de almacén</span><span class="d-none d-lg-inline">Aprobar salidas de almacén</span>
                             </a>
                         </li>
                         @endif
+                        @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Almacenista']))
+
                         <li class="nav-item dropdown" style="margin-left: -2px;">
                             <a class="nav-link BOTON" href="{{ url('/salidaalmacen') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
                                 <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Salida de almacén</span><span class="d-none d-lg-inline">Salida de almacén</span>
@@ -335,7 +337,9 @@
                                 </ul>
                             </li>
                         </ul>
-                        @if(auth()->check() && !auth()->user()->hasRoles(['Almacenista','Asistente de compras']))
+                        @endif
+
+                        @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown" style="margin-left: -2px;">
                                 <a class="nav-link dropdown-toggle BOTON" href="#" style="color: #fff; font-weight: bold; text-decoration: none;" role="button" data-bs-toggle="dropdown" aria-expanded="false">

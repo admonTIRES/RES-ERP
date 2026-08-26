@@ -281,13 +281,25 @@
                             </a>
                         </li>
                     </ul>
+                    @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Técnico en mantenimiento junior']))
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown" style="margin-left: -2px;">
                             <a class="nav-link BOTON" href="{{ url('/salidalmacenmtto') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
-                                <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Salida de almacén</span><span class="d-none d-lg-inline">Salida de almacén</span>
+                                <i class="bi bi-box-arrow-right" style="margin-right: 5px;"></i> <span class="d-lg-none">Salida de almacén</span><span class="d-none d-lg-inline">Salida de almacén</span>
                             </a>
                         </li>
                     </ul>
+                    @endif
+                    @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Técnico en mantenimiento junior','Asistente de planeación y logística']))
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown" style="margin-left: -2px;">
+                            <a class="nav-link BOTON" href="{{ url('/reportesalidamtto') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
+                                <i class="bi bi-card-list" style="margin-right: 5px;"></i> <span class="d-lg-none">Reporte salida de almacén</span><span class="d-none d-lg-inline">Reporte salida de almacén</span>
+                            </a>
+                        </li>
+                    </ul>
+                    @endif
+
                 </ul>
             </div>
         </div>
@@ -410,6 +422,10 @@
 
     @if(request()->is('salidalmacenmtto'))
     <script src="/assets/js_sitio/inventariomantenimiento/salidaalmacenmtto.js"></script>
+    @endif
+
+    @if(request()->is('reportesalidamtto'))
+    <script src="/assets/js_sitio/inventariomantenimiento/reportesalidamtto.js"></script>
     @endif
 
 

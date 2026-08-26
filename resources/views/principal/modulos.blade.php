@@ -801,13 +801,14 @@
                         $tieneSoloRolLideOperaciones = !$esSuperusuario && $user->hasRole('Líder de Operaciones');
                         $tieneSoloRolTecnicojunior = !$esSuperusuario && $user->hasRole('Técnico en mantenimiento junior');
 
+                        $tieneSoloRolAsistentePlaneacion = !$esSuperusuario && $user->hasRole('Asistente de planeación y logística');
+
                         /*
                         |--------------------------------------------------------------------------
                         | Roles restringidos administrativos
                         |--------------------------------------------------------------------------
                         */
                         $tieneSoloRolSSTJunior = !$esSuperusuario && $user->hasRole('Consultor-Instructor Junior');
-                        $tieneSoloRolAsistentePlaneacion = !$esSuperusuario && $user->hasRole('Asistente de planeación y logística');
                         $tieneSoloRolHSEQ = !$esSuperusuario && $user->hasRole('Analista HSEQ');
                         $tieneSoloRolSoftware = !$esSuperusuario && $user->hasRole('Desarrollador de Software Junior');
                         $tieneSoloRolAmadellaves = !$esSuperusuario && $user->hasRole('Ama de llaves');
@@ -823,8 +824,8 @@
                         |--------------------------------------------------------------------------
                         */
                         $tieneRolRestringidoUnico =
+
                         $tieneSoloRolSSTJunior ||
-                        $tieneSoloRolAsistentePlaneacion ||
                         $tieneSoloRolHSEQ ||
                         $tieneSoloRolSoftware ||
                         $tieneSoloRolFRE ||
@@ -840,7 +841,7 @@
 
                         <div class="modules">
                             {{-- RRHH --}}
-                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolIntendente || $tieneSoloRolTecnicojunior )
+                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolIntendente || $tieneSoloRolTecnicojunior || $tieneSoloRolAsistentePlaneacion )
                             <a href="{{ url('/recempleado') }}" class="modules__link">
                                 <div class="modules__card">
                                     <div class="modules__circle"><img src="assets/Modulos/img/RRHH.png" alt=""></div>
@@ -872,7 +873,7 @@
                             </a>
                             @endif
                             {{-- Ventas --}}
-                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior )
+                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior ||$tieneSoloRolAsistentePlaneacion)
                             <div class="modules__card" onclick="noPermiso('Ventas')">
                                 <div class="modules__circle"><img src="assets/Modulos/img/Ventas.png" alt=""></div>
                                 <h2 class="modules__text">Ventas</h2>
@@ -886,7 +887,7 @@
                             </a>
                             @endif
                             {{-- Admón --}}
-                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior )
+                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior ||$tieneSoloRolAsistentePlaneacion )
                             <div class="modules__card" onclick="noPermiso('Admón')">
                                 <div class="modules__circle"><img src="assets/Modulos/img/Admon.png" alt=""></div>
                                 <h2 class="modules__text">Admón</h2>
@@ -898,7 +899,7 @@
                             </div>
                             @endif
                             {{-- Almacén --}}
-                            @if($tieneSoloRolAlmacenista )
+                            @if($tieneSoloRolAlmacenista || $tieneSoloRolAsistentePlaneacion)
                             <a href="{{ url('/inventario') }}" class="modules__link">
                                 <div class="modules__card">
                                     <div class="modules__circle"><img src="assets/Modulos/img/Almacén.png" alt=""></div>
@@ -919,7 +920,7 @@
                             </a>
                             @endif
                             {{-- Mantenimiento --}}
-                            @if($tieneSoloRolAlmacenista || $tieneSoloRolTecnicojunior )
+                            @if($tieneSoloRolAlmacenista || $tieneSoloRolTecnicojunior || $tieneSoloRolAsistentePlaneacion)
                             <a href="{{ url('/mantenimientoequipos') }}" class="modules__link">
                                 <div class="modules__card">
                                     <div class="modules__circle"><img src="assets/Modulos/img/Almacén.png" alt=""></div>
@@ -940,7 +941,7 @@
                             </a>
                             @endif
                             {{-- HSE --}}
-                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior)
+                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior ||$tieneSoloRolAsistentePlaneacion)
                             <div class="modules__card" onclick="noPermiso('HSE')">
                                 <div class="modules__circle"><img src="assets/Modulos/img/RRHH.png" alt=""></div>
                                 <h2 class="modules__text">HSE</h2>
@@ -952,7 +953,7 @@
                             </div>
                             @endif
                             {{-- Calidad --}}
-                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior)
+                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior || $tieneSoloRolAsistentePlaneacion)
                             <div class="modules__card" onclick="noPermiso('Calidad')">
                                 <div class="modules__circle"><img src="assets/Modulos/img/Calidad.png" alt=""></div>
                                 <h2 class="modules__text">Calidad</h2>
@@ -964,7 +965,7 @@
                             </div>
                             @endif
                             {{-- Página web --}}
-                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior)
+                            @if($tieneRolRestringidoUnico || $tieneSoloRolAlmacenista || $tieneSoloRolLideOperaciones || $tieneSoloRolTecnicojunior ||$tieneSoloRolAsistentePlaneacion)
                             <div class="modules__card" onclick="noPermiso('Página web')">
                                 <div class="modules__circle"><img src="assets/Modulos/img/sitoweb.png" alt=""></div>
                                 <h2 class="modules__text">Página web</h2>
