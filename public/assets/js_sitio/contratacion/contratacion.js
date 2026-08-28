@@ -219,6 +219,7 @@ function bloquearBotones() {
         'guardarDOCUMENTOSOPORTECONTRATO',
         'guardarRENOVACION',
         'guardarSOPORTECONTRATO',
+        'guardarASIGNACIONES'
     ];
 
     botones.forEach(botonId => {
@@ -244,7 +245,8 @@ function desbloquearBotones() {
         'guardarFormRP',
         'guardarDOCUMENTOSOPORTECONTRATO',
         'guardarRENOVACION',
-        'guardarSOPORTECONTRATO'
+        'guardarSOPORTECONTRATO',
+        'guardarASIGNACIONES'
     ];
 
     botones.forEach(botonId => {
@@ -5314,7 +5316,7 @@ function cargarTablasingnaciongeneral() {
             render: function (data, type, row) {
 
                 if (row.TIPO_ASIGNACION == 2) {
-                    return '';
+                return row.BTN_RETORNAR || '';
                 }
 
                 return row.BTN_RETORNAR || '';
@@ -5924,8 +5926,12 @@ document.addEventListener('DOMContentLoaded', function() {
      }
     });});
 
-$("#guardarSOPORTECONTRATO").click(function (e)
+
+
+
+    $("#guardarSOPORTECONTRATO").click(function (e) {
     e.preventDefault();
+
 
     formularioValido = validarFormularioV1('formularioSOPORTECONTRATO');
 
