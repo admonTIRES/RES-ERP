@@ -818,6 +818,14 @@
                         $tieneSoloRolSSPA = !$esSuperusuario && $user->hasRole('Responsable de SSPA');
                         $tieneSoloRolAT = !$esSuperusuario && $user->hasRole('Apoyo Técnico');
 
+
+
+
+                        $tieneSoloRolRESPONSABLESSPA = !$esSuperusuario && $user->hasRole('Ing. Responsable del SSPA');
+
+
+
+
                         /*
                         |--------------------------------------------------------------------------
                         | Agrupador de roles restringidos
@@ -832,7 +840,7 @@
                         $tieneSoloRolFRP ||
                         $tieneSoloRolSSPA ||
                         $tieneSoloRolAT ||
-
+                        $tieneSoloRolRESPONSABLESSPA ||
                         $tieneSoloRolAmadellaves;
 
                         @endphp
