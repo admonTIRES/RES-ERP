@@ -5,13 +5,13 @@
 <div class="contenedor-contenido">
     <ol class="breadcrumb mt-2" style="display: flex; justify-content: center; align-items: center;">
         <h3 style="color: #ffffff; margin: 0;">
-            <i class="bi bi-file-earmark-fill"></i>&nbsp;&nbsp;Lista de facturas
+            <i class="bi bi-file-earmark-fill"></i>&nbsp;&nbsp;Comprobante de pago
         </h3>
 
     </ol>
 
     <div class="card-body">
-        <table id="Tablalistafacturasproveedores" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
+        <table id="Tablacomprobantedepago" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
         </table>
     </div>
 </div>
@@ -19,9 +19,6 @@
 
 
 
-<!-- ============================================================== -->
-<!-- MODAL FACTURA PROVEEDOR  -->
-<!-- ============================================================== -->
 
 <div class="modal fade" id="modalDetalleFactura" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -50,9 +47,6 @@
                         </div>
                     </div>
 
-                    
-
-
                     <div class="mb-4 d-none" id="contenedorOC">
                         <div class="row">
                             <div class="col-6">
@@ -65,9 +59,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
 
                     <div class="row d-none" id="camposFactura">
                         <div class="col-md-4 mb-3">
@@ -150,5 +141,51 @@
         </form>
     </div>
 </div>
+
+
+
+
+<div class="modal fade" id="ModalSubirReciboPago" tabindex="-1" aria-labelledby="ModalSubirReciboPagoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formSubirReciboPago" enctype="multipart/form-data">
+                {{ csrf_field() }}
+
+
+                <div class="modal-header">
+                    <h5 class="modal-title"> Subir comprobante de pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="ID_FACTURA_RECIBO_PAGO" name="ID_FORMULARIO_FACTURACION">
+                    <div class="alert alert-info">
+                        <strong>Proveedor:</strong>
+                        <span id="NOMBRE_PROVEEDOR_RECIBO"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ARCHIVO_RECIBO_PAGO" class="form-label">
+                            Comprobante de pago en PDF
+                        </label>
+                        <input type="file" class="form-control" id="ARCHIVO_RECIBO_PAGO" name="ARCHIVO_RECIBO_PAGO" accept="application/pdf,.pdf" required>
+                        <div class="form-text">
+                            Únicamente se permite un archivo PDF.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="botonGuardarReciboPago">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        Subir comprobante
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 @endsection

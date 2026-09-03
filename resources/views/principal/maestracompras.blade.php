@@ -436,7 +436,7 @@
                                 </li>
                                 <hr class="dropdown-divider">
                                 <li>
-                                    <a class="dropdown-item" href="{{ url('/#') }}">
+                                    <a class="dropdown-item" href="{{ url('/comprobantepagos') }}">
                                         Envió comprobante de pago
                                     </a>
                                 </li>
@@ -476,7 +476,7 @@
                         @endif
 
 
-                        
+
                         @if(auth()->check() && auth()->user()->hasRoles(['Superusuario', 'Administrador','Asistente de compras','externo']))
                         <ul class="navbar-nav">
                             <li class="nav-item dropdown" style="margin-left: -10px;">
@@ -771,7 +771,9 @@
     <script src="/assets/js_sitio/proveedor/relacionpago.js?v=2"></script>
     @endif
 
-
+    @if(request()->is('comprobantepagos'))
+    <script src="/assets/js_sitio/proveedor/comprobantepago.js?"></script>
+    @endif
 
 
     <script src="/assets/js_sitio/externo.js?v=1.0"></script>

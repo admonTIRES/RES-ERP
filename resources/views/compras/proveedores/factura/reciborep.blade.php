@@ -35,11 +35,7 @@
                     <div class="row" id="datosFactura">
 
                         <input type="hidden" id="SUBIR_REP" name="SUBIR_REP" value="1">
-
                         <input type="hidden" id="ESTATUS_REP" name="ESTATUS_REP" value="">
-
-
-
                         <input type="hidden" id="TOTAL_FACTURA" name="TOTAL_FACTURA" value="">
 
                         <div class="col-md-12 mb-3">

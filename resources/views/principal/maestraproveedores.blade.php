@@ -420,7 +420,7 @@
     @endif
 
     @if(request()->is('proveedoresdocumentos'))
-    <script src="/assets/js_sitio/proveedor/altadocumentos.js?v=2"></script>
+    <script src="/assets/js_sitio/proveedor/altadocumentos.js?v=3"></script>
     @endif
 
     @if(request()->is('po-gr'))

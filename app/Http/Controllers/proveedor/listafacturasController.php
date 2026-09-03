@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\proveedor\facturacionModel;
 
 
-
-
-
 use DB;
 
 
@@ -37,9 +34,7 @@ class listafacturasController extends Controller
 
             foreach ($tabla as $value) {
 
-                $value->RFC_PROVEEDOR_TEXTO =
-                    ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE') .
-                    ' (' . ($value->RFC_ALTA ?? $value->RFC_PROVEEDOR) . ')';
+                $value->RFC_PROVEEDOR_TEXTO = ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE') .' (' . ($value->RFC_ALTA ?? $value->RFC_PROVEEDOR) . ')';
 
 
 

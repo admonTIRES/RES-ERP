@@ -293,7 +293,7 @@ $('#Tabladocumentosproveedores').on('click', '.ver-archivo-documentosoporte', fu
         return;
     }
 
-    var nombreDocumentoSoporte = row.data().NOMBRE_DOCUMENTO;
+    var nombreDocumentoSoporte = row.data().NOMBRE_DOCUMENTO_PROVEEEDOR;
     var url = '/mostrardocumentosoporteproveedor/' + id;
     
     abrirModal(url, nombreDocumentoSoporte);
