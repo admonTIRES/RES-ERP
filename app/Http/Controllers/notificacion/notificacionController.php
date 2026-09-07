@@ -917,7 +917,7 @@ class notificacionController extends Controller
                             'fecha' => 'Fecha de factura: ' . ($fechaFactura ?: 'Sin fecha'),
                             'fecha_sort' => $fechaFactura ?: $n->created_at,
                             'estatus_badge' => $badgeComprobantePago,
-                            'link' => url('/comprobantedepago')
+                            'link' => url('/comprobantepagos')
                         ];
                     });
             }
