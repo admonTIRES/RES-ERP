@@ -135,6 +135,9 @@ use App\Http\Controllers\proveedor\relacionpagoController;
 
 use App\Http\Controllers\proveedor\enviocomprobandepagoController;
 
+use App\Http\Controllers\proveedor\listarepController;
+
+
 // CONTROLADORES DE PO 
 use App\Http\Controllers\ordencompra\poController;
 use App\Http\Controllers\ordencompra\pdfpoController;
@@ -1110,13 +1113,16 @@ Route::get('/descargarExcelRelacionPagos/{ID}', [relacionpagoController::class, 
 
 
 //============================================== COMPROBANTE DE PAGOS   ============================================== 
-Route::get('/comprobantepagos', function () {
-    return view('compras.comprobantedepago.comprobantepago');
-});
+Route::get('/comprobantepagos', function () {return view('compras.comprobantedepago.comprobantepago');});
 Route::get('/Tablacomprobantedepago', [enviocomprobandepagoController::class, 'Tablacomprobantedepago']);
 Route::post('Savecomprobantepago', [enviocomprobandepagoController::class, 'store']);
 Route::post('cargarcomprobantepago', [enviocomprobandepagoController::class, 'cargarcomprobantepago']);
 
+//============================================== APROBAR REP    ============================================== 
+
+Route::get('/listarep', function () {return view('compras.listarep.listarep');});
+Route::get('/Tablareciborep', [listarepController::class, 'Tablareciborep']);
+Route::post('/aprobarRechazarREP', [listarepController::class, 'aprobarRechazarREP']);
 
 
 //==============================================     PROVEEDORES TEMPORALES  ============================================== 

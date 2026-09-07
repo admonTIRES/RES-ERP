@@ -101,508 +101,16 @@ class notificacionController extends Controller
                 });
 
 
-            /**
-             * 2 NOTIFICACIONES AUTORIZAR RECURSOS EMPLEADOS (TIPOS 1 y 3)
-             */
+                /**
+                 * 2 NOTIFICACIONES AUTORIZAR RECURSOS EMPLEADOS (TIPOS 1 y 3)
+                 */
 
-            $autorizadores = [1,2,3];
-            $notiAutorizar = collect([]);
+                $autorizadores = [1,2,3];
+                $notiAutorizar = collect([]);
 
-            if (in_array($idUsuario, $autorizadores)) {
+                if (in_array($idUsuario, $autorizadores)) {
 
-                $badgeAutorizar = "<span style='
-                background-color:#3a87ad;
-                color:white;
-                padding:3px 8px;
-                border-radius:6px;
-                font-size:11px;
-                font-weight:bold;
-                display:inline-block;
-                '>Aprobar</span>";
-
-                $notiAutorizar = recemplaedosModel::where('DAR_BUENO', 1)
-                    ->whereIn('TIPO_SOLICITUD', [1, 3])
-
-                    ->where(function ($q) {
-                        $q->whereNull('ESTADO_APROBACION')
-                            ->orWhereNotIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada']);
-                    })
-
-                    ->where(function ($q) use ($idUsuario, $autorizadores) {
-                        $q->whereNull('JEFE_ID')
-                            ->orWhereNotIn('JEFE_ID', $autorizadores)
-                            ->orWhere('JEFE_ID', '!=', $idUsuario);
-                    })
-
-                    ->orderBy('FECHA_SALIDA', 'desc')
-                    ->get()
-                    ->map(function ($n) use ($badgeAutorizar) {
-
-                        return [
-                            'titulo'        => $this->textoTipoSolicitud($n->TIPO_SOLICITUD),
-                            'detalle'       => $n->SOLICITANTE_SALIDA ?? 'Sin nombre',
-                            'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SALIDA,
-                            'estatus_badge' => $badgeAutorizar,
-                            'link'          => url('/solicitudesaprobaciones')
-                        ];
-                    });
-            }
-
-
-            /**
-             * 3 NOTIFICACIONES AUTORIZAR (TIPO 2 – SALIDA DE ALMACÉN)
-             */
-            $notiTipo2 = collect([]);
-
-            if (in_array($idUsuario, $autorizadores)) {
-
-                $badgeSalida = "<span style='
-                background-color:#3a87ad;
-                color:white;
-                padding:3px 8px;
-                border-radius:6px;
-                font-size:11px;
-                font-weight:bold;
-                display:inline-block;
-            '>Aprobar</span>";
-
-                $notiTipo2 = recemplaedosModel::where('TIPO_SOLICITUD', 2)
-
-                    ->where(function ($query) {
-                        $query->whereNull('ESTADO_APROBACION')
-                            ->orWhereNotIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada']);
-                    })
-
-                    ->orderBy('FECHA_SALIDA', 'desc')
-                    ->get()
-                    ->map(function ($n) use ($badgeSalida) {
-                        return [
-                            'titulo'        => 'Aprobar salida de almacén',
-                            'detalle'       => $n->SOLICITANTE_SALIDA ?? 'Sin nombre',
-                            'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SALIDA,
-                            'estatus_badge' => $badgeSalida,
-                            'link'          => url('/aprobacionalmacen')
-                        ];
-                    });
-            }
-
-
-            /**
-             * 4 NOTIFICACIONES – ENTREGA (Solo cuando solicitud tipo 2 aprobada)
-             */
-           
-
-            $notiEntrega = collect([]);
-
-            $usuariosQuePuedenEntregar = [1,3,10];
-
-            if (in_array($idUsuario, $usuariosQuePuedenEntregar)) {
-
-                $badgeEntrega = "<span style='
-                    background-color:#ff9800;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                '>Entregar</span>";
-
-                $notiEntrega = recemplaedosModel::where('TIPO_SOLICITUD', 2)
-                    ->where('ESTADO_APROBACION', 'Aprobada')
-
-                    ->where(function ($q) {
-                        $q->whereNull('FINALIZAR_SOLICITUD_ALMACEN')
-                            ->orWhere('FINALIZAR_SOLICITUD_ALMACEN', '!=', 1);
-                    })
-
-                    ->where('USUARIO_ID', '!=', $idUsuario)
-
-                    ->orderBy('FECHA_SALIDA', 'desc')
-                    ->get()
-                    ->map(function ($n) use ($badgeEntrega) {
-                        return [
-                            'titulo'        => 'Salida de almacén',
-                            'detalle'       => $n->SOLICITANTE_SALIDA ?? 'Sin nombre',
-                            'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SALIDA,
-                            'estatus_badge' => $badgeEntrega,
-                            'link'          => url('/salidaalmacen')
-                        ];
-                    });
-            }
-
-
-            /**
-             * 5 NOTIFICACIONES DE Vo.Bo MR 
-             */
-
-            $badgeVoBoMR = "<span style='
-            background-color:#f4c542;
-            color:black;
-            padding:3px 8px;
-            border-radius:6px;
-            font-size:11px;
-            font-weight:bold;
-            display:inline-block;
-            '>Vo.Bo</span>";
-
-            $notiVoBoMR = mrModel::whereIn('USUARIO_ID', $usuariosACargo)
-                ->where('DAR_BUENO', 0)
-                ->orderBy('FECHA_SOLICITUD_MR', 'desc')
-                ->get()
-                ->map(function ($n) use ($badgeVoBoMR) {
-                    return [
-                        'titulo' => 'Vo.Bo MR: ' . $n->NO_MR,
-                        'detalle'       => $n->SOLICITANTE_MR ?? 'Sin nombre',
-                        'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SOLICITUD_MR,
-                        'estatus_badge' => $badgeVoBoMR,
-                        'link'          => url('/requisicionmaterialeslideres')
-                    ];
-                });
-
-
-
-            /**
-             * 6 NOTIFICACIONES DE AUTORIZAR MR  
-             */
-
-            $autorizadores = [1,2, 3];
-            $notiAutorizarMR = collect([]);
-
-            if (in_array($idUsuario, $autorizadores)) {
-
-                $badgeAutorizarMR = "<span style='
-                background-color:#3a87ad;
-                color:white;
-                padding:3px 8px;
-                border-radius:6px;
-                font-size:11px;
-                font-weight:bold;
-                display:inline-block;
-                '>Aprobar</span>";
-
-                $notiAutorizarMR = mrModel::where('DAR_BUENO', 1)
-                    ->where(function ($q) {
-                        $q->whereNull('ESTADO_APROBACION')
-                            ->orWhereNotIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada']);
-                    })
-
-                    ->where(function ($q) use ($idUsuario, $autorizadores) {
-                        $q->whereNull('JEFEINMEDIATO_ID')
-                            ->orWhereNotIn('JEFEINMEDIATO_ID', $autorizadores)
-                            ->orWhere('JEFEINMEDIATO_ID', '!=', $idUsuario);
-                    })
-
-                    ->orderBy('FECHA_SOLICITUD_MR', 'desc')
-                    ->get()
-                    ->map(function ($n) use ($badgeAutorizarMR) {
-
-                        return [
-                            'titulo' => 'Aprobar MR:<br> ' . $n->NO_MR,
-                            'detalle'       => $n->SOLICITANTE_MR ?? 'Sin nombre',
-                            'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SOLICITUD_MR,
-                            'estatus_badge' => $badgeAutorizarMR,
-                            'link'          => url('/requisicionmaterialesaprobacion')
-                        ];
-                    });
-            }
-
-
-            /**
-             * 7 NOTIFICACIONES – MR PENDIENTE EN BITÁCORA 
-             */
-
-            $notiBitacoraMR = collect([]);
-
-            $usuariosMR = [1,3];
-
-            if (in_array($idUsuario, $usuariosMR)) {
-
-                $badgeMR = "<span style='
-                    background-color:#ff9800;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                    '>Pendiente</span>";
-
-                $notiBitacoraMR = mrModel::where('ESTADO_APROBACION', 'Aprobada')
-
-                    ->whereNotIn('NO_MR', function ($q) {
-                        $q->select('NO_MR')->from('hoja_trabajo');
-                    })
-
-                    ->orderBy('FECHA_SOLICITUD_MR', 'desc')
-                    ->get()
-                    ->map(function ($n) use ($badgeMR) {
-
-                        return [
-                            'titulo'        => 'Tienes una MR en la Bitácora:' . $n->NO_MR,
-                            'detalle'       => $n->SOLICITANTE_MR ?? 'Sin nombre',
-                            'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SOLICITUD_MR,
-                            'estatus_badge' => $badgeMR,
-                            'link'          => url('/bitacora')
-                        ];
-                    });
-            }
-
-
-
-            /**
-             * 8 NOTIFICACIONES – VERIFICACIÓN DE MR (BITACORA) – Usuarios  y 2
-             */
-        
-            $notiVerificacionMR = collect([]);
-
-            $usuariosVerificacion = [1,2];
-
-            if (in_array($idUsuario, $usuariosVerificacion)) {
-
-                $badgeVerif = "<span style='
-                    background-color:#3a87ad;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                '>Aprobar</span>";
-
-                $listaMR = HojaTrabajo::select('NO_MR')
-                    ->where('SOLICITAR_VERIFICACION', 'Sí')
-                    ->groupBy('NO_MR')
-                    ->get();
-
-                $notiVerificacionMR = $listaMR->filter(function ($mr) {
-
-                    $registros = HojaTrabajo::where('NO_MR', $mr->NO_MR)->get();
-
-                 
-                    $todosRequierenMatriz = $registros->every(function ($item) {
-                        return $item->REQUIERE_MATRIZ === "Sí";
-                    });
-                    if ($todosRequierenMatriz) return false;
-
-                  
-                    $todosFinalizados = $registros->every(function ($item) {
-                        return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
-                    });
-                    if ($todosFinalizados) return false;
-
-
-                    $pendienteSinMatriz = $registros->contains(function ($item) {
-                        return
-                            $item->SOLICITAR_VERIFICACION === "Sí" &&
-                            ($item->REQUIERE_MATRIZ !== "Sí" || $item->REQUIERE_MATRIZ === null) &&
-                            !in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
-                    });
-
-                    if ($pendienteSinMatriz) {
-                        return true;
-                    }
-
-                
-                    $regSinMatriz = $registros->filter(function ($item) {
-                        return $item->REQUIERE_MATRIZ !== "Sí" || $item->REQUIERE_MATRIZ === null;
-                    });
-
-                    if ($regSinMatriz->count() > 0) {
-                        $sinMatrizFinalizados = $regSinMatriz->every(function ($item) {
-                            return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
-                        });
-
-                        if ($sinMatrizFinalizados) return false;
-                    }
-
-                    return false; 
-                })
-
-                    ->map(function ($mr) use ($badgeVerif) {
-
-                        $registro = HojaTrabajo::where('NO_MR', $mr->NO_MR)->first();
-
-                        return [
-                            'titulo'        => 'Aprobar bitácora MR:<br> ' . $mr->NO_MR,
-                            'detalle'       => 'Solicitud de aprobación',
-                            'fecha'         => 'Fecha solicitud: ' . ($registro->FECHA_VERIFICACION ?? ''),
-                            'estatus_badge' => $badgeVerif,
-                            'link'          => url('/bitacora')
-                        ];
-                    });
-            }
-
-
-            /**
-             * 9  NOTIFICACIONES DE MATRIZ COMPARATIVA 
-             */
-          
-            $notiMatrizComparativa = collect([]);
-
-            $usuariosMatriz = [1, 3];
-
-            if (in_array($idUsuario, $usuariosMatriz)) {
-
-                $badgeMatriz = "<span style='
-                    background-color:#ff9800;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                '>Pendiente</span>";
-
-                $registros = DB::table('formulario_matrizcomparativa')
-                    ->select('NO_MR', 'SOLICITAR_VERIFICACION', 'created_at')
-                    ->orderBy('created_at', 'desc')
-                    ->get()
-                    ->groupBy('NO_MR'); 
-
-                $notiMatrizComparativa = collect($registros)->filter(function ($group) {
-
-                    $yaSolicitada = collect($group)->contains(function ($item) {
-                        return $item->SOLICITAR_VERIFICACION === "Sí";
-                    });
-
-                    return !$yaSolicitada;
-                })->map(function ($group) use ($badgeMatriz) {
-
-                    $mr = $group->first();
-
-                    return [
-                        'titulo'        => 'Matriz comparativa: <br>' . $mr->NO_MR,
-                        'detalle'       => 'Pendiente por realizar',
-                        'fecha'         => date('Y-m-d', strtotime($mr->created_at)),
-                        'fecha_sort'    => date('Y-m-d H:i:s', strtotime($mr->created_at)),
-                        'estatus_badge' => $badgeMatriz,
-                        'link'          => url('/matrizcomparativa')
-                    ];
-                });
-            }
-
-            /**
-             * 10 NOTIFICACIONES – PARA APROBAR MATRIZ
-             * 
-             */
-          
-            $notiAprobarMatriz = collect([]);
-
-            $usuariosAprobadoresVerif = [1, 2];
-
-            if (in_array($idUsuario, $usuariosAprobadoresVerif)) {
-
-                $badgeVerificacion = "<span style='
-                    background-color:#3a87ad;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                '>Aprobar</span>";
-
-                $registros = DB::table('formulario_matrizcomparativa')
-                    ->select('NO_MR', 'SOLICITAR_VERIFICACION', 'ESTADO_APROBACION', 'FECHA_SOLCITIUD')
-                    ->orderBy('FECHA_SOLCITIUD', 'desc')
-                    ->get()
-                    ->groupBy('NO_MR');
-
-                $notiAprobarMatriz = collect($registros)->filter(function ($group) {
-
-                    $solicitoVerificacion = collect($group)->contains(function ($item) {
-                        return $item->SOLICITAR_VERIFICACION === "Sí";
-                    });
-
-                    if (!$solicitoVerificacion) return false;
-
-                    $finalizados = collect($group)->every(function ($item) {
-                        return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
-                    });
-
-                    if ($finalizados) return false;
-
-                    return true;
-                })->map(function ($group) use ($badgeVerificacion) {
-
-                    $mr = $group->first();
-
-                    return [
-                        'titulo'        => 'Aprobar de matriz comparativa:' . $mr->NO_MR,
-                        'detalle'       => 'Solicitud de aprobación',
-                        'fecha'         => 'Fecha solicitud: ' . ($mr->FECHA_SOLCITIUD ?? ''),
-                        'estatus_badge' => $badgeVerificacion,
-                        'link'          => url('/matrizaprobacion')
-                    ];
-                });
-            }
-
-
-            /**
-             * 11 NOTIFICACIONES – PARA ORDEN DE COMPRA
-             * 
-             */
-
-            $notiOrdencompra = collect([]);
-
-            $usuariosPO = [1, 3];
-
-            if (in_array($idUsuario, $usuariosPO)) {
-
-                $badgePO = "<span style='
-                    background-color:#ff9800;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                    '>Pendiente</span>";
-
-                $registros = DB::table('formulario_ordencompra')
-                    ->select('NO_PO', 'SOLICITAR_AUTORIZACION', 'created_at')
-                    ->orderBy('created_at', 'desc')
-                    ->get()
-                    ->groupBy('NO_PO');
-
-                $notiOrdencompra = collect($registros)->filter(function ($group) {
-
-                    $yaSolicitadapo = collect($group)->contains(function ($item) {
-                        return $item->SOLICITAR_AUTORIZACION === "Sí";
-                    });
-
-                    return !$yaSolicitadapo;
-                })->map(function ($group) use ($badgePO) {
-
-                    $mr = $group->first();
-
-                    return [
-                        'titulo'        => 'Orden de compra:<br>' . $mr->NO_PO,
-                        'detalle'       => 'Pendiente por realizar',
-                        'fecha'         => date('Y-m-d', strtotime($mr->created_at)),
-                        'fecha_sort'    => date('Y-m-d H:i:s', strtotime($mr->created_at)),
-                        'estatus_badge' => $badgePO,
-                        'link'          => url('/ordencompra')
-                    ];
-                });
-            }
-
-
-
-
-
-            /**
-             * 12 NOTIFICACIONES – PARA APROBAR ORDEN DE COMPRA
-             */
-
-            $notiAprobarPO = collect([]);
-
-            $usuariosAprobadoresPO = [1, 2];
-
-            if (in_array($idUsuario, $usuariosAprobadoresPO)) {
-
-                $badgeVerificacionPo = "<span style='
+                    $badgeAutorizar = "<span style='
                     background-color:#3a87ad;
                     color:white;
                     padding:3px 8px;
@@ -612,49 +120,123 @@ class notificacionController extends Controller
                     display:inline-block;
                     '>Aprobar</span>";
 
-                $registros = DB::table('formulario_ordencompra')
-                    ->select('NO_PO', 'SOLICITAR_AUTORIZACION', 'ESTADO_APROBACION', 'FECHA_SOLCITIUD')
-                    ->orderBy('FECHA_SOLCITIUD', 'desc')
-                    ->get()
-                    ->groupBy('NO_PO');
+                    $notiAutorizar = recemplaedosModel::where('DAR_BUENO', 1)
+                        ->whereIn('TIPO_SOLICITUD', [1, 3])
 
-                $notiAprobarPO = collect($registros)->filter(function ($group) {
+                        ->where(function ($q) {
+                            $q->whereNull('ESTADO_APROBACION')
+                                ->orWhereNotIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada']);
+                        })
 
-                    $solicitoVerificacionPo = collect($group)->contains(function ($item) {
-                        return $item->SOLICITAR_AUTORIZACION === "Sí";
-                    });
+                        ->where(function ($q) use ($idUsuario, $autorizadores) {
+                            $q->whereNull('JEFE_ID')
+                                ->orWhereNotIn('JEFE_ID', $autorizadores)
+                                ->orWhere('JEFE_ID', '!=', $idUsuario);
+                        })
 
-                    if (!$solicitoVerificacionPo) return false;
+                        ->orderBy('FECHA_SALIDA', 'desc')
+                        ->get()
+                        ->map(function ($n) use ($badgeAutorizar) {
 
-                    $finalizados = collect($group)->every(function ($item) {
-                        return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
-                    });
-
-                    if ($finalizados) return false;
-
-                    return true;
-                })->map(function ($group) use ($badgeVerificacionPo) {
-
-                    $mr = $group->first();
-
-                    return [
-                        'titulo'        => 'Aprobar PO:<br>' . $mr->NO_PO,
-                        'detalle'       => 'Solicitud de aprobación',
-                        'fecha'         => 'Fecha solicitud: ' . ($mr->FECHA_SOLCITIUD ?? ''),
-                        'estatus_badge' => $badgeVerificacionPo,
-                        'link'          => url('/ordencompraaprobacion')
-                    ];
-                });
-            }
+                            return [
+                                'titulo'        => $this->textoTipoSolicitud($n->TIPO_SOLICITUD),
+                                'detalle'       => $n->SOLICITANTE_SALIDA ?? 'Sin nombre',
+                                'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SALIDA,
+                                'estatus_badge' => $badgeAutorizar,
+                                'link'          => url('/solicitudesaprobaciones')
+                            ];
+                        });
+                }
 
 
-            /**
-             * 13 NOTIFICACIONES – Vo.Bo USUARIO BITACORA GR
-             * 
-             */
-            $notiVoboGR = collect([]);
+                /**
+                 * 3 NOTIFICACIONES AUTORIZAR (TIPO 2 – SALIDA DE ALMACÉN)
+                 */
+                $notiTipo2 = collect([]);
 
-            $badgeVoBoGR = "<span style='
+                if (in_array($idUsuario, $autorizadores)) {
+
+                    $badgeSalida = "<span style='
+                    background-color:#3a87ad;
+                    color:white;
+                    padding:3px 8px;
+                    border-radius:6px;
+                    font-size:11px;
+                    font-weight:bold;
+                    display:inline-block;
+                '>Aprobar</span>";
+
+                    $notiTipo2 = recemplaedosModel::where('TIPO_SOLICITUD', 2)
+
+                        ->where(function ($query) {
+                            $query->whereNull('ESTADO_APROBACION')
+                                ->orWhereNotIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada']);
+                        })
+
+                        ->orderBy('FECHA_SALIDA', 'desc')
+                        ->get()
+                        ->map(function ($n) use ($badgeSalida) {
+                            return [
+                                'titulo'        => 'Aprobar salida de almacén',
+                                'detalle'       => $n->SOLICITANTE_SALIDA ?? 'Sin nombre',
+                                'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SALIDA,
+                                'estatus_badge' => $badgeSalida,
+                                'link'          => url('/aprobacionalmacen')
+                            ];
+                        });
+                }
+
+
+                /**
+                 * 4 NOTIFICACIONES – ENTREGA (Solo cuando solicitud tipo 2 aprobada)
+                 */
+            
+
+                $notiEntrega = collect([]);
+
+                $usuariosQuePuedenEntregar = [1,3,10];
+
+                if (in_array($idUsuario, $usuariosQuePuedenEntregar)) {
+
+                    $badgeEntrega = "<span style='
+                        background-color:#ff9800;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                    '>Entregar</span>";
+
+                    $notiEntrega = recemplaedosModel::where('TIPO_SOLICITUD', 2)
+                        ->where('ESTADO_APROBACION', 'Aprobada')
+
+                        ->where(function ($q) {
+                            $q->whereNull('FINALIZAR_SOLICITUD_ALMACEN')
+                                ->orWhere('FINALIZAR_SOLICITUD_ALMACEN', '!=', 1);
+                        })
+
+                        ->where('USUARIO_ID', '!=', $idUsuario)
+
+                        ->orderBy('FECHA_SALIDA', 'desc')
+                        ->get()
+                        ->map(function ($n) use ($badgeEntrega) {
+                            return [
+                                'titulo'        => 'Salida de almacén',
+                                'detalle'       => $n->SOLICITANTE_SALIDA ?? 'Sin nombre',
+                                'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SALIDA,
+                                'estatus_badge' => $badgeEntrega,
+                                'link'          => url('/salidaalmacen')
+                            ];
+                        });
+                }
+
+
+                /**
+                 * 5 NOTIFICACIONES DE Vo.Bo MR 
+                 */
+
+                $badgeVoBoMR = "<span style='
                 background-color:#f4c542;
                 color:black;
                 padding:3px 8px;
@@ -662,31 +244,449 @@ class notificacionController extends Controller
                 font-size:11px;
                 font-weight:bold;
                 display:inline-block;
-            '>Vo.Bo</span>";
+                '>Vo.Bo</span>";
 
-            $notiVoboGR = DB::table('formulario_bitacoragr')
-                ->where('USUARIO_ID', $idUsuario)
+                $notiVoBoMR = mrModel::whereIn('USUARIO_ID', $usuariosACargo)
+                    ->where('DAR_BUENO', 0)
+                    ->orderBy('FECHA_SOLICITUD_MR', 'desc')
+                    ->get()
+                    ->map(function ($n) use ($badgeVoBoMR) {
+                        return [
+                            'titulo' => 'Vo.Bo MR: ' . $n->NO_MR,
+                            'detalle'       => $n->SOLICITANTE_MR ?? 'Sin nombre',
+                            'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SOLICITUD_MR,
+                            'estatus_badge' => $badgeVoBoMR,
+                            'link'          => url('/requisicionmaterialeslideres')
+                        ];
+                    });
 
-                ->where('MANDAR_USUARIO_VOBO', 'Sí')
 
-                ->where(function ($q) {
-                    $q->whereNull('VO_BO_USUARIO')
-                        ->orWhereNotIn('VO_BO_USUARIO', ['Aprobada', 'Rechazada']);
-                })
 
-                ->orderBy('CREATED_AT', 'desc')
-                ->get()
-                ->map(function ($gr) use ($badgeVoBoGR) {
+                /**
+                 * 6 NOTIFICACIONES DE AUTORIZAR MR  
+                 */
 
-                    return [
-                        'titulo'        => 'Vo.Bo GR: ' . $gr->NO_RECEPCION,
-                        'detalle'       => 'Pendiente de Vo.Bo del usuario',
-                        'fecha'         => 'Fecha: ' . date('Y-m-d', strtotime($gr->CREATED_AT)),
-                        'fecha_sort'    => date('Y-m-d H:i:s', strtotime($gr->CREATED_AT)),
-                        'estatus_badge' => $badgeVoBoGR,
-                        'link'          => url('/vobogrusuario')
-                    ];
-                });
+                $autorizadores = [1,2, 3];
+                $notiAutorizarMR = collect([]);
+
+                if (in_array($idUsuario, $autorizadores)) {
+
+                    $badgeAutorizarMR = "<span style='
+                    background-color:#3a87ad;
+                    color:white;
+                    padding:3px 8px;
+                    border-radius:6px;
+                    font-size:11px;
+                    font-weight:bold;
+                    display:inline-block;
+                    '>Aprobar</span>";
+
+                    $notiAutorizarMR = mrModel::where('DAR_BUENO', 1)
+                        ->where(function ($q) {
+                            $q->whereNull('ESTADO_APROBACION')
+                                ->orWhereNotIn('ESTADO_APROBACION', ['Aprobada', 'Rechazada']);
+                        })
+
+                        ->where(function ($q) use ($idUsuario, $autorizadores) {
+                            $q->whereNull('JEFEINMEDIATO_ID')
+                                ->orWhereNotIn('JEFEINMEDIATO_ID', $autorizadores)
+                                ->orWhere('JEFEINMEDIATO_ID', '!=', $idUsuario);
+                        })
+
+                        ->orderBy('FECHA_SOLICITUD_MR', 'desc')
+                        ->get()
+                        ->map(function ($n) use ($badgeAutorizarMR) {
+
+                            return [
+                                'titulo' => 'Aprobar MR:<br> ' . $n->NO_MR,
+                                'detalle'       => $n->SOLICITANTE_MR ?? 'Sin nombre',
+                                'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SOLICITUD_MR,
+                                'estatus_badge' => $badgeAutorizarMR,
+                                'link'          => url('/requisicionmaterialesaprobacion')
+                            ];
+                        });
+                }
+
+
+                /**
+                 * 7 NOTIFICACIONES – MR PENDIENTE EN BITÁCORA 
+                 */
+
+                $notiBitacoraMR = collect([]);
+
+                $usuariosMR = [1,3];
+
+                if (in_array($idUsuario, $usuariosMR)) {
+
+                    $badgeMR = "<span style='
+                        background-color:#ff9800;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                        '>Pendiente</span>";
+
+                    $notiBitacoraMR = mrModel::where('ESTADO_APROBACION', 'Aprobada')
+
+                        ->whereNotIn('NO_MR', function ($q) {
+                            $q->select('NO_MR')->from('hoja_trabajo');
+                        })
+
+                        ->orderBy('FECHA_SOLICITUD_MR', 'desc')
+                        ->get()
+                        ->map(function ($n) use ($badgeMR) {
+
+                            return [
+                                'titulo'        => 'Tienes una MR en la Bitácora:' . $n->NO_MR,
+                                'detalle'       => $n->SOLICITANTE_MR ?? 'Sin nombre',
+                                'fecha'         => 'Fecha solicitud: ' . $n->FECHA_SOLICITUD_MR,
+                                'estatus_badge' => $badgeMR,
+                                'link'          => url('/bitacora')
+                            ];
+                        });
+                }
+
+
+
+                /**
+                 * 8 NOTIFICACIONES – VERIFICACIÓN DE MR (BITACORA) – Usuarios  y 2
+                 */
+            
+                $notiVerificacionMR = collect([]);
+
+                $usuariosVerificacion = [1,2];
+
+                if (in_array($idUsuario, $usuariosVerificacion)) {
+
+                    $badgeVerif = "<span style='
+                        background-color:#3a87ad;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                    '>Aprobar</span>";
+
+                    $listaMR = HojaTrabajo::select('NO_MR')
+                        ->where('SOLICITAR_VERIFICACION', 'Sí')
+                        ->groupBy('NO_MR')
+                        ->get();
+
+                    $notiVerificacionMR = $listaMR->filter(function ($mr) {
+
+                        $registros = HojaTrabajo::where('NO_MR', $mr->NO_MR)->get();
+
+                    
+                        $todosRequierenMatriz = $registros->every(function ($item) {
+                            return $item->REQUIERE_MATRIZ === "Sí";
+                        });
+                        if ($todosRequierenMatriz) return false;
+
+                    
+                        $todosFinalizados = $registros->every(function ($item) {
+                            return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
+                        });
+                        if ($todosFinalizados) return false;
+
+
+                        $pendienteSinMatriz = $registros->contains(function ($item) {
+                            return
+                                $item->SOLICITAR_VERIFICACION === "Sí" &&
+                                ($item->REQUIERE_MATRIZ !== "Sí" || $item->REQUIERE_MATRIZ === null) &&
+                                !in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
+                        });
+
+                        if ($pendienteSinMatriz) {
+                            return true;
+                        }
+
+                    
+                        $regSinMatriz = $registros->filter(function ($item) {
+                            return $item->REQUIERE_MATRIZ !== "Sí" || $item->REQUIERE_MATRIZ === null;
+                        });
+
+                        if ($regSinMatriz->count() > 0) {
+                            $sinMatrizFinalizados = $regSinMatriz->every(function ($item) {
+                                return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
+                            });
+
+                            if ($sinMatrizFinalizados) return false;
+                        }
+
+                        return false; 
+                    })
+
+                        ->map(function ($mr) use ($badgeVerif) {
+
+                            $registro = HojaTrabajo::where('NO_MR', $mr->NO_MR)->first();
+
+                            return [
+                                'titulo'        => 'Aprobar bitácora MR:<br> ' . $mr->NO_MR,
+                                'detalle'       => 'Solicitud de aprobación',
+                                'fecha'         => 'Fecha solicitud: ' . ($registro->FECHA_VERIFICACION ?? ''),
+                                'estatus_badge' => $badgeVerif,
+                                'link'          => url('/bitacora')
+                            ];
+                        });
+                }
+
+
+                /**
+                 * 9  NOTIFICACIONES DE MATRIZ COMPARATIVA 
+                 */
+            
+                $notiMatrizComparativa = collect([]);
+
+                $usuariosMatriz = [1, 3];
+
+                if (in_array($idUsuario, $usuariosMatriz)) {
+
+                    $badgeMatriz = "<span style='
+                        background-color:#ff9800;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                    '>Pendiente</span>";
+
+                    $registros = DB::table('formulario_matrizcomparativa')
+                        ->select('NO_MR', 'SOLICITAR_VERIFICACION', 'created_at')
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->groupBy('NO_MR'); 
+
+                    $notiMatrizComparativa = collect($registros)->filter(function ($group) {
+
+                        $yaSolicitada = collect($group)->contains(function ($item) {
+                            return $item->SOLICITAR_VERIFICACION === "Sí";
+                        });
+
+                        return !$yaSolicitada;
+                    })->map(function ($group) use ($badgeMatriz) {
+
+                        $mr = $group->first();
+
+                        return [
+                            'titulo'        => 'Matriz comparativa: <br>' . $mr->NO_MR,
+                            'detalle'       => 'Pendiente por realizar',
+                            'fecha'         => date('Y-m-d', strtotime($mr->created_at)),
+                            'fecha_sort'    => date('Y-m-d H:i:s', strtotime($mr->created_at)),
+                            'estatus_badge' => $badgeMatriz,
+                            'link'          => url('/matrizcomparativa')
+                        ];
+                    });
+                }
+
+                /**
+                 * 10 NOTIFICACIONES – PARA APROBAR MATRIZ
+                 * 
+                 */
+            
+                $notiAprobarMatriz = collect([]);
+
+                $usuariosAprobadoresVerif = [1, 2];
+
+                if (in_array($idUsuario, $usuariosAprobadoresVerif)) {
+
+                    $badgeVerificacion = "<span style='
+                        background-color:#3a87ad;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                    '>Aprobar</span>";
+
+                    $registros = DB::table('formulario_matrizcomparativa')
+                        ->select('NO_MR', 'SOLICITAR_VERIFICACION', 'ESTADO_APROBACION', 'FECHA_SOLCITIUD')
+                        ->orderBy('FECHA_SOLCITIUD', 'desc')
+                        ->get()
+                        ->groupBy('NO_MR');
+
+                    $notiAprobarMatriz = collect($registros)->filter(function ($group) {
+
+                        $solicitoVerificacion = collect($group)->contains(function ($item) {
+                            return $item->SOLICITAR_VERIFICACION === "Sí";
+                        });
+
+                        if (!$solicitoVerificacion) return false;
+
+                        $finalizados = collect($group)->every(function ($item) {
+                            return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
+                        });
+
+                        if ($finalizados) return false;
+
+                        return true;
+                    })->map(function ($group) use ($badgeVerificacion) {
+
+                        $mr = $group->first();
+
+                        return [
+                            'titulo'        => 'Aprobar de matriz comparativa:' . $mr->NO_MR,
+                            'detalle'       => 'Solicitud de aprobación',
+                            'fecha'         => 'Fecha solicitud: ' . ($mr->FECHA_SOLCITIUD ?? ''),
+                            'estatus_badge' => $badgeVerificacion,
+                            'link'          => url('/matrizaprobacion')
+                        ];
+                    });
+                }
+
+
+                /**
+                 * 11 NOTIFICACIONES – PARA ORDEN DE COMPRA
+                 * 
+                 */
+
+                $notiOrdencompra = collect([]);
+
+                $usuariosPO = [1, 3];
+
+                if (in_array($idUsuario, $usuariosPO)) {
+
+                    $badgePO = "<span style='
+                        background-color:#ff9800;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                        '>Pendiente</span>";
+
+                    $registros = DB::table('formulario_ordencompra')
+                        ->select('NO_PO', 'SOLICITAR_AUTORIZACION', 'created_at')
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->groupBy('NO_PO');
+
+                    $notiOrdencompra = collect($registros)->filter(function ($group) {
+
+                        $yaSolicitadapo = collect($group)->contains(function ($item) {
+                            return $item->SOLICITAR_AUTORIZACION === "Sí";
+                        });
+
+                        return !$yaSolicitadapo;
+                    })->map(function ($group) use ($badgePO) {
+
+                        $mr = $group->first();
+
+                        return [
+                            'titulo'        => 'Orden de compra:<br>' . $mr->NO_PO,
+                            'detalle'       => 'Pendiente por realizar',
+                            'fecha'         => date('Y-m-d', strtotime($mr->created_at)),
+                            'fecha_sort'    => date('Y-m-d H:i:s', strtotime($mr->created_at)),
+                            'estatus_badge' => $badgePO,
+                            'link'          => url('/ordencompra')
+                        ];
+                    });
+                }
+
+
+
+
+
+                /**
+                 * 12 NOTIFICACIONES – PARA APROBAR ORDEN DE COMPRA
+                 */
+
+                $notiAprobarPO = collect([]);
+
+                $usuariosAprobadoresPO = [1, 2];
+
+                if (in_array($idUsuario, $usuariosAprobadoresPO)) {
+
+                    $badgeVerificacionPo = "<span style='
+                        background-color:#3a87ad;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                        '>Aprobar</span>";
+
+                    $registros = DB::table('formulario_ordencompra')
+                        ->select('NO_PO', 'SOLICITAR_AUTORIZACION', 'ESTADO_APROBACION', 'FECHA_SOLCITIUD')
+                        ->orderBy('FECHA_SOLCITIUD', 'desc')
+                        ->get()
+                        ->groupBy('NO_PO');
+
+                    $notiAprobarPO = collect($registros)->filter(function ($group) {
+
+                        $solicitoVerificacionPo = collect($group)->contains(function ($item) {
+                            return $item->SOLICITAR_AUTORIZACION === "Sí";
+                        });
+
+                        if (!$solicitoVerificacionPo) return false;
+
+                        $finalizados = collect($group)->every(function ($item) {
+                            return in_array($item->ESTADO_APROBACION, ['Aprobada', 'Rechazada']);
+                        });
+
+                        if ($finalizados) return false;
+
+                        return true;
+                    })->map(function ($group) use ($badgeVerificacionPo) {
+
+                        $mr = $group->first();
+
+                        return [
+                            'titulo'        => 'Aprobar PO:<br>' . $mr->NO_PO,
+                            'detalle'       => 'Solicitud de aprobación',
+                            'fecha'         => 'Fecha solicitud: ' . ($mr->FECHA_SOLCITIUD ?? ''),
+                            'estatus_badge' => $badgeVerificacionPo,
+                            'link'          => url('/ordencompraaprobacion')
+                        ];
+                    });
+                }
+
+
+                /**
+                 * 13 NOTIFICACIONES – Vo.Bo USUARIO BITACORA GR
+                 * 
+                 */
+                $notiVoboGR = collect([]);
+
+                $badgeVoBoGR = "<span style='
+                    background-color:#f4c542;
+                    color:black;
+                    padding:3px 8px;
+                    border-radius:6px;
+                    font-size:11px;
+                    font-weight:bold;
+                    display:inline-block;
+                '>Vo.Bo</span>";
+
+                $notiVoboGR = DB::table('formulario_bitacoragr')
+                    ->where('USUARIO_ID', $idUsuario)
+
+                    ->where('MANDAR_USUARIO_VOBO', 'Sí')
+
+                    ->where(function ($q) {
+                        $q->whereNull('VO_BO_USUARIO')
+                            ->orWhereNotIn('VO_BO_USUARIO', ['Aprobada', 'Rechazada']);
+                    })
+
+                    ->orderBy('CREATED_AT', 'desc')
+                    ->get()
+                    ->map(function ($gr) use ($badgeVoBoGR) {
+
+                        return [
+                            'titulo'        => 'Vo.Bo GR: ' . $gr->NO_RECEPCION,
+                            'detalle'       => 'Pendiente de Vo.Bo del usuario',
+                            'fecha'         => 'Fecha: ' . date('Y-m-d', strtotime($gr->CREATED_AT)),
+                            'fecha_sort'    => date('Y-m-d H:i:s', strtotime($gr->CREATED_AT)),
+                            'estatus_badge' => $badgeVoBoGR,
+                            'link'          => url('/vobogrusuario')
+                        ];
+                    });
 
 
             /**
@@ -779,57 +779,57 @@ class notificacionController extends Controller
              * 15 NOTIFICACIONES – MENSAJES PÁGINA WEB
              */
 
-            $notiPaginaWeb = collect([]);
+                $notiPaginaWeb = collect([]);
 
-            $usuariosPaginaWeb = [1, 2, 3];
+                $usuariosPaginaWeb = [1, 2, 3];
 
-            if (in_array($idUsuario, $usuariosPaginaWeb)) {
+                if (in_array($idUsuario, $usuariosPaginaWeb)) {
 
-                $badgePaginaWeb = "<span style='
-                    background-color:#ff9800;
-                    color:white;
-                    padding:3px 8px;
-                    border-radius:6px;
-                    font-size:11px;
-                    font-weight:bold;
-                    display:inline-block;
-                '>Pendiente</span>";
+                    $badgePaginaWeb = "<span style='
+                        background-color:#ff9800;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                    '>Pendiente</span>";
 
-                $notiPaginaWeb = ContactoPaginaWeb::whereNull('SOLICITUD_ATENDIDA')
-                    ->orderBy('created_at', 'desc')
-                    ->get()
-                    ->map(function ($n) use ($badgePaginaWeb) {
-                        return [
-                            'titulo'        => 'Mensaje página web',
-                            'detalle'       => $n->NOMBRE ?? 'Sin nombre',
-                            'fecha'         => 'Fecha solicitud: ' . \Carbon\Carbon::parse($n->created_at)->format('Y-m-d'),
-                            'fecha_sort'    => $n->created_at,
-                            'estatus_badge' => $badgePaginaWeb,
-                            'link'          => url('/mensajespaginaweb') 
-                        ];
-                    });
-            }
+                    $notiPaginaWeb = ContactoPaginaWeb::whereNull('SOLICITUD_ATENDIDA')
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->map(function ($n) use ($badgePaginaWeb) {
+                            return [
+                                'titulo'        => 'Mensaje página web',
+                                'detalle'       => $n->NOMBRE ?? 'Sin nombre',
+                                'fecha'         => 'Fecha solicitud: ' . \Carbon\Carbon::parse($n->created_at)->format('Y-m-d'),
+                                'fecha_sort'    => $n->created_at,
+                                'estatus_badge' => $badgePaginaWeb,
+                                'link'          => url('/mensajespaginaweb') 
+                            ];
+                        });
+                }
 
 
-            /**
-             * 16. NOTIFICACIONES - FACTURAS POR REVISAR
-             */
-           
-            $notiFacturas = collect([]);
+                /**
+                 * 16. NOTIFICACIONES - FACTURAS POR REVISAR
+                 */
+            
+                $notiFacturas = collect([]);
 
-            $usuariosFacturacion = [1, 3, 6];
+                $usuariosFacturacion = [1, 3, 6];
 
-            if (in_array($idUsuario, $usuariosFacturacion)) {
+                if (in_array($idUsuario, $usuariosFacturacion)) {
 
                 $badgeFactura = "<span style='
-        background-color:#17a2b8;
-        color:white;
-        padding:3px 8px;
-        border-radius:6px;
-        font-size:11px;
-        font-weight:bold;
-        display:inline-block;
-    '>Facturación</span>";
+                background-color:#17a2b8;
+                color:white;
+                padding:3px 8px;
+                border-radius:6px;
+                font-size:11px;
+                font-weight:bold;
+                display:inline-block;
+                '>Facturación</span>";
 
                 $notiFacturas = DB::table('formulario_facturasproveedores as cp')
                     ->leftJoin('formulario_altaproveedor as fa', 'cp.RFC_PROVEEDOR', '=', 'fa.RFC_ALTA')
@@ -859,6 +859,120 @@ class notificacionController extends Controller
             }
 
 
+            /**
+             * 17. NOTIFICACIONES - CARGAR COMPROBANTE DE PAGO
+             * Solo para el usuario con ID 3
+             */
+
+            $notiComprobantePago = collect([]);
+
+            $usuariosComprobantePago = [1, 3];
+
+            if (in_array($idUsuario, $usuariosComprobantePago)) {
+
+                $badgeComprobantePago = "<span style='
+                background-color:#ff9800;
+                color:white;
+                padding:3px 8px;
+                border-radius:6px;
+                font-size:11px;
+                font-weight:bold;
+                display:inline-block;
+            '>Pendiente</span>";
+
+                $notiComprobantePago = DB::table('formulario_facturasproveedores as cp')
+                    ->leftJoin('formulario_altaproveedor as fa', 'cp.RFC_PROVEEDOR', '=', 'fa.RFC_ALTA')
+                    ->select(
+                        'cp.*',
+                        'fa.RAZON_SOCIAL_ALTA',
+                        'fa.RFC_ALTA'
+                    )
+                    ->where(function ($query) {
+                        $query->whereNull('cp.SUBIR_RECIBO_PAGO')->orWhere('cp.SUBIR_RECIBO_PAGO', '');
+                    })
+                    ->whereExists(function ($subquery) {
+                        $subquery->select(DB::raw(1))
+                            ->from('relacionpagosproveedores as rp')
+                            ->whereRaw("
+                    JSON_SEARCH(
+                        rp.JSON_RELACIONES,
+                        'one',
+                        CAST(cp.ID_FORMULARIO_FACTURACION AS CHAR),
+                        NULL,
+                        '$[*].ID_FORMULARIO_FACTURACION'
+                    ) IS NOT NULL
+                ");
+                    })
+                    ->orderBy('cp.created_at', 'desc')
+                    ->get()
+                    ->map(function ($n) use ($badgeComprobantePago) {
+
+                        $nombreProveedor = !empty($n->RAZON_SOCIAL_ALTA) ? $n->RAZON_SOCIAL_ALTA : 'Sin proveedor';
+                        $fechaFactura = !empty($n->FECHA_FACTURA) ? $n->FECHA_FACTURA : $n->FECHA_FACTURA_EXTRANJERO;
+                        $numeroFactura = !empty($n->FOLIO_FISCAL) ? $n->FOLIO_FISCAL : $n->NO_FACTURA_EXTRANJERO;
+
+                        return [
+                            'titulo' => 'Cargar comprobante de pago',
+                            'detalle' => 'Proveedor: ' . $nombreProveedor . '<br>Factura: ' . ($numeroFactura ?: 'Sin número'),
+                            'fecha' => 'Fecha de factura: ' . ($fechaFactura ?: 'Sin fecha'),
+                            'fecha_sort' => $fechaFactura ?: $n->created_at,
+                            'estatus_badge' => $badgeComprobantePago,
+                            'link' => url('/comprobantedepago')
+                        ];
+                    });
+            }
+
+
+            /**
+             * 18. NOTIFICACIONES - REP PENDIENTE DE REVISIÓN
+             */
+
+            $notiRevisionREP = collect([]);
+
+            $usuariosRevisionREP = [1, 3, 6];
+
+            if (in_array($idUsuario, $usuariosRevisionREP)) {
+
+                $badgeRevisionREP = "<span style='
+                        background-color:#17a2b8;
+                        color:white;
+                        padding:3px 8px;
+                        border-radius:6px;
+                        font-size:11px;
+                        font-weight:bold;
+                        display:inline-block;
+                    '>Revisar</span>";
+
+                $notiRevisionREP = DB::table('formulario_facturasproveedores as cp')
+                    ->leftJoin('formulario_altaproveedor as fa', 'cp.RFC_PROVEEDOR', '=', 'fa.RFC_ALTA')
+                    ->select(
+                        'cp.*',
+                        'fa.RAZON_SOCIAL_ALTA',
+                        'fa.RFC_ALTA'
+                    )
+                    ->where('cp.ESTATUS_FACTURA', 1)
+                    ->whereRaw("UPPER(TRIM(cp.METODO_PAGO)) = 'PPD'")
+                    ->where('cp.SUBIR_RECIBO_PAGO', 1)
+                    ->whereNull('cp.ESTATUS_REP')
+                    ->orderBy('cp.created_at', 'desc')
+                    ->get()
+                    ->map(function ($n) use ($badgeRevisionREP) {
+
+                        $nombreProveedor = !empty($n->RAZON_SOCIAL_ALTA) ? $n->RAZON_SOCIAL_ALTA : 'Sin proveedor';
+                        $fechaFactura = !empty($n->FECHA_FACTURA) ? $n->FECHA_FACTURA : $n->FECHA_FACTURA_EXTRANJERO;
+                        $numeroFactura = !empty($n->FOLIO_FISCAL) ? $n->FOLIO_FISCAL : $n->NO_FACTURA_EXTRANJERO;
+
+                        return [
+                            'titulo' => 'REP pendiente de revisión',
+                            'detalle' => 'Proveedor: ' . $nombreProveedor . '<br>Factura: ' . ($numeroFactura ?: 'Sin número'),
+                            'fecha' => 'Fecha de factura: ' . ($fechaFactura ?: 'Sin fecha'),
+                            'fecha_sort' => $fechaFactura ?: $n->created_at,
+                            'estatus_badge' => $badgeRevisionREP,
+                            'link' => url('/listarep')
+                        ];
+                    });
+            }
+
             $resultado = collect($notiVoBo)
                 ->merge(collect($notiAutorizar))
                 ->merge(collect($notiTipo2))
@@ -875,6 +989,8 @@ class notificacionController extends Controller
                 // ->merge(collect($notiActualizacionDocs))
                 ->merge(collect($notiPaginaWeb))
                 ->merge(collect($notiFacturas))
+                ->merge(collect($notiComprobantePago))
+                ->merge(collect($notiRevisionREP))
 
 
                 ->sortByDesc(function ($item) {

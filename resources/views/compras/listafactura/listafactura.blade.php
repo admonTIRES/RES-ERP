@@ -7,9 +7,7 @@
         <h3 style="color: #ffffff; margin: 0;">
             <i class="bi bi-file-earmark-fill"></i>&nbsp;&nbsp;Lista de facturas
         </h3>
-
     </ol>
-
     <div class="card-body">
         <table id="Tablalistafacturasproveedores" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
         </table>
@@ -26,7 +24,6 @@
 <div class="modal fade" id="modalDetalleFactura" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <form method="post" enctype="multipart/form-data" id="formularioFACTURA" style="background-color: #ffffff;">
-
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Detalle de factura</h5>
@@ -38,7 +35,6 @@
 
                     <h5>Datos de factura</h5>
 
-
                     <input type="hidden" id="ID_FORMULARIO_FACTURACION" name="ID_FORMULARIO_FACTURACION" value="">
 
                     <div class="mb-4 d-none" id="contenedorCONTRATO">
@@ -49,10 +45,6 @@
                             </div>
                         </div>
                     </div>
-
-                    
-
-
                     <div class="mb-4 d-none" id="contenedorOC">
                         <div class="row">
                             <div class="col-6">
@@ -65,10 +57,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
                     <div class="row d-none" id="camposFactura">
                         <div class="col-md-4 mb-3">
                             <label>Folio fiscal</label>
@@ -102,7 +90,6 @@
                             <input type="text" id="TOTAL_FACTURA" name="TOTAL_FACTURA" class="form-control" required readonly>
                         </div>
                     </div>
-
                     <div class="row d-none" id="camposFacturaExtranjero">
                         <div class="col-md-4 mb-3">
                             <label>No. Factura</label>
@@ -132,7 +119,6 @@
                             <input type="text" id="TOTAL_FACTURA_EXTRANJERO" name="TOTAL_FACTURA_EXTRANJERO" class="form-control" required readonly>
                         </div>
                     </div>
-
                     <hr>
                     <h6>Archivos</h6>
 
@@ -140,9 +126,7 @@
                     <a id="verSoportePDF" target="_blank" class="btn btn-danger">Soporte</a>
                     <a id="verXML" target="_blank" class="btn btn-secondary d-none">XML</a>
 
-
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                 </div>

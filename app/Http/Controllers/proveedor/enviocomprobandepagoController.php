@@ -60,9 +60,9 @@ class enviocomprobandepagoController extends Controller
                 $value->RFC_PROVEEDOR_TEXTO = ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE') .' (' .($value->RFC_ALTA ?? $value->RFC_PROVEEDOR) .')';
 
              
-                $value->BTN_SUBIR_RECIBO_PAGO = '<button type="button" class="btn btn-success btn-custom rounded-pill SUBIR_RECIBO_PAGO" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                $value->BTN_SUBIR_RECIBO_PAGO = '<button type="button" class="btn btn-primary btn-custom rounded-pill SUBIR_RECIBO_PAGO" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
                     data-proveedor="' . htmlspecialchars($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE',ENT_QUOTES,'UTF-8') . '" title="Subir comprobante de pago" >
-                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                    <i class="bi bi-arrow-bar-up"></i>
                 </button>';
 
                 if ($value->ACTIVO == 0) {

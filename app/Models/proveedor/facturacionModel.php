@@ -41,12 +41,10 @@ class facturacionModel extends Model
         'ARCHIVO_REP',
         'XML_REP',
         'ESTATUS_REP',
-
         'SUBIR_RECIBO_PAGO',
         'ARCHIVO_RECIBO_PAGO',
-
-
-        'MOTIVO_RECHAZO_FACTURA'
+        'MOTIVO_RECHAZO_FACTURA',
+        'MOTIVO_RECHAZO_REP'
 
 
     ];

@@ -440,6 +440,12 @@
                                         Envió comprobante de pago
                                     </a>
                                 </li>
+                                <hr class="dropdown-divider">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url('/listarep') }}">
+                                        Recibo Electrónico de Pago (REP)
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif
@@ -773,6 +779,10 @@
 
     @if(request()->is('comprobantepagos'))
     <script src="/assets/js_sitio/proveedor/comprobantepago.js?"></script>
+    @endif
+
+    @if(request()->is('listarep'))
+    <script src="/assets/js_sitio/proveedor/listarep.js?"></script>
     @endif
 
 

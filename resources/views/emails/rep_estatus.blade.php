@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
     <style>
@@ -129,7 +130,7 @@
     <div class="container">
 
         <div class="header">
-            Estatus de factura
+            Estatus del Recibo Electrónico de Pago
         </div>
 
         <div class="content">
@@ -142,16 +143,20 @@
             @if($estatus == 1)
 
             <div class="estatus-aprobado">
-                La factura ha sido aprobada correctamente.
+                El Recibo Electrónico de Pago ha sido aprobado correctamente.
             </div>
 
             @else
 
             <div class="estatus-rechazado">
-                La factura ha sido rechazada.
+                El Recibo Electrónico de Pago ha sido rechazado.
             </div>
 
             @endif
+
+            <p>
+                El Recibo Electrónico de Pago asociado con la siguiente factura:
+            </p>
 
             <div class="factura-box">
 
@@ -162,7 +167,7 @@
 
                 @else
 
-                <b>No. Factura:</b><br>
+                <b>No. de factura:</b><br>
                 {{ $factura->NO_FACTURA_EXTRANJERO }}
 
                 @endif
@@ -176,26 +181,21 @@
             </p>
 
             <div class="motivo">
-
                 {{ $justificacion }}
-
             </div>
 
             <p>
-                Le solicitamos realizar las correcciones correspondientes y volver a cargar la factura en el sistema.
+                Le solicitamos realizar las correcciones correspondientes y cargar nuevamente el Recibo Electrónico de Pago en el sistema.
             </p>
 
             <div class="button">
 
                 <a href="https://results-erp.results-in-performance.com/login">
-
                     Ingresar al sistema
-
                 </a>
 
             </div>
 
-            @else
             @endif
 
             <div class="no-reply">
