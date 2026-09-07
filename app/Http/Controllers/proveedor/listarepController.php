@@ -29,7 +29,7 @@ class listarepController extends Controller
                 )
                 ->where('cp.ESTATUS_FACTURA', 1)
                 ->whereRaw("UPPER(TRIM(cp.METODO_PAGO)) = 'PPD'")
-                ->where('cp.SUBIR_RECIBO_PAGO', 1)
+                ->where('cp.SUBIR_REP', 1)
                 ->whereNull('cp.ESTATUS_REP')
                 ->get();
 

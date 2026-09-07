@@ -929,19 +929,19 @@ class notificacionController extends Controller
 
             $notiRevisionREP = collect([]);
 
-            $usuariosRevisionREP = [1, 3, 6];
+            $usuariosRevisionREP = [1, 3];
 
             if (in_array($idUsuario, $usuariosRevisionREP)) {
 
                 $badgeRevisionREP = "<span style='
-                        background-color:#17a2b8;
-                        color:white;
-                        padding:3px 8px;
-                        border-radius:6px;
-                        font-size:11px;
-                        font-weight:bold;
-                        display:inline-block;
-                    '>Revisar</span>";
+                    background-color:#17a2b8;
+                    color:white;
+                    padding:3px 8px;
+                    border-radius:6px;
+                    font-size:11px;
+                    font-weight:bold;
+                    display:inline-block;
+                '>Revisar</span>";
 
                 $notiRevisionREP = DB::table('formulario_facturasproveedores as cp')
                     ->leftJoin('formulario_altaproveedor as fa', 'cp.RFC_PROVEEDOR', '=', 'fa.RFC_ALTA')
@@ -952,7 +952,7 @@ class notificacionController extends Controller
                     )
                     ->where('cp.ESTATUS_FACTURA', 1)
                     ->whereRaw("UPPER(TRIM(cp.METODO_PAGO)) = 'PPD'")
-                    ->where('cp.SUBIR_RECIBO_PAGO', 1)
+                    ->where('cp.SUBIR_REP', 1)
                     ->whereNull('cp.ESTATUS_REP')
                     ->orderBy('cp.created_at', 'desc')
                     ->get()
