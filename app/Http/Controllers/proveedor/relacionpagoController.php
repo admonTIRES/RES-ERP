@@ -217,47 +217,41 @@ class relacionpagoController extends Controller
 
     public function descargarExcelRelacionPagos($ID_RELACION_PAGOS)
     {
-
-        $relacion = DB::table('relacionpagosproveedores')->where('ID_RELACION_PAGOS', $ID_RELACION_PAGOS)->first();
+        $relacion = DB::table('relacionpagosproveedores')->where('ID_RELACION_PAGOS',$ID_RELACION_PAGOS)->first();
 
         if (!$relacion) {
-
             abort(404);
         }
 
-        $datos = json_decode($relacion->JSON_RELACIONES, true);
-
+        $datos = json_decode($relacion->JSON_RELACIONES,true);
 
         if (!$datos) {
             $datos = [];
         }
 
-
         usort($datos, function ($a, $b) {
-
 
             $ordenMoneda = [
                 'MXN' => 1,
                 'USD' => 2
             ];
 
-            $monedaA = strtoupper(trim($a['MONEDA']));
-            $monedaB = strtoupper(trim($b['MONEDA']));
-
+            $monedaA = strtoupper(trim($a['MONEDA'] ?? ''));
+            $monedaB = strtoupper(trim($b['MONEDA'] ?? ''));
             $valorMonedaA = $ordenMoneda[$monedaA] ?? 99;
             $valorMonedaB = $ordenMoneda[$monedaB] ?? 99;
 
             if ($valorMonedaA != $valorMonedaB) {
-
                 return $valorMonedaA <=> $valorMonedaB;
             }
 
+            $bancoA = strtoupper(trim($a['BANCO'] ?? ''));
+            $bancoB = strtoupper(trim($b['BANCO'] ?? ''));
 
-            $aEsBBVA = strtoupper(trim($a['BANCO'])) == 'BBVA';
-            $bEsBBVA = strtoupper(trim($b['BANCO'])) == 'BBVA';
+            $aEsBBVA = $bancoA == 'BBVA';
+            $bEsBBVA = $bancoB == 'BBVA';
 
             if ($aEsBBVA == $bEsBBVA) {
-
                 return 0;
             }
 
@@ -266,35 +260,56 @@ class relacionpagoController extends Controller
 
         $spreadsheet = new Spreadsheet();
 
-
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Relación de pagos');
-        $sheet->mergeCells('A1:M2');
 
+        $sheet->mergeCells('A1:N2');
         $sheet->getRowDimension(1)->setRowHeight(18);
         $sheet->getRowDimension(2)->setRowHeight(18);
 
-        $sheet->setCellValue('A1', 'Relación de pagos RES');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => ['bold' => true,'size' => 11,'name' => 'Poppins'],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
+        $sheet->setCellValue('A1','Relación de pagos RES');
 
-        ]);
+        $sheet->getStyle('A1')
+            ->applyFromArray([
+                'font' => ['bold' => true,'size' => 11,'name' => 'Poppins'],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
+            ]);
+
 
         $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+
         $drawing->setName('Logo RES');
         $drawing->setDescription('Logo RES');
+
         $drawing->setPath(public_path('assets/images/Color@4x.png'));
+
         $drawing->setCoordinates('A1');
         $drawing->setHeight(45);
         $drawing->setOffsetX(10);
         $drawing->setOffsetY(5);
         $drawing->setWorksheet($sheet);
 
+        $sheet->mergeCells('A3:B3');
+        $sheet->setCellValue('A3','Fecha de pago');
+        $sheet->setCellValue('C3',$relacion->FECHA_RELACION);
+
+        $sheet->getStyle('A3:B3')
+            ->applyFromArray([
+                'font' => ['bold' => true,'size' => 11,'name' => 'Poppins'],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
+            ]);
+
+        $sheet->getStyle('C3')
+            ->applyFromArray([
+                'font' => ['size' => 11,'name' => 'Poppins'],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
+            ]);
+
+        $sheet->getRowDimension(3)->setRowHeight(22);
+
         $filaEncabezado = 4;
 
         $encabezados = [
-
             'A' => 'No',
             'B' => 'Fecha de factura',
             'C' => 'No. Factura o Folio Fiscal',
@@ -307,28 +322,24 @@ class relacionpagoController extends Controller
             'J' => 'Fecha de Recepción',
             'K' => 'Días de crédito',
             'L' => 'Banco',
-            'M' => 'No. Cuenta Bancaria'
-
+            'M' => 'No. Cuenta Bancaria',
+            'N' => 'Observaciones'
         ];
 
-
         foreach ($encabezados as $columna => $texto) {
-            $sheet->setCellValue($columna . $filaEncabezado, $texto);
+
+            $sheet->setCellValue($columna . $filaEncabezado,$texto);
         }
 
-
-
-        $sheet->getStyle('A4:M4')->applyFromArray([
-            'font' => ['bold' => true,'color' => ['rgb' => '000000'],'size' => 11,'name' => 'Poppins'],
-            'fill' => ['fillType' => Fill::FILL_SOLID,'startColor' => ['rgb' => '92D050']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER,'wrapText' => true],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN,'color' => ['rgb' => '000000']]]
-
-        ]);
-
-
+        $sheet->getStyle('A4:N4') ->applyFromArray([
+                'font' => ['bold' => true,'color' => ['rgb' => '000000'],'size' => 11,'name' => 'Poppins'],
+                'fill' => ['fillType' =>Fill::FILL_SOLID,'startColor' => ['rgb' => '92D050']],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER,'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN,'color' => ['rgb' => '000000']]]
+            ]);
 
         $sheet->getRowDimension(4)->setRowHeight(40);
+
         $sheet->getColumnDimension('A')->setWidth(8);
         $sheet->getColumnDimension('B')->setWidth(15);
         $sheet->getColumnDimension('C')->setWidth(32);
@@ -342,80 +353,97 @@ class relacionpagoController extends Controller
         $sheet->getColumnDimension('K')->setWidth(15);
         $sheet->getColumnDimension('L')->setWidth(18);
         $sheet->getColumnDimension('M')->setWidth(25);
-
+        $sheet->getColumnDimension('N')->setWidth(25);
 
         $fila = 5;
-
         $numero = 1;
 
         foreach ($datos as $dato) {
 
-            $sheet->setCellValue('A' . $fila, $numero);
-            $sheet->setCellValue('B' . $fila, $dato['FECHA_FACTURA']);
-            $sheet->setCellValue('C' . $fila, $dato['FOLIO_FISCAL']);
-            $sheet->setCellValue('D' . $fila, $dato['RAZON_SOCIAL']);
-            $sheet->setCellValue('E' . $fila, $dato['RFC']);
-            $sheet->setCellValue('F' . $fila, $dato['SUBTOTAL']);
-            $sheet->setCellValue('G' . $fila, $dato['IVA']);
-            $sheet->setCellValue('H' . $fila, $dato['TOTAL']);
-            $sheet->setCellValue('I' . $fila, $dato['MONEDA']);
-            $sheet->setCellValue('J' . $fila, $dato['FECHA_RECEPCION']);
-            $sheet->setCellValue('K' . $fila, $dato['DIAS_CREDITO']);
-            $sheet->setCellValue('L' . $fila, $dato['BANCO']);
-            $sheet->setCellValue('M' . $fila, $dato['NO_CUENTA']);
+            $observaciones = $dato['OBSERVACIONES'] ?? '';
 
-            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray([
+            if ($observaciones === null || strtolower(trim((string) $observaciones)) === 'null') 
+            {
+                $observaciones = '';
+            }
+
+            $sheet->setCellValue('A' . $fila,$numero);
+            $sheet->setCellValue('B' . $fila,$dato['FECHA_FACTURA'] ?? '');
+            $sheet->setCellValue('C' . $fila,$dato['FOLIO_FISCAL'] ?? '');
+            $sheet->setCellValue('D' . $fila,$dato['RAZON_SOCIAL'] ?? '');
+            $sheet->setCellValue('E' . $fila,$dato['RFC'] ?? '');
+            $sheet->setCellValue('F' . $fila,$dato['SUBTOTAL'] ?? '');
+            $sheet->setCellValue('G' . $fila,$dato['IVA'] ?? '');
+            $sheet->setCellValue('H' . $fila,$dato['TOTAL'] ?? '');
+            $sheet->setCellValue('I' . $fila,$dato['MONEDA'] ?? '');
+            $sheet->setCellValue('J' . $fila,$dato['FECHA_RECEPCION'] ?? '');
+            $sheet->setCellValue('K' . $fila,$dato['DIAS_CREDITO'] ?? '');
+            $sheet->setCellValue('L' . $fila,$dato['BANCO'] ?? '');
+            $sheet->setCellValue('M' . $fila,$dato['NO_CUENTA'] ?? '');
+            $sheet->setCellValue('N' . $fila,$observaciones);
+
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray([
                 'font' => ['name' => 'Poppins','size' => 11],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER,'wrapText' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN,'color' => ['rgb' => 'BFBFBF']]]
             ]);
 
-            $sheet->getRowDimension($fila)->setRowHeight(35);
+            foreach (range('A', 'N') as $columna) {
 
-            $sheet->getStyle('F' . $fila . ':H' . $fila)
-                ->getNumberFormat()
-                ->setFormatCode('$#,##0.00');
+                $valorCelda = $sheet->getCell($columna . $fila)->getValue();
+                $valorLimpio = trim((string) $valorCelda);
+                if ($valorCelda === null || $valorLimpio === '' || strtolower($valorLimpio) === 'null') 
+                {
+                    $sheet->getStyle($columna . $fila)->applyFromArray([
+                        'borders' => ['diagonal' => ['borderStyle' =>Border::BORDER_THIN,'color' => ['rgb' => '000000']],
+                            'diagonalDirection' =>\PhpOffice\PhpSpreadsheet\Style\Borders::DIAGONAL_UP
+                        ]
+                    ]);
+                }
+            }
+
+            $sheet->getRowDimension($fila)->setRowHeight(35);
+            $sheet->getStyle('F' . $fila . ':H' . $fila)->getNumberFormat()->setFormatCode('$#,##0.00');
 
             $fila++;
             $numero++;
         }
 
-
         $filaTotales = $fila + 1;
 
-        $sheet->mergeCells('E' . $filaTotales . ':F' . $filaTotales);
-        $sheet->setCellValue('E' . $filaTotales, 'Total MXN');
-        $sheet->setCellValue('G' . $filaTotales, $relacion->MONTO_MXN);
-        $sheet->mergeCells('E' . ($filaTotales + 1) . ':F' . ($filaTotales + 1));
+        $sheet->mergeCells('E' . $filaTotales .':F' . $filaTotales);
+        $sheet->setCellValue('E' . $filaTotales,'Total MXN');
+        $sheet->setCellValue('G' . $filaTotales,$relacion->MONTO_MXN);
+        $sheet->mergeCells('E' . ($filaTotales + 1) .':F' . ($filaTotales + 1));
         $sheet->setCellValue('E' . ($filaTotales + 1),'Total USD');
         $sheet->setCellValue('G' . ($filaTotales + 1),$relacion->MONTO_USD);
 
-        $sheet->getStyle('E' . $filaTotales . ':G' . ($filaTotales + 1))->applyFromArray([
+        $sheet->getStyle('E' . $filaTotales .':G' . ($filaTotales + 1))->applyFromArray([
             'font' => ['bold' => true,'size' => 11],
             'fill' => ['fillType' => Fill::FILL_SOLID,'startColor' => ['rgb' => 'D9EAD3']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN,'color' => ['rgb' => '000000']]]
+            'alignment' => ['horizontal' =>Alignment::HORIZONTAL_CENTER,'vertical' =>Alignment::VERTICAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' =>Border::BORDER_THIN,'color' => ['rgb' => '000000']]]
         ]);
 
-
-        $sheet->getStyle('G' . $filaTotales . ':G' . ($filaTotales + 1))->getNumberFormat()->setFormatCode('$#,##0.00');
+        $sheet->getStyle('G' . $filaTotales .':G' . ($filaTotales + 1))->getNumberFormat()->setFormatCode('$#,##0.00');
 
 
         $filaFirmas = $filaTotales + 7;
-        $sheet->setCellValue('C' . $filaFirmas,'Virginia Licona Andrade');
-        $sheet->setCellValue('C' . ($filaFirmas + 1),'Elaborado por');
-        $sheet->mergeCells('G' . $filaFirmas . ':H' . $filaFirmas);
-        $sheet->setCellValue('G' . $filaFirmas,'Leonardo Cuellar Chala');
-        $sheet->mergeCells('G' . ($filaFirmas + 1) . ':H' . ($filaFirmas + 1));
-        $sheet->setCellValue('G' . ($filaFirmas + 1),'Autorizado por');
 
+        $sheet->setCellValue('C' . $filaFirmas,'Virginia Licona Andrade');
+
+        $sheet->setCellValue('C' . ($filaFirmas + 1),'Elaborado por');
+        $sheet->mergeCells('G' . $filaFirmas .':H' . $filaFirmas);
+        $sheet->setCellValue('G' . $filaFirmas,'Leonardo Cuellar Chala');
+        $sheet->mergeCells('G' . ($filaFirmas + 1) .':H' . ($filaFirmas + 1));
+        $sheet->setCellValue('G' . ($filaFirmas + 1),'Autorizado por');
 
         $sheet->getStyle('C' . $filaFirmas)->applyFromArray([
             'font' => ['bold' => true,'name' => 'Poppins','size' => 11],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
         ]);
 
-        $sheet->getStyle('G' . $filaFirmas . ':H' . $filaFirmas)->applyFromArray([
+        $sheet->getStyle('G' . $filaFirmas .':H' . $filaFirmas)->applyFromArray([
             'font' => ['bold' => true,'name' => 'Poppins','size' => 11],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
         ]);
@@ -425,24 +453,26 @@ class relacionpagoController extends Controller
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
         ]);
 
-        $sheet->getStyle('G' . ($filaFirmas + 1) . ':H' . ($filaFirmas + 1))->applyFromArray(['font' => ['name' => 'Poppins','size' => 11],'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER]
+        $sheet->getStyle('G' . ($filaFirmas + 1) .':H' . ($filaFirmas + 1))->applyFromArray([
+            'font' => ['name' => 'Poppins','size' => 11],
+            'alignment' => ['horizontal' =>Alignment::HORIZONTAL_CENTER,'vertical' =>Alignment::VERTICAL_CENTER]
         ]);
 
         $sheet->getRowDimension($filaFirmas)->setRowHeight(20);
+
         $sheet->getRowDimension($filaFirmas + 1)->setRowHeight(20);
 
 
-        $sheet->getStyle('A1:M' . ($filaFirmas + 1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A1:N' . ($filaFirmas + 1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
+        $nombreArchivo = 'Relación de pago - ' .$relacion->FECHA_RELACION .'.xlsx';
 
-        $nombreArchivo = 'RelacionPagos_' . date('Ymd_His') . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $nombreArchivo . '"');
-        header('Cache-Control: max-age=0');
+        header('Content-Disposition: attachment;filename="' .$nombreArchivo .'"');
 
+        header('Cache-Control: max-age=0');
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
-
         exit;
     }
 

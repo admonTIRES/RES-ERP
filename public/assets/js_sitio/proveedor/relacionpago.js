@@ -9,8 +9,6 @@ ModalRelacion.addEventListener('hidden.bs.modal', event => {
     document.getElementById('formularioRELACION').reset();   
 
     $('#tablaRelacionPagos tbody').empty();
-
-
     $('#JSON_RELACIONES').val('');
 
 
@@ -31,7 +29,6 @@ $("#NUEVA_RELACION").click(function (e) {
 
 });
 
-
 function cargarTablaRelacionPagos() {
 
     $.get('/getFacturasRelacionPagos', function (data) {
@@ -41,13 +38,9 @@ function cargarTablaRelacionPagos() {
         data.forEach(function (item) {
 
             html += `
-
-                <tr 
-                    data-idfactura="${item.ID_FORMULARIO_FACTURACION}"
-                    data-manual="0">
-
+                <tr  data-idfactura="${item.ID_FORMULARIO_FACTURACION}" data-manual="0">
                     <td class="text-center">
-                        <button type="button"class="btn btn-secondary btn-sm"disabled>
+                        <button type="button" class="btn btn-secondary btn-sm" disabled>
                             <i class="bi bi-lock-fill"></i>
                         </button>
                     </td>
@@ -57,7 +50,9 @@ function cargarTablaRelacionPagos() {
                     <td>
                         <div class="input-group">
                             <input type="text" class="form-control form-control-sm mydatepicker fecha-factura" value="${item.FECHA_FACTURA ?? ''}">
-                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <span class="input-group-text">
+                                <i class="bi bi-calendar-event"></i>
+                            </span>
                         </div>
                     </td>
                     <td>
@@ -70,7 +65,7 @@ function cargarTablaRelacionPagos() {
                         <input type="text" class="form-control form-control-sm input-pago rfc-proveedor" value="${item.RFC_PROVEEDOR ?? ''}">
                     </td>
                     <td>
-                        <input type="text" class="form-control form-control-sm input-pago subtotal-factura"value="${item.SUBTOTAL ?? ''}">
+                        <input type="text" class="form-control form-control-sm input-pago subtotal-factura" value="${item.SUBTOTAL ?? ''}">
                     </td>
                     <td>
                         <input type="text" class="form-control form-control-sm input-pago iva-factura" value="${item.IVA ?? ''}">
@@ -78,13 +73,17 @@ function cargarTablaRelacionPagos() {
                     <td>
                         <input type="text" class="form-control form-control-sm input-pago total-factura" value="${item.TOTAL ?? ''}">
                     </td>
+
                     <td>
                         <input type="text" class="form-control form-control-sm input-pago moneda-factura" value="${item.MONEDA ?? ''}">
                     </td>
+
                     <td>
                         <div class="input-group">
                             <input type="text" class="form-control form-control-sm mydatepicker fecha-recepcion" value="${item.FECHA_RECEPCION ?? ''}">
-                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <span class="input-group-text">
+                                <i class="bi bi-calendar-event"></i>
+                            </span>
                         </div>
                     </td>
                     <td>
@@ -93,31 +92,33 @@ function cargarTablaRelacionPagos() {
                     <td>
                         <input type="text" class="form-control form-control-sm input-pago banco-factura" value="${item.BANCO ?? ''}">
                     </td>
+
                     <td>
                         <input type="text" class="form-control form-control-sm input-pago cuenta-factura" value="${item.NO_CUENTA ?? ''}">
                     </td>
+
+                    <td>
+                        <textarea class="form-control form-control-sm input-pago observacion-factura" rows="2" placeholder="Escriba las observaciones"></textarea>
+                    </td>
+
                 </tr>
             `;
         });
 
         $('#tablaRelacionPagos tbody').html(html);
+
         activarDatePickerRelacion();
         calcularTotalesRelacion();
-
     });
 }
-
 
 $(document).on('click', '#agregarPagoManual', function () {
 
     let fila = `
-
         <tr 
-            class="fila-pago-manual"
-            data-idfactura="0"
-            data-manual="1">
+            class="fila-pago-manual" data-idfactura="0" data-manual="1">
             <td class="text-center">
-                <button type="button"class="btn btn-danger btn-sm eliminarPagoManual">
+                <button type="button" class="btn btn-danger btn-sm eliminarPagoManual">
                     <i class="bi bi-trash3-fill"></i>
                 </button>
             </td>
@@ -127,7 +128,9 @@ $(document).on('click', '#agregarPagoManual', function () {
             <td>
                 <div class="input-group">
                     <input type="text" class="form-control form-control-sm mydatepicker fecha-factura" placeholder="aaaa-mm-dd">
-                    <span class="input-group-text"> <i class="bi bi-calendar-event"></i></span>
+                    <span class="input-group-text">
+                        <i class="bi bi-calendar-event"></i>
+                    </span>
                 </div>
             </td>
             <td>
@@ -151,10 +154,13 @@ $(document).on('click', '#agregarPagoManual', function () {
             <td>
                 <input type="text" class="form-control form-control-sm input-pago moneda-factura" placeholder="Moneda">
             </td>
+
             <td>
                 <div class="input-group">
                     <input type="text" class="form-control form-control-sm mydatepicker fecha-recepcion" placeholder="aaaa-mm-dd">
-                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    <span class="input-group-text">
+                        <i class="bi bi-calendar-event"></i>
+                    </span>
                 </div>
             </td>
             <td>
@@ -165,7 +171,9 @@ $(document).on('click', '#agregarPagoManual', function () {
             </td>
             <td>
                 <input type="text" class="form-control form-control-sm input-pago cuenta-factura" placeholder="Cuenta bancaria">
-
+            </td>
+            <td>
+                <textarea class="form-control form-control-sm input-pago observacion-factura" rows="2" placeholder="Escriba las observaciones"></textarea>
             </td>
 
         </tr>
@@ -174,35 +182,23 @@ $(document).on('click', '#agregarPagoManual', function () {
     $('#tablaRelacionPagos tbody').append(fila);
 
     activarDatePickerRelacion();
-
     calcularTotalesRelacion();
-
 });
 
-
-$(document).on(
-    'keyup change',
-    '.seleccionar-factura, .total-factura, .moneda-factura',
+$(document).on('keyup change','.seleccionar-factura, .total-factura, .moneda-factura',
     function () {
-
         calcularTotalesRelacion();
     }
 );
 
-$(document).on(
-    'keyup change',
-    '.subtotal-factura, .iva-factura',
+$(document).on('keyup change','.subtotal-factura, .iva-factura',
     function () {
 
         let fila = $(this).closest('tr');
 
-        let subtotal = parseFloat(
-            fila.find('.subtotal-factura').val()
-        );
+        let subtotal = parseFloat(fila.find('.subtotal-factura').val());
 
-        let iva = parseFloat(
-            fila.find('.iva-factura').val()
-        );
+        let iva = parseFloat(fila.find('.iva-factura').val());
 
         if (isNaN(subtotal)) {
             subtotal = 0;
@@ -212,15 +208,11 @@ $(document).on(
             iva = 0;
         }
 
-
-        fila.find('.total-factura').val(
-            subtotal + iva
-        );
+        fila.find('.total-factura').val(subtotal + iva);
 
         calcularTotalesRelacion();
     }
 );
-
 
 $(document).on('click', '.eliminarPagoManual', function () {
 
@@ -229,9 +221,6 @@ $(document).on('click', '.eliminarPagoManual', function () {
     calcularTotalesRelacion();
 
 });
-
-
-
 
 function activarDatePickerRelacion() {
 
@@ -246,60 +235,40 @@ function activarDatePickerRelacion() {
 
     $('.mydatepicker').off('click').on('click', function () {
 
-        $(this).datepicker(
-            'setDate',
-            $(this).val()
-        );
+        $(this).datepicker('setDate',$(this).val());
 
     });
 
 }
 
-
 function calcularTotalesRelacion() {
 
     let totalMXN = 0;
-
     let totalUSD = 0;
 
 
     $('#tablaRelacionPagos tbody tr').each(function () {
 
-        let checked = $(this)
-            .find('.seleccionar-factura')
-            .is(':checked');
-
+        let checked = $(this).find('.seleccionar-factura').is(':checked');
         if (!checked) return;
 
 
-        let total = $(this)
-            .find('.total-factura')
-            .val();
+        let total = $(this).find('.total-factura').val();
 
-        total = parseFloat(
-            String(total).replace(/,/g, '')
-        );
+        total = parseFloat(String(total).replace(/,/g, ''));
 
         if (isNaN(total)) {
 
             total = 0;
         }
 
-
-        let moneda = $(this)
-            .find('.moneda-factura')
-            .val();
-
-        moneda = String(moneda)
-            .trim()
-            .toUpperCase();
+        let moneda = $(this).find('.moneda-factura').val();
+        moneda = String(moneda).trim().toUpperCase();
 
         if (moneda == 'MXN') {
-
             totalMXN += total;
 
         } else if (moneda == 'USD') {
-
             totalUSD += total;
         }
 
@@ -311,7 +280,6 @@ function calcularTotalesRelacion() {
 
 }
 
-
 $(document).on(
     'keyup change',
     '.seleccionar-factura, .total-factura, .moneda-factura',
@@ -322,116 +290,41 @@ $(document).on(
     }
 );
 
-
-
-
 function obtenerFacturasRelacion() {
 
     let facturas = [];
 
-
     $('#tablaRelacionPagos tbody tr').each(function () {
 
-        let checked = $(this)
-            .find('.seleccionar-factura')
-            .is(':checked');
+        let checked = $(this).find('.seleccionar-factura').is(':checked');
 
-        if (!checked) return;
-
+        if (!checked) {
+            return;
+        }
 
         facturas.push({
 
-            ID_FORMULARIO_FACTURACION :
-
-                $(this).attr('data-idfactura'),
-
-            MANUAL :
-
-                $(this).attr('data-manual'),
-
-            FECHA_FACTURA :
-
-                $(this)
-                    .find('.fecha-factura')
-                    .val(),
-
-            FOLIO_FISCAL :
-
-                $(this)
-                    .find('.folio-fiscal')
-                    .val(),
-
-            RAZON_SOCIAL :
-
-                $(this)
-                    .find('.razon-social')
-                    .val(),
-
-            RFC :
-
-                $(this)
-                    .find('.rfc-proveedor')
-                    .val(),
-
-            SUBTOTAL :
-
-                $(this)
-                    .find('.subtotal-factura')
-                    .val(),
-
-            IVA :
-
-                $(this)
-                    .find('.iva-factura')
-                    .val(),
-
-            TOTAL :
-
-                $(this)
-                    .find('.total-factura')
-                    .val(),
-
-            MONEDA :
-
-                $(this)
-                    .find('.moneda-factura')
-                    .val(),
-
-            FECHA_RECEPCION :
-
-                $(this)
-                    .find('.fecha-recepcion')
-                    .val(),
-
-            DIAS_CREDITO :
-
-                $(this)
-                    .find('.dias-credito')
-                    .val(),
-
-            BANCO :
-
-                $(this)
-                    .find('.banco-factura')
-                    .val(),
-
-            NO_CUENTA :
-
-                $(this)
-                    .find('.cuenta-factura')
-                    .val()
+            ID_FORMULARIO_FACTURACION:$(this).attr('data-idfactura'),
+            MANUAL:$(this).attr('data-manual'),
+            FECHA_FACTURA:$(this).find('.fecha-factura').val(),
+            FOLIO_FISCAL:$(this).find('.folio-fiscal').val(),
+            RAZON_SOCIAL:$(this).find('.razon-social').val(),
+            RFC:$(this).find('.rfc-proveedor').val(),
+            SUBTOTAL:$(this).find('.subtotal-factura').val(),
+            IVA:$(this).find('.iva-factura').val(),
+            TOTAL:$(this).find('.total-factura').val(),
+            MONEDA:$(this).find('.moneda-factura').val(),
+            FECHA_RECEPCION:$(this).find('.fecha-recepcion').val(),
+            DIAS_CREDITO:$(this).find('.dias-credito').val(),
+            BANCO: $(this).find('.banco-factura').val(),
+            NO_CUENTA: $(this).find('.cuenta-factura').val(),
+            OBSERVACIONES: $(this).find('.observacion-factura').val()
 
         });
-
     });
 
     return facturas;
 }
-
-
-
-
-
 
 $("#guardarRELACION").click(function (e) {
 
@@ -539,8 +432,6 @@ $("#guardarRELACION").click(function (e) {
     
 });
 
-
-
 var Tablarelacionespago = $("#Tablarelacionespago").DataTable({
     language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
     lengthChange: true,
@@ -597,8 +488,6 @@ var Tablarelacionespago = $("#Tablarelacionespago").DataTable({
     ]
 });
 
-
-
 $('#Tablarelacionespago tbody').on('change', 'td>label>input.ELIMINAR', function () {
     var tr = $(this).closest('tr');
     var row = Tablarelacionespago.row(tr);
@@ -614,8 +503,6 @@ $('#Tablarelacionespago tbody').on('change', 'td>label>input.ELIMINAR', function
     eliminarDatoTabla(data, [Tablarelacionespago], 'RelacionDelete');
 });
 
-
-
 $('#Tablarelacionespago tbody').on('click', 'td>button.EDITAR', function () {
     var tr = $(this).closest('tr');
     var row = Tablarelacionespago.row(tr);
@@ -629,8 +516,6 @@ $('#Tablarelacionespago tbody').on('click', 'td>button.EDITAR', function () {
     );
 
 });
-
-
 
 $(document).ready(function() {
     $('#Tablarelacionespago tbody').on('click', 'td>button.VISUALIZAR', function () {
@@ -653,14 +538,10 @@ $(document).ready(function() {
     });
 });
 
-
-
-
-
-
 function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
 
     $('#tablaRelacionPagos tbody').empty();
+
     let facturas = [];
 
     try {
@@ -670,14 +551,14 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
     } catch (e) {
 
         facturas = [];
+
     }
 
-
-    facturas.forEach(function(item){
+    facturas.forEach(function (item) {
 
         let boton = '';
 
-        if(item.MANUAL == 1){
+        if (item.MANUAL == 1) {
 
             boton = `
                 <button type="button" class="btn btn-danger btn-sm eliminarPagoManual">
@@ -694,11 +575,15 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
             `;
         }
 
-        let fila = `
+        let observaciones = '';
 
-            <tr
-                data-idfactura="${item.ID_FORMULARIO_FACTURACION}"
-                data-manual="${item.MANUAL}">
+        if (item.OBSERVACIONES !== undefined && item.OBSERVACIONES !== null && String(item.OBSERVACIONES).trim().toLowerCase() !== 'null')
+        {
+            observaciones = item.OBSERVACIONES;
+        }
+
+        let fila = `
+            <tr data-idfactura="${item.ID_FORMULARIO_FACTURACION}" data-manual="${item.MANUAL}">
                 <td class="text-center">
                     ${boton}
                 </td>
@@ -708,7 +593,9 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
                 <td>
                     <div class="input-group">
                         <input type="text" class="form-control form-control-sm mydatepicker fecha-factura" value="${item.FECHA_FACTURA ?? ''}">
-                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                        <span class="input-group-text">
+                            <i class="bi bi-calendar-event"></i>
+                        </span>
                     </div>
                 </td>
                 <td>
@@ -718,7 +605,7 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
                     <input type="text" class="form-control form-control-sm input-pago razon-social" value="${item.RAZON_SOCIAL ?? ''}">
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm input-pago rfc-proveedor" value="${item.RFC ?? ''}">
+                    <input type="text"class="form-control form-control-sm input-pago rfc-proveedor" value="${item.RFC ?? ''}">
                 </td>
                 <td>
                     <input type="text" class="form-control form-control-sm input-pago subtotal-factura" value="${item.SUBTOTAL ?? ''}">
@@ -727,7 +614,10 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
                     <input type="text" class="form-control form-control-sm input-pago iva-factura" value="${item.IVA ?? ''}">
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm input-pago total-factura" value="${item.TOTAL ?? ''}">
+                    <input
+                        type="text"
+                        class="form-control form-control-sm input-pago total-factura"
+                        value="${item.TOTAL ?? ''}">
                 </td>
                 <td>
                     <input type="text" class="form-control form-control-sm input-pago moneda-factura" value="${item.MONEDA ?? ''}">
@@ -735,7 +625,9 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
                 <td>
                     <div class="input-group">
                         <input type="text" class="form-control form-control-sm mydatepicker fecha-recepcion" value="${item.FECHA_RECEPCION ?? ''}">
-                        <span class="input-group-text"> <i class="bi bi-calendar-event"></i></span>
+                        <span class="input-group-text">
+                            <i class="bi bi-calendar-event"></i>
+                        </span>
                     </div>
                 </td>
                 <td>
@@ -747,32 +639,23 @@ function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
                 <td>
                     <input type="text" class="form-control form-control-sm input-pago cuenta-factura" value="${item.NO_CUENTA ?? ''}">
                 </td>
+                <td>
+                    <textarea class="form-control form-control-sm input-pago observacion-factura" rows="2" placeholder="Escriba las observaciones">${observaciones}</textarea>
+                </td>
+
             </tr>
         `;
 
         $('#tablaRelacionPagos tbody').append(fila);
-
     });
-
 
     activarDatePickerRelacion();
     calcularTotalesRelacion();
-
 }
-
-
-
 
 function descargarExcelRelacionPagos(id)
 {
-
-    window.open(
-
-        '/descargarExcelRelacionPagos/' + id,
-
-        '_blank'
-
-    );
+    window.open('/descargarExcelRelacionPagos/' + id,'_blank');
 
 }
 

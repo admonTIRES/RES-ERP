@@ -180,6 +180,8 @@
                                         <th style="min-width:50px;" class="text-center">Días Crédito</th>
                                         <th style="min-width:180px;" class="text-center">Banco</th>
                                         <th style="min-width:250px;" class="text-center">No. Cuenta Bancaria</th>
+                                        <th style="min-width:250px;" class="text-center">Observaciones</th>
+
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
