@@ -19,6 +19,7 @@ use App\Models\requisicionmaterial\mrModel;
 use App\Models\recempleados\recemplaedosModel;
 use App\Models\paginaweb\ContactoPaginaWeb;
 use App\Models\proveedor\facturacionModel;
+use App\Models\proveedor\relacionpagosModel;
 
 
 
@@ -973,6 +974,45 @@ class notificacionController extends Controller
                     });
             }
 
+
+
+            /**
+             * 19. NOTIFICACIONES - APROBAR RELACIÓN DE PAGO
+             */
+
+            $notiAprobarRelacionPago = collect([]);
+
+            $usuariosAprobarRelacionPago = [1, 2];
+
+            if (in_array($idUsuario, $usuariosAprobarRelacionPago)) {
+
+                $badgeAprobarRelacionPago = "<span style='
+                background-color:#3a87ad;
+                color:white;
+                padding:3px 8px;
+                border-radius:6px;
+                font-size:11px;
+                font-weight:bold;
+                display:inline-block;
+            '>Aprobar</span>";
+
+                $notiAprobarRelacionPago = relacionpagosModel::where('FIRMO_USUARIO', 1)
+                    ->whereNull('ESTADO_APROBACION')
+                    ->orderBy('FECHA_RELACION', 'desc')
+                    ->get()
+                    ->map(function ($n) use ($badgeAprobarRelacionPago) {
+
+                        return [
+                            'titulo' => 'Aprobar Relación de pago',
+                            'detalle' => '',
+                            'fecha' => 'Fecha de relación: ' . ($n->FECHA_RELACION ?: 'Sin fecha'),
+                            'fecha_sort' => $n->FECHA_RELACION,
+                            'estatus_badge' => $badgeAprobarRelacionPago,
+                            'link' => url('/relacionpagosaprobar')
+                        ];
+                    });
+            }
+
             $resultado = collect($notiVoBo)
                 ->merge(collect($notiAutorizar))
                 ->merge(collect($notiTipo2))
@@ -991,7 +1031,7 @@ class notificacionController extends Controller
                 ->merge(collect($notiFacturas))
                 ->merge(collect($notiComprobantePago))
                 ->merge(collect($notiRevisionREP))
-
+                ->merge(collect($notiAprobarRelacionPago))
 
                 ->sortByDesc(function ($item) {
 
