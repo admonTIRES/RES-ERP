@@ -36,41 +36,41 @@ class facturaproveedorController extends Controller
 {
 
 
-    // public function validarPuedeSubirFactura()
-    // {
-    //     $rfc = Auth::user()->RFC_PROVEEDOR;
-
-    //     $existeBloqueo = DB::table('formulario_facturasproveedores')
-    //         ->where('RFC_PROVEEDOR', $rfc)
-    //         ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
-    //         ->where('SUBIR_RECIBO_PAGO', 1)
-    //         ->where(function ($query) {
-    //             $query->whereNull('SUBIR_REP')
-    //                 ->orWhere('SUBIR_REP', 0)
-    //                 ->orWhere('ESTATUS_REP', 2);
-    //         })
-    //         ->exists();
-
-
-    //     if ($existeBloqueo) {
-    //         return response()->json([
-    //             'puede' => false,
-    //             'mensaje' => 'Tiene pendiente de cargar un REP o está en proceso de verificación.'
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'puede' => true
-    //     ]);
-    // }
-
-
     public function validarPuedeSubirFactura()
     {
+        $rfc = Auth::user()->RFC_PROVEEDOR;
+
+        $existeBloqueo = DB::table('formulario_facturasproveedores')
+            ->where('RFC_PROVEEDOR', $rfc)
+            ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
+            ->where('SUBIR_RECIBO_PAGO', 1)
+            ->where(function ($query) {
+                $query->whereNull('SUBIR_REP')
+                    ->orWhere('SUBIR_REP', 0)
+                    ->orWhere('ESTATUS_REP', 2);
+            })
+            ->exists();
+
+
+        if ($existeBloqueo) {
+            return response()->json([
+                'puede' => false,
+                'mensaje' => 'Tiene pendiente de cargar un REP o está en proceso de verificación.'
+            ]);
+        }
+
         return response()->json([
             'puede' => true
         ]);
     }
+
+
+    // public function validarPuedeSubirFactura()
+    // {
+    //     return response()->json([
+    //         'puede' => true
+    //     ]);
+    // }
 
     public function validarContratoNumero(Request $request)
     {
@@ -407,164 +407,6 @@ class facturaproveedorController extends Controller
     {
         try {
             switch (intval($request->api)) {
-                // case 1:
-
-                //     $rfc = Auth::user()->RFC_PROVEEDOR;
-                //     $requestData = $request->all();
-                //     $requestData['RFC_PROVEEDOR'] = $rfc;
-
-                //     if ($request->ID_FORMULARIO_FACTURACION == 0) {
-                //         DB::statement('ALTER TABLE formulario_facturasproveedores AUTO_INCREMENT=1;');
-
-                //         $cuentas = facturacionModel::create($requestData);
-
-                //         if ($request->hasFile('DOCUMENTOS_SOPORTE_FACTURA')) {
-                //             $file = $request->file('DOCUMENTOS_SOPORTE_FACTURA');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documentos de soporte";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $cuentas->DOCUMENTOS_SOPORTE_FACTURA = $filePath;
-                //             $cuentas->save();
-                //         }
-
-                //         if ($request->hasFile('FACTURA_PDF')) {
-                //             $file = $request->file('FACTURA_PDF');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documento factura";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $cuentas->FACTURA_PDF = $filePath;
-                //             $cuentas->save();
-                //         }
-
-                //         if ($request->hasFile('FACTURA_XML')) {
-                //             $file = $request->file('FACTURA_XML');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/XML factura";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $cuentas->FACTURA_XML = $filePath;
-                //             $cuentas->save();
-                //         }
-
-                //         if ($request->hasFile('ARCHIVO_REP')) {
-                //             $file = $request->file('ARCHIVO_REP');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/PDF/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $cuentas->ARCHIVO_REP = $filePath;
-                //             $cuentas->save();
-                //         }
-
-                //         if ($request->hasFile('XML_REP')) {
-                //             $file = $request->file('XML_REP');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/XML/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $cuentas->XML_REP = $filePath;
-                //             $cuentas->save();
-                //         }
-
-
-                //         if ($request->hasFile('ARCHIVO_RECIBO_PAGO')) {
-                //             $file = $request->file('ARCHIVO_RECIBO_PAGO');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $cuentas->ARCHIVO_RECIBO_PAGO = $filePath;
-                //             $cuentas->save();
-                //         }
-
-
-
-                //     } else {
-                //         $cuentas = facturacionModel::find($request->ID_FORMULARIO_FACTURACION);
-
-                //         if (isset($request->ELIMINAR)) {
-                //             $cuentas->ACTIVO = $request->ELIMINAR == 1 ? 0 : 1;
-                //             $cuentas->save();
-
-                //             $response['code'] = 1;
-                //             $response['cuenta'] = $request->ELIMINAR == 1 ? 'Desactivada' : 'Activada';
-                //             return response()->json($response);
-                //         }
-
-                //         if ($request->hasFile('DOCUMENTOS_SOPORTE_FACTURA')) {
-                //             if ($cuentas->DOCUMENTOS_SOPORTE_FACTURA && Storage::exists($cuentas->DOCUMENTOS_SOPORTE_FACTURA)) {
-                //                 Storage::delete($cuentas->DOCUMENTOS_SOPORTE_FACTURA);
-                //             }
-                //             $file = $request->file('DOCUMENTOS_SOPORTE_FACTURA');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documentos de soporte";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $requestData['DOCUMENTOS_SOPORTE_FACTURA'] = $filePath;
-                //         }
-
-                //         if ($request->hasFile('FACTURA_PDF')) {
-                //             if ($cuentas->FACTURA_PDF && Storage::exists($cuentas->FACTURA_PDF)) {
-                //                 Storage::delete($cuentas->FACTURA_PDF);
-                //             }
-                //             $file = $request->file('FACTURA_PDF');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Documento factura";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $requestData['FACTURA_PDF'] = $filePath;
-                //         }
-
-                //         if ($request->hasFile('FACTURA_XML')) {
-                //             if ($cuentas->FACTURA_XML && Storage::exists($cuentas->FACTURA_XML)) {
-                //                 Storage::delete($cuentas->FACTURA_XML);
-                //             }
-                //             $file = $request->file('FACTURA_XML');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/XML factura";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $requestData['FACTURA_XML'] = $filePath;
-                //         }
-
-                //         if ($request->hasFile('ARCHIVO_REP')) {
-                //             if ($cuentas->ARCHIVO_REP && Storage::exists($cuentas->ARCHIVO_REP)) {
-                //                 Storage::delete($cuentas->ARCHIVO_REP);
-                //             }
-                //             $file = $request->file('ARCHIVO_REP');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/PDF/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $requestData['ARCHIVO_REP'] = $filePath;
-                //         }
-
-                //         if ($request->hasFile('XML_REP')) {
-                //             if ($cuentas->XML_REP && Storage::exists($cuentas->XML_REP)) {
-                //                 Storage::delete($cuentas->XML_REP);
-                //             }
-                //             $file = $request->file('XML_REP');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo Electrónico de Pago/XML/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $requestData['XML_REP'] = $filePath;
-                //         }
-
-                //         if ($request->hasFile('ARCHIVO_RECIBO_PAGO')) {
-                //             if ($cuentas->ARCHIVO_RECIBO_PAGO && Storage::exists($cuentas->ARCHIVO_RECIBO_PAGO)) {
-                //                 Storage::delete($cuentas->ARCHIVO_RECIBO_PAGO);
-                //             }
-                //             $file = $request->file('ARCHIVO_RECIBO_PAGO');
-                //             $folderPath = "proveedores/{$rfc}/Facturas/{$cuentas->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$cuentas->ID_FORMULARIO_FACTURACION}";
-                //             $fileName = $file->getClientOriginalName();
-                //             $filePath = $file->storeAs($folderPath, $fileName);
-                //             $requestData['ARCHIVO_RECIBO_PAGO'] = $filePath;
-                //         }
-
-
-
-                //         $cuentas->update(collect($requestData)->except('RFC_PROVEEDOR')->toArray());
-
-
-                //     }
-
-                //     $response['code'] = 1;
-                //     $response['cuenta']  = $cuentas;
-                //     return response()->json($response);
-
-
 
                 case 1:
 
