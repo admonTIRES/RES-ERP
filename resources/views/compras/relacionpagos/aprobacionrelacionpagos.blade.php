@@ -110,17 +110,15 @@
     }
 </style>
 <div class="contenedor-contenido">
-    <ol class="breadcrumb mt-2" style="display: flex; justify-content: center; align-items: center;">
+    <ol class="breadcrumb mb-5" style="display: flex; justify-content: center; align-items: center;">
         <h3 style="color: #ffffff; margin: 0;">
-            <i class="bi bi-cash-stack"></i>&nbsp;&nbsp;Relación de pagos
+            <i class="bi bi-cash-stack"></i>&nbsp;&nbsp;Aprobar relación de pagos
         </h3>
-        <button type="button" class="btn btn-light waves-effect waves-light" id="NUEVA_RELACION" style="margin-left: auto;">
-            Nueva &nbsp;<i class="bi bi-plus-circle"></i>
-        </button>
+
     </ol>
 
     <div class="card-body">
-        <table id="Tablarelacionespago" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
+        <table id="Tablarelacionespagoaprobar" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
         </table>
     </div>
 </div>
@@ -154,12 +152,6 @@
                                     <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                                 </div>
                             </div>
-                            <button type="button"
-                                class="btn btn-success btn-sm btn-agregar-pago"
-                                id="agregarPagoManual">
-                                <i class="bi bi-plus-circle"></i>
-                                Agregar pago manual
-                            </button>
                         </div>
                         <div class="contenedor-tabla-pagos">
                             <table class="table table-bordered align-middle mb-0 tabla-relacion-pagos"
@@ -206,18 +198,6 @@
                         </div>
                     </div>
 
-                    <div class="col-12 mt-5" id="DIV_FIRMAR" style="display:block; margin-top:10px;">
-                        <div class="row justify-content-center">
-                            <div class="col-6 text-center">
-                                <button type="button" id="FIRMAR_RELACION" class="btn btn-info"
-                                    data-usuario="{{ Auth::user()->EMPLEADO_NOMBRE }} {{ Auth::user()->EMPLEADO_APELLIDOPATERNO }} {{ Auth::user()->EMPLEADO_APELLIDOMATERNO }}">
-                                    <i class="bi bi-pen-fill"></i> Firmar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-
                     <input type="hidden" id="FIRMO_USUARIO" name="FIRMO_USUARIO" value="">
 
                     <div class="mt-3">
@@ -225,13 +205,13 @@
                         <input type="text" id="FIRMADO_POR" name="FIRMADO_POR" class="form-control" readonly required>
                     </div>
 
-                    <div class="aprobacion-direccion-hoja mt-5" id="APROBACION_HOJA" style="display: none;">
+                    <div class="aprobacion-direccion-hoja mt-5" id="APROBACION_HOJA" style="display: block;">
                         <div class="bloque-aprobacion">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Estado de Aprobación</label>
-                                    <select class="form-control" id="ESTADO_APROBACION" name="ESTADO_APROBACION" style="pointer-events: none; background-color: #e9ecef;">
-                                        <option value="" selected disabled>Seleccione una opción</option>
+                                    <select class="form-control" id="ESTADO_APROBACION" name="ESTADO_APROBACION" required>
+                                        <option value="" disabled>Seleccione una opción</option>
                                         <option value="Aprobada">Aprobada</option>
                                         <option value="Rechazada">Rechazada</option>
                                     </select>
@@ -247,21 +227,35 @@
                             </div>
                             <div class="mt-3 " id="motivo-rechazo" style="display: none;">
                                 <label class="form-label fw-bold">Motivo del rechazo</label>
-                                <textarea class="form-control motivo-rechazo" name="MOTIVO_RECHAZO" id="MOTIVO_RECHAZO" rows="3" placeholder="Escriba el motivo de rechazo..."></textarea>
+                                <textarea class="form-control motivo-rechazo" name="MOTIVO_RECHAZO" id="MOTIVO_RECHAZO" rows="3" placeholder="Escriba el motivo de rechazo..." required></textarea>
                             </div>
                         </div>
 
-                        <div class="col-12  mt-4">
-                            <div class="row">
-                                <div class="col-12 mb-3">
-                                    <label class="form-label fw-bold">Aprobado por:</label>
-                                    <input type="text" class="form-control" id="APROBADO_POR" name="APROBADO_POR" readonly>
+
+                        <div class="col-12 mt-5" id="DIV_FIRMAR" style="display:block; margin-top:10px;">
+                            <div class="row justify-content-center">
+                                <div class="col-6 text-center">
+                                    <button type="button" id="FIRMAR_RELACION" class="btn btn-info"
+                                        data-usuario="{{ Auth::user()->EMPLEADO_NOMBRE }} {{ Auth::user()->EMPLEADO_APELLIDOPATERNO }} {{ Auth::user()->EMPLEADO_APELLIDOMATERNO }}">
+                                        <i class="bi bi-pen-fill"></i> Firmar
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
 
+                        <input type="hidden" id="FIRMO_APROBACION" name="FIRMO_APROBACION" value="">
 
+
+
+                        <div class="col-12  mt-4">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label>Aprobado por:</label>
+                                    <input type="text" class="form-control" id="APROBADO_POR" name="APROBADO_POR" required readonly>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
 

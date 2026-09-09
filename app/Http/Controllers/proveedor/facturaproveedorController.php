@@ -36,92 +36,41 @@ class facturaproveedorController extends Controller
 {
 
 
-    public function validarPuedeSubirFactura()
-    {
-        $rfc = Auth::user()->RFC_PROVEEDOR;
-
-        // $existeBloqueo = DB::table('formulario_facturasproveedores')
-        //     ->where('RFC_PROVEEDOR', $rfc)
-        //     ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
-        //     ->where('SUBIR_RECIBO_PAGO', 1) 
-        //     ->where(function ($query) {
-        //         $query->whereNull('SUBIR_REP')
-        //             ->orWhere('SUBIR_REP', 0)
-        //             ->orWhereNull('ESTATUS_REP')
-        //             ->orWhere('ESTATUS_REP', '!=', 1);
-        //     })
-        //     ->exists();
-
-        $existeBloqueo = DB::table('formulario_facturasproveedores')
-            ->where('RFC_PROVEEDOR', $rfc)
-            ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
-            ->where('SUBIR_RECIBO_PAGO', 1)
-            ->where(function ($query) {
-                $query->whereNull('SUBIR_REP')
-                    ->orWhere('SUBIR_REP', 0)
-                    ->orWhere('ESTATUS_REP', 2);
-            })
-            ->exists();
-
-
-        if ($existeBloqueo) {
-            return response()->json([
-                'puede' => false,
-                'mensaje' => 'Tiene pendiente de cargar un REP o está en proceso de verificación.'
-            ]);
-        }
-
-        return response()->json([
-            'puede' => true
-        ]);
-    }
-
-    // public function validarContratoNumero(Request $request)
+    // public function validarPuedeSubirFactura()
     // {
-    //     $request->validate([
-    //         'numero_contrato' => 'required|string'
-    //     ]);
+    //     $rfc = Auth::user()->RFC_PROVEEDOR;
 
-    //     $userRFC = Auth::user()->RFC_PROVEEDOR;
-    //     $numeroContrato = $request->numero_contrato;
+    //     $existeBloqueo = DB::table('formulario_facturasproveedores')
+    //         ->where('RFC_PROVEEDOR', $rfc)
+    //         ->whereRaw('UPPER(TRIM(METODO_PAGO)) = "PPD"')
+    //         ->where('SUBIR_RECIBO_PAGO', 1)
+    //         ->where(function ($query) {
+    //             $query->whereNull('SUBIR_REP')
+    //                 ->orWhere('SUBIR_REP', 0)
+    //                 ->orWhere('ESTATUS_REP', 2);
+    //         })
+    //         ->exists();
 
-    //     $contrato = contratoproveedorModel::where('RFC_PROVEEDOR', $userRFC)
-    //         ->where('NUMERO_CONTRATO_PROVEEDOR', $numeroContrato)
-    //         ->first();
 
-    //     if (!$contrato) {
+    //     if ($existeBloqueo) {
     //         return response()->json([
-    //             'valido' => false,
-    //             'mensaje' => 'El número de contrato es incorrecto.'
-    //         ]);
-    //     }
-
-    //     $hoy = Carbon::today();
-
-    //     $fechaInicio = Carbon::parse($contrato->FECHAI_CONTRATO_PROVEEDOR);
-    //     $fechaFin    = Carbon::parse($contrato->FECHAF_CONTRATO_PROVEEDOR);
-
-    //     if ($hoy->lt($fechaInicio)) {
-    //         return response()->json([
-    //             'valido' => false,
-    //             'mensaje' => 'El contrato aún no inicia su vigencia.'
-    //         ]);
-    //     }
-
-    //     if ($hoy->gt($fechaFin)) {
-    //         return response()->json([
-    //             'valido' => false,
-    //             'mensaje' => 'El contrato está vencido.'
+    //             'puede' => false,
+    //             'mensaje' => 'Tiene pendiente de cargar un REP o está en proceso de verificación.'
     //         ]);
     //     }
 
     //     return response()->json([
-    //         'valido' => true,
-    //         'mensaje' => 'Contrato validado',
-    //         'contrato' => $contrato
+    //         'puede' => true
     //     ]);
     // }
 
+
+    public function validarPuedeSubirFactura()
+    {
+        return response()->json([
+            'puede' => true
+        ]);
+    }
 
     public function validarContratoNumero(Request $request)
     {
@@ -242,38 +191,6 @@ class facturaproveedorController extends Controller
     }
 
 
-
-
-    // public function validarPOGR(Request $request)
-    // {
-    //     $request->validate([
-    //         'po' => 'required',
-    //         'gr' => 'required'
-    //     ]);
-
-    //     $userRFC = Auth::user()->RFC_PROVEEDOR;
-
-    //     $existe = DB::table('formulario_bitacoragr')
-    //         ->where('PROVEEDOR_KEY', $userRFC)
-    //         ->where('NO_PO', $request->po)
-    //         ->where('NO_RECEPCION', $request->gr)
-    //         ->exists();
-
-    //     if (!$existe) {
-    //         return response()->json([
-    //             'valido' => false,
-    //             'mensaje' => 'Verifique que estén correcto el No de (PO) y (GR)'
-
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'valido' => true,
-    //         'mensaje' => 'PO y GR válidos'
-    //     ]);
-    // }
-
-
     public function validarPOGR(Request $request)
     {
         $request->validate([
@@ -391,7 +308,6 @@ class facturaproveedorController extends Controller
         $archivo = facturacionModel::findOrFail($id)->DOCUMENTOS_SOPORTE_FACTURA;
         return Storage::response($archivo);
     }
-
 
     public function mostrarfactura($id)
     {

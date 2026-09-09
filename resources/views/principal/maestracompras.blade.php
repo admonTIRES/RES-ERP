@@ -402,11 +402,13 @@
                                         </li>
 
                                         <hr class="dropdown-divider">
+                                        @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
                                         <li>
                                             <a class="dropdown-item" href="{{ url('/aprobardocumentosproveedor') }}">
                                                 Aprobación
                                             </a>
                                         </li>
+                                        @endif
                                     </ul>
                                 </li>
                             </ul>
@@ -429,10 +431,24 @@
                                     </a>
                                 </li>
                                 <hr class="dropdown-divider">
-                                <li>
-                                    <a class="dropdown-item" href="{{ url('/relacionpagos') }}">
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">
                                         Relación de pagos
                                     </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url('/relacionpagos') }}">
+                                                Relación de pagos
+                                            </a>
+                                        </li>
+
+                                        <hr class="dropdown-divider">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url('/relacionpagosaprobar') }}">
+                                                Aprobación
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <hr class="dropdown-divider">
                                 <li>
@@ -774,7 +790,7 @@
     @endif
 
     @if(request()->is('relacionpagos'))
-    <script src="/assets/js_sitio/proveedor/relacionpago.js?v=3"></script>
+    <script src="/assets/js_sitio/proveedor/relacionpago.js?v=4"></script>
     @endif
 
     @if(request()->is('comprobantepagos'))
@@ -785,6 +801,9 @@
     <script src="/assets/js_sitio/proveedor/listarep.js?"></script>
     @endif
 
+    @if(request()->is('relacionpagosaprobar'))
+    <script src="/assets/js_sitio/proveedor/relacionpagoaprobar.js"></script>
+    @endif
 
     <script src="/assets/js_sitio/externo.js?v=1.0"></script>
 

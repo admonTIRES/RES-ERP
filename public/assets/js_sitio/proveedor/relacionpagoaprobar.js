@@ -13,9 +13,11 @@ ModalRelacion.addEventListener('hidden.bs.modal', event => {
 
 
     $('#DIV_FIRMAR').show();
-    $('#APROBACION_HOJA').hide();
+    $('#APROBACION_HOJA').show();
     $('#FIRMO_USUARIO').val('0');
+    $('#motivo-rechazo').hide();
 
+    $('#DIV_FIRMAR').show();
 
       const inputFecha = document.getElementById("FECHA_RELACION");
     if (inputFecha) {
@@ -385,7 +387,7 @@ $("#guardarRELACION").click(function (e) {
             icon: "question",
         },async function () { 
             await loaderbtn('guardarRELACION')
-            await ajaxAwaitFormData({ api: 1, ID_RELACION_PAGOS: ID_RELACION_PAGOS },  'RelacionSave', 'formularioRELACION', 'guardarRELACION', { callbackAfter: true, callbackBefore: true }, 
+            await ajaxAwaitFormData({ api: 2, ID_RELACION_PAGOS: ID_RELACION_PAGOS },  'RelacionSave', 'formularioRELACION', 'guardarRELACION', { callbackAfter: true, callbackBefore: true }, 
                 () => {
                     Swal.fire({
                         icon: 'info',
@@ -407,7 +409,7 @@ $("#guardarRELACION").click(function (e) {
                     )
                     $('#modalRelacionPagos').modal('hide')
                     document.getElementById('formularioRELACION').reset();
-                    Tablarelacionespago.ajax.reload()
+                    Tablarelacionespagoaprobar.ajax.reload()
                 }
             )            
         }, 1)
@@ -420,7 +422,7 @@ $("#guardarRELACION").click(function (e) {
             icon: "question",
         }, async function () { 
             await loaderbtn('guardarRELACION')
-            await ajaxAwaitFormData({ api: 1, ID_RELACION_PAGOS: ID_RELACION_PAGOS }, 'RelacionSave', 'formularioRELACION','guardarRELACION', { callbackAfter: true, callbackBefore: true }, 
+            await ajaxAwaitFormData({ api: 2, ID_RELACION_PAGOS: ID_RELACION_PAGOS }, 'RelacionSave', 'formularioRELACION','guardarRELACION', { callbackAfter: true, callbackBefore: true }, 
                 () => {
                     Swal.fire({
                         icon: 'info',
@@ -440,7 +442,7 @@ $("#guardarRELACION").click(function (e) {
                         )
                         $('#modalRelacionPagos').modal('hide')
                         document.getElementById('formularioRELACION').reset();
-                        Tablarelacionespago.ajax.reload()
+                        Tablarelacionespagoaprobar.ajax.reload()
                     }, 300);  
                 }
             )
@@ -459,7 +461,7 @@ $("#guardarRELACION").click(function (e) {
     
 });
 
-var Tablarelacionespago = $("#Tablarelacionespago").DataTable({
+var Tablarelacionespagoaprobar = $("#Tablarelacionespagoaprobar").DataTable({
     language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
     lengthChange: true,
     lengthMenu: [
@@ -478,12 +480,12 @@ var Tablarelacionespago = $("#Tablarelacionespago").DataTable({
         data: {},
         method: 'GET',
         cache: false,
-        url: '/Tablarelacionespago',
+        url: '/Tablarelacionespagoaprobar',
         beforeSend: function () {
             mostrarCarga();
         },
         complete: function () {
-            Tablarelacionespago.columns.adjust().draw();
+            Tablarelacionespagoaprobar.columns.adjust().draw();
             ocultarCarga();
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -500,24 +502,20 @@ var Tablarelacionespago = $("#Tablarelacionespago").DataTable({
             }
         },
         { data: 'FECHA_RELACION' },
-        { data: 'ESTADO_BADGE' }, 
-        { data: 'BTN_EXCEL' },
         { data: 'BTN_EDITAR' },
         { data: 'BTN_VISUALIZAR' },
     ],
     columnDefs: [
         { targets: 0, title: '#', className: 'all  text-center' },
         { targets: 1, title: 'Fecha relación', className: 'all text-center nombre-column' },
-        { targets: 2, title: 'Estado', className: 'all text-center' }, 
-        { targets: 3, title: 'Descargar Excel', className: 'all text-center' },
-        { targets: 4, title: 'Editar', className: 'all text-center' },
-        { targets: 5, title: 'Visualizar', className: 'all text-center' },
+        { targets: 2, title: 'Editar', className: 'all text-center' },
+        { targets: 3, title: 'Visualizar', className: 'all text-center' },
     ]
 });
 
-$('#Tablarelacionespago tbody').on('change', 'td>label>input.ELIMINAR', function () {
+$('#Tablarelacionespagoaprobar tbody').on('change', 'td>label>input.ELIMINAR', function () {
     var tr = $(this).closest('tr');
-    var row = Tablarelacionespago.row(tr);
+    var row = Tablarelacionespagoaprobar.row(tr);
 
     var estado = $(this).is(':checked') ? 1 : 0;
 
@@ -527,73 +525,73 @@ $('#Tablarelacionespago tbody').on('change', 'td>label>input.ELIMINAR', function
         ID_RELACION_PAGOS: row.data().ID_RELACION_PAGOS
     };
 
-    eliminarDatoTabla(data, [Tablarelacionespago], 'RelacionDelete');
+    eliminarDatoTabla(data, [Tablarelacionespagoaprobar], 'RelacionDelete');
 });
 
-$('#Tablarelacionespago tbody').on('click', 'td>button.EDITAR', function () {
+$('#Tablarelacionespagoaprobar tbody').on('click', 'td > button.EDITAR', function () {
+
     var tr = $(this).closest('tr');
-    var row = Tablarelacionespago.row(tr);
+
+    var row = Tablarelacionespagoaprobar.row(tr);
 
     ID_RELACION_PAGOS = row.data().ID_RELACION_PAGOS;
 
-    editarDatoTabla(row.data(), 'formularioRELACION', 'modalRelacionPagos',1);
-    
+    var aprobadoPor = $('#APROBADO_POR').val();
+
+    editarDatoTabla(row.data(), 'formularioRELACION', 'modalRelacionPagos', 1);
+
+    $('#APROBADO_POR').val(aprobadoPor);
     $('#tablaRelacionPagos tbody').empty();
 
     cargarTablaRelacionDesdeJSON(row.data().JSON_RELACIONES);
 
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const fechaHoy = `${yyyy}-${mm}-${dd}`;
+    
+    $('#FECHA_APROBACION').val(fechaHoy);
 
-    if (row.data().FIRMO_USUARIO === "1") {
+    if (row.data().FIRMO_APROBACION === "1") {
         $('#DIV_FIRMAR').hide();
     } else  {
         $('#DIV_FIRMAR').show();
     } 
 
-    if (row.data().ESTADO_APROBACION === "Aprobada") {
-        $('#motivo-rechazo').hide();   
-        $('#APROBACION_HOJA').show();
-    } else if (row.data().ESTADO_APROBACION === "Rechazada") {
-        $('#APROBACION_HOJA').show();
-        $('#motivo-rechazo').show();        
-    } else {
-        $('#motivo-rechazo').hide();   
-        $('#APROBACION_HOJA').hide();
-    }
-
-
-
-
 });
 
 $(document).ready(function() {
-    $('#Tablarelacionespago tbody').on('click', 'td>button.VISUALIZAR', function () {
+    $('#Tablarelacionespagoaprobar tbody').on('click', 'td>button.VISUALIZAR', function () {
         var tr = $(this).closest('tr');
-        var row = Tablarelacionespago.row(tr);
+        var row = Tablarelacionespagoaprobar.row(tr);
         
         hacerSoloLectura(row.data(), '#modalRelacionPagos');
 
         ID_RELACION_PAGOS = row.data().ID_RELACION_PAGOS;
         editarDatoTabla(row.data(), 'formularioRELACION', 'modalRelacionPagos', 1);
         
-        $('#tablaRelacionPagos tbody').empty();
-        cargarTablaRelacionDesdeJSON(row.data().JSON_RELACIONES);
+        var aprobadoPor = $('#APROBADO_POR').val();
+
         
-        if (row.data().FIRMO_USUARIO === "1") {
+        $('#APROBADO_POR').val(aprobadoPor);
+        $('#tablaRelacionPagos tbody').empty();
+
+        cargarTablaRelacionDesdeJSON(row.data().JSON_RELACIONES);
+
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        const fechaHoy = `${yyyy}-${mm}-${dd}`;
+        $('#FECHA_APROBACION').val(fechaHoy);
+
+
+        if (row.data().FIRMO_APROBACION === "1") {
             $('#DIV_FIRMAR').hide();
         } else  {
             $('#DIV_FIRMAR').show();
         } 
-
-        if (row.data().ESTADO_APROBACION === "Aprobada") {
-                $('#motivo-rechazo').hide();   
-                $('#APROBACION_HOJA').show();
-            } else if (row.data().ESTADO_APROBACION === "Rechazada") {
-                $('#APROBACION_HOJA').show();
-                $('#motivo-rechazo').show();        
-            } else {
-                $('#motivo-rechazo').hide();   
-                $('#APROBACION_HOJA').hide();
-            }
 
     });
 
@@ -601,6 +599,22 @@ $(document).ready(function() {
         resetFormulario('#modalRelacionPagos');
     });
 });
+
+
+function togglerechazo() {
+    const valor = $('#ESTADO_APROBACION').val();
+    if (valor === 'Rechazada') {
+        $('#motivo-rechazo').show();
+    } else {
+        $('#motivo-rechazo').hide();
+        $('#MOTIVO_RECHAZO').val('');
+    }
+}
+
+$('#ESTADO_APROBACION').on('change', togglerechazo);
+
+
+
 
 function cargarTablaRelacionDesdeJSON(jsonRelaciones) {
 
@@ -725,11 +739,12 @@ function descargarExcelRelacionPagos(id)
 
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
      const btnFirmar = document.getElementById("FIRMAR_RELACION");
-    const inputFirmo = document.getElementById("FIRMO_USUARIO");
-    const inputFirmadoPor = document.getElementById("FIRMADO_POR");
-    const inputFechaSalida = document.getElementById("FECHA_RELACION");
+    const inputFirmo = document.getElementById("FIRMO_APROBACION");
+    const inputFirmadoPor = document.getElementById("APROBADO_POR");
+    const inputFechaSalida = document.getElementById("FECHA_APROBACION");
 
     btnFirmar.addEventListener("click", function () {
         let usuarioNombre = btnFirmar.getAttribute("data-usuario");

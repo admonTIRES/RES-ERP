@@ -14,6 +14,16 @@ class relacionpagosModel extends Model
     'JSON_RELACIONES',
     'FECHA_RELACION',
     'MONTO_MXN',
-    'MONTO_USD'
+    'MONTO_USD',
+    'FIRMO_USUARIO',
+    'FIRMADO_POR',
+    'SOLICITUD_ID',
+    'AUTORIZO_ID',
+    'ESTADO_APROBACION',
+    'FECHA_APROBACION',
+    'MOTIVO_RECHAZO',
+    'APROBADO_POR',
+    'FIRMO_APROBACION',
+    'ACTIVO'
     ];
 }
