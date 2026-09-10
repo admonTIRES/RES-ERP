@@ -357,13 +357,12 @@ $(document).on('click', '.editarMaterial', function () {
                 $("#OBS_GUANTES_NEOPRENO_VEHICULOS").val(material.OBS_GUANTES_NEOPRENO_VEHICULOS);
                 $("#OBS_CALIBRADOR_LLANTAS_VEHICULOS").val(material.OBS_CALIBRADOR_LLANTAS_VEHICULOS);
                 $("#OBS_EXTINTOR_PQS_VEHICULOS").val(material.OBS_EXTINTOR_PQS_VEHICULOS);
-                $("#OBS_LINTERNA_RECARGABLE_VEHICULOS").val(material.OBS_LINTERNA_RECARGABLE_VEHICULOS);
-
-
+                $("#OBS_LINTERNA_RECARGABLE_VEHICULOS").val(material.OBS_LINTERNA_RECARGABLE_VEHICULOS);                
                 $("#FRENTE_DERECHA").val(material.FRENTE_DERECHA);
                 $("#FRENTE_IZQUIERDA").val(material.FRENTE_IZQUIERDA);
                 $("#TRASERA_DERECHA").val(material.TRASERA_DERECHA);
                 $("#TRASERA_IZQUIERDA").val(material.TRASERA_IZQUIERDA);
+                $("#FECHA_REGRESO_VEHICULOS").val(material.FECHA_REGRESO_VEHICULOS);
 
 
                 if (material.BOTIQUIN_PRIMEROS_AUXILIOS_VEHICULOS === '1') {
@@ -682,7 +681,7 @@ $(document).on('click', '.visualizarMaterial', function () {
                 $("#FRENTE_IZQUIERDA").val(material.FRENTE_IZQUIERDA);
                 $("#TRASERA_DERECHA").val(material.TRASERA_DERECHA);
                 $("#TRASERA_IZQUIERDA").val(material.TRASERA_IZQUIERDA);
-
+                $("#FECHA_REGRESO_VEHICULOS").val(material.FECHA_REGRESO_VEHICULOS);
 
                 if (material.BOTIQUIN_PRIMEROS_AUXILIOS_VEHICULOS === '1') {
                     $('#TABLA_BOTIQUIN_VEHICULOS').show();

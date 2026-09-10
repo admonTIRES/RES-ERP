@@ -512,7 +512,7 @@ class bitacoravehiculosController extends Controller
                         'PASE_VEHICULAR_VEHICULOS'                => $bitacora->PASE_VEHICULAR_VEHICULOS,
                         'LLANTA_REFACCION_VEHICULOS'              => $bitacora->LLANTA_REFACCION_VEHICULOS,
                         'BRILLO_SEGURIDAD_VEHICULOS'              => $bitacora->BRILLO_SEGURIDAD_VEHICULOS,
-                        'HORAREGRESO_VEHICULOS'          => $bitacora->HORAREGRESO_VEHICULOS,
+                        'HORAREGRESO_VEHICULOS' => $bitacora->HORAREGRESO_VEHICULOS,
                         'OBSERVACIONES_BITACORA' => $bitacora->OBSERVACIONES_BITACORA,
                         'DANIOS_UNIDAD_JSON' => $bitacora->DANIOS_UNIDAD_JSON,
                         'FRENTE_DERECHA' => $bitacora->FRENTE_DERECHA,
@@ -523,6 +523,10 @@ class bitacoravehiculosController extends Controller
                         'FRENTE_IZQUIERDA_RADIO' => $bitacora->FRENTE_IZQUIERDA_RADIO,
                         'TRASERA_DERECHA_RADIO' => $bitacora->TRASERA_DERECHA_RADIO,
                         'TRASERA_IZQUIERDA_RADIO' => $bitacora->TRASERA_IZQUIERDA_RADIO,
+
+                        'FECHA_REGRESO_VEHICULOS' => $bitacora->FECHA_REGRESO_VEHICULOS,
+
+                        
                     ]
                 ]);
             }
