@@ -862,7 +862,7 @@ class notificacionController extends Controller
 
             /**
              * 17. NOTIFICACIONES - CARGAR COMPROBANTE DE PAGO
-             * Solo para el usuario con ID 3
+             * 
              */
 
             $notiComprobantePago = collect([]);
@@ -1013,6 +1013,160 @@ class notificacionController extends Controller
                     });
             }
 
+
+
+
+            /**
+             * 20.NOTIFICACIONES - GR PENDIENTE
+             */
+
+            $notiGRPendiente = collect([]);
+
+            $usuariosGRPendiente = [1, 3, 10];
+
+            if (in_array($idUsuario, $usuariosGRPendiente)) {
+
+                $badgeGRPendiente = "<span style='
+                background-color:#ff9800;
+                color:white;
+                padding:3px 8px;
+                border-radius:6px;
+                font-size:11px;
+                font-weight:bold;
+                display:inline-block;
+            '>Pendiente</span>";
+
+
+                $poUltimoNotificacionGR = DB::table('formulario_ordencompra as po')
+                    ->select(
+                        'po.ID_FORMULARIO_PO',
+                        'po.NO_PO',
+                        'po.HOJA_ID',
+                        'po.FECHA_APROBACION',
+                        'po.PROVEEDOR_SELECCIONADO',
+                        'po.ESTADO_APROBACION',
+                        'po.CANCELACION_PO'
+                    )
+                    ->join(DB::raw('(
+                        SELECT
+                            REPLACE(SUBSTRING_INDEX(NO_PO, "-Rev", 1), " ", "") AS PO_BASE,
+                            MAX(FECHA_APROBACION) AS max_fecha
+                        FROM formulario_ordencompra
+                        GROUP BY PO_BASE
+                    ) AS ult'), function ($join) {
+                                    $join->on(DB::raw('REPLACE(SUBSTRING_INDEX(po.NO_PO, "-Rev", 1), " ", "")'), '=', 'ult.PO_BASE')
+                            ->on('po.FECHA_APROBACION', '=', 'ult.max_fecha');
+                    });
+
+          
+
+                $rowsConPONotificacionGR = DB::table('hoja_trabajo as ht')
+                    ->join('formulario_requisiconmaterial as mr', 'mr.NO_MR', '=', 'ht.NO_MR')
+                    ->leftJoinSub($poUltimoNotificacionGR, 'po', function ($join) {
+                        $join->whereRaw("
+                FIND_IN_SET(
+                    CAST(ht.id AS CHAR),
+                    REPLACE(REPLACE(REPLACE(REPLACE(po.HOJA_ID, '[', ''), ']', ''), '\"', ''), ' ', '')
+                    )
+                ");
+                    })
+                    ->leftJoin('formulario_altaproveedor as prov', 'prov.RFC_ALTA', '=', 'po.PROVEEDOR_SELECCIONADO')
+                    ->leftJoin('formulario_proveedortemp as provtemp', 'provtemp.RAZON_PROVEEDORTEMP', '=', 'po.PROVEEDOR_SELECCIONADO')
+                    ->whereNotNull('po.NO_PO')
+                    ->where('po.ESTADO_APROBACION', 'Aprobada')
+                    ->where(function ($query) {
+                        $query->whereNull('po.CANCELACION_PO')->orWhere('po.CANCELACION_PO', '!=', 1);
+                    })
+                    ->select(
+                        DB::raw('COALESCE(po.NO_PO, CONCAT("HT-", ht.id)) as AGRUPADOR'),
+                        'mr.NO_MR',
+                        'mr.FECHA_APRUEBA_MR',
+                        'po.NO_PO',
+                        DB::raw('po.PROVEEDOR_SELECCIONADO as PROVEEDOR_KEY'),
+                        DB::raw("
+                CASE
+                    WHEN prov.RAZON_SOCIAL_ALTA IS NOT NULL THEN CONCAT(prov.RAZON_SOCIAL_ALTA, ' (', prov.RFC_ALTA, ')')
+                    WHEN provtemp.RAZON_PROVEEDORTEMP IS NOT NULL THEN provtemp.RAZON_PROVEEDORTEMP
+                    WHEN po.PROVEEDOR_SELECCIONADO IS NOT NULL THEN po.PROVEEDOR_SELECCIONADO
+                    ELSE 'Sin proveedor'
+                END as PROVEEDOR
+                ")
+                    );
+
+        
+                $rowsSinPONotificacionGR = DB::table('hoja_trabajo as ht')
+                    ->join('formulario_requisiconmaterial as mr', 'mr.NO_MR', '=', 'ht.NO_MR')
+                    ->leftJoinSub($poUltimoNotificacionGR, 'po', function ($join) {
+                        $join->whereRaw("
+                FIND_IN_SET(
+                    CAST(ht.id AS CHAR),
+                    REPLACE(REPLACE(REPLACE(REPLACE(po.HOJA_ID, '[', ''), ']', ''), '\"', ''), ' ', '')
+                    )
+                ");
+                    })
+                    ->leftJoin('formulario_altaproveedor as prov', 'prov.RFC_ALTA', '=', 'ht.PROVEEDOR_SELECCIONADO')
+                    ->leftJoin('formulario_proveedortemp as provtemp', 'provtemp.RAZON_PROVEEDORTEMP', '=', 'ht.PROVEEDOR_SELECCIONADO')
+                    ->whereNull('po.NO_PO')
+                    ->where('ht.ESTADO_APROBACION', 'Aprobada')
+                    ->select(
+                        DB::raw('CONCAT("HT-", ht.NO_MR, "-", ht.PROVEEDOR_SELECCIONADO) as AGRUPADOR'),
+                        'mr.NO_MR',
+                        'mr.FECHA_APRUEBA_MR',
+                        DB::raw('NULL as NO_PO'),
+                        'ht.PROVEEDOR_SELECCIONADO as PROVEEDOR_KEY',
+                        DB::raw("
+                CASE
+                    WHEN prov.RAZON_SOCIAL_ALTA IS NOT NULL THEN CONCAT(prov.RAZON_SOCIAL_ALTA, ' (', prov.RFC_ALTA, ')')
+                    WHEN provtemp.RAZON_PROVEEDORTEMP IS NOT NULL THEN provtemp.RAZON_PROVEEDORTEMP
+                    WHEN ht.PROVEEDOR_SELECCIONADO IS NOT NULL THEN ht.PROVEEDOR_SELECCIONADO
+                    ELSE 'Sin proveedor'
+                END as PROVEEDOR")
+                    );
+
+          
+                $unionNotificacionGR = $rowsConPONotificacionGR->unionAll($rowsSinPONotificacionGR);
+
+                $notiGRPendiente = DB::query()
+                    ->fromSub($unionNotificacionGR, 't')
+                    ->orderBy('t.FECHA_APRUEBA_MR', 'desc')
+                    ->get()
+                    ->groupBy('AGRUPADOR')
+                    ->map(function ($group) use ($badgeGRPendiente) {
+
+                        $registro = $group->first();
+
+                        $registrosGR = DB::table('formulario_bitacoragr')
+                            ->where('NO_MR', $registro->NO_MR)
+                            ->when($registro->NO_PO, function ($query) use ($registro) {
+                                $query->where('NO_PO', $registro->NO_PO);
+                            }, function ($query) use ($registro) {
+                                $query->where('PROVEEDOR_KEY', $registro->PROVEEDOR_KEY);
+                            })
+                            ->get(['FINALIZAR_GR']);
+
+                        $mostrarNotificacion = $registrosGR->isEmpty() || !$registrosGR->every(function ($gr) {
+                            return $gr->FINALIZAR_GR === 'Sí';
+                        });
+
+                        if (!$mostrarNotificacion) {
+                            return null;
+                        }
+
+                        return [
+                            'titulo' => 'Tienes GR pendiente de la MR: ' . $registro->NO_MR,
+                            'detalle' => 'Proveedor: ' . ($registro->PROVEEDOR ?: 'Sin proveedor'),
+                            'fecha' => 'Fecha MR: ' . ($registro->FECHA_APRUEBA_MR ?: 'Sin fecha'),
+                            'fecha_sort' => $registro->FECHA_APRUEBA_MR,
+                            'estatus_badge' => $badgeGRPendiente,
+                            'link' => url('/bitacoragr')
+                        ];
+                    })
+                    ->filter()
+                    ->values();
+            }
+
+
+
             $resultado = collect($notiVoBo)
                 ->merge(collect($notiAutorizar))
                 ->merge(collect($notiTipo2))
@@ -1032,6 +1186,7 @@ class notificacionController extends Controller
                 ->merge(collect($notiComprobantePago))
                 ->merge(collect($notiRevisionREP))
                 ->merge(collect($notiAprobarRelacionPago))
+                ->merge(collect($notiGRPendiente))
 
                 ->sortByDesc(function ($item) {
 

@@ -380,14 +380,14 @@ class grhistorialController extends Controller
                         ? 'bg-verde-suave'
                         : 'bg-amarillo-suave';
 
-                    // 🔹 NO_GR
+                    //  NO_GR
                     $first->NO_GR = $registrosGR
                         ->pluck('NO_RECEPCION')
-                        ->filter() // elimina null
+                        ->filter() 
                         ->map(fn($v) => "• {$v}")
                         ->implode('<br>');
 
-                    // 🔹 FECHAS
+                    // FECHAS
                     $first->FECHA_EMISION = $registrosGR
                         ->pluck('FECHA_EMISION')
                         ->filter()
