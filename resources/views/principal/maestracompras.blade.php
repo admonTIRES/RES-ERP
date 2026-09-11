@@ -790,7 +790,7 @@
     @endif
 
     @if(request()->is('relacionpagos'))
-    <script src="/assets/js_sitio/proveedor/relacionpago.js?v=4"></script>
+    <script src="/assets/js_sitio/proveedor/relacionpago.js?v=6"></script>
     @endif
 
     @if(request()->is('comprobantepagos'))

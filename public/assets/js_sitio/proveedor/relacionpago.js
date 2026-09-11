@@ -509,7 +509,7 @@ var Tablarelacionespago = $("#Tablarelacionespago").DataTable({
         { targets: 0, title: '#', className: 'all  text-center' },
         { targets: 1, title: 'Fecha relación', className: 'all text-center nombre-column' },
         { targets: 2, title: 'Estado', className: 'all text-center' }, 
-        { targets: 3, title: 'Descargar Excel', className: 'all text-center' },
+        { targets: 3, title: 'Descargar', className: 'all text-center' },
         { targets: 4, title: 'Editar', className: 'all text-center' },
         { targets: 5, title: 'Visualizar', className: 'all text-center' },
     ]
