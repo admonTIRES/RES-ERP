@@ -183,7 +183,7 @@
                                     <label>Inicio de Vigencia *</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="INICIOVIGENCIA_POLIZA" name="INICIOVIGENCIA_POLIZA" required>
-                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -192,7 +192,7 @@
                                     <label>Fin de Vigencia *</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FINVIGENCIA_POLIZA" name="FINVIGENCIA_POLIZA" required>
-                                        <span class="input-group-text"><i class="icon-calender"></i></span>
+                                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -907,131 +907,131 @@
                             </div>
 
                             <div class="col-12 mt-4" id="DIV_KILOMETRAJE_LLEGADA" style="display: none;">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered text-center align-middle">
-                                            <thead class="table-secondary">
-                                                <tr>
-                                                    <th colspan="3">Kilometraje de llegada</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="3" style="text-align:center;">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-center align-middle">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th colspan="3">Kilometraje de llegada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3" style="text-align:center;">
 
-                                                        <input type="text" class="form-control mb-2"
-                                                            name="KILOMETRAJE_LLEGADA_VEHICULOS"
-                                                            id="KILOMETRAJE_LLEGADA_VEHICULOS"
-                                                            placeholder="Kilometraje llegada"
-                                                            required>
+                                                    <input type="text" class="form-control mb-2"
+                                                        name="KILOMETRAJE_LLEGADA_VEHICULOS"
+                                                        id="KILOMETRAJE_LLEGADA_VEHICULOS"
+                                                        placeholder="Kilometraje llegada"
+                                                        required>
 
-                                                        <p style="font-size:14px; margin-bottom:4px;">
-                                                            <strong>Marque el nivel actual de combustible</strong>
-                                                        </p>
+                                                    <p style="font-size:14px; margin-bottom:4px;">
+                                                        <strong>Marque el nivel actual de combustible</strong>
+                                                    </p>
 
-                                                        <div style="display:flex; justify-content:center;">
-                                                            <canvas id="canvasCombustibleLlegada"
-                                                                width="360"
-                                                                height="160"
-                                                                style="border:1px solid #ccc; cursor:crosshair;">
-                                                            </canvas>
-                                                        </div>
+                                                    <div style="display:flex; justify-content:center;">
+                                                        <canvas id="canvasCombustibleLlegada"
+                                                            width="360"
+                                                            height="160"
+                                                            style="border:1px solid #ccc; cursor:crosshair;">
+                                                        </canvas>
+                                                    </div>
 
-                                                        <div style="margin-top:6px;">
-                                                            <button type="button" id="btnLimpiarCombustibleLlegada">
-                                                                Limpiar
-                                                            </button>
-                                                        </div>
+                                                    <div style="margin-top:6px;">
+                                                        <button type="button" id="btnLimpiarCombustibleLlegada">
+                                                            Limpiar
+                                                        </button>
+                                                    </div>
 
-                                                        <input type="hidden"
-                                                            name="COMBUSTIBLE_LLEGADA_VEHICULOS"
-                                                            id="COMBUSTIBLE_LLEGADA_VEHICULOS">
-                                                    </td>
+                                                    <input type="hidden"
+                                                        name="COMBUSTIBLE_LLEGADA_VEHICULOS"
+                                                        id="COMBUSTIBLE_LLEGADA_VEHICULOS">
+                                                </td>
 
 
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="col-12 mt-3">
-                                        <div class="row">
-                                            <div class="col-6 mt-2">
-                                                <label class="form-label">Fecha de regreso *</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_REGRESO_VEHICULOS" name="FECHA_REGRESO_VEHICULOS" required>
-                                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-6 mt-2">
-                                                <label class="form-label">Regreso de la unidad / horario aprox *</label>
-                                                <input type="time" id="HORAREGRESO_VEHICULOS" name="HORAREGRESO_VEHICULOS" class="form-control" required>
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-
-                                    <div class="col-12" id="FIRMA_REGRESO_VEHICULO" style="display: none;">
-                                        <div class="row">
-                                            <div class="col-6 mt-3">
-                                                <label class="form-label">Retornado por</label>
-                                                <select class="form-control" id="VERIFICA_POR" name="VERIFICA_POR" required>
-                                                    <option value="">Seleccione una opción</option>
-                                                    <optgroup label="Colaboradores">
-                                                        @foreach ($colaboradores as $recibido)
-                                                        <option value="{{ $recibido->CURP }}">
-                                                            {{ $recibido->NOMBRE_COLABORADOR }} {{ $recibido->PRIMER_APELLIDO }} {{ $recibido->SEGUNDO_APELLIDO }}
-                                                        </option>
-                                                        @endforeach
-                                                    </optgroup>
-                                                    <optgroup label="Proveedores">
-                                                        @foreach ($proveedores as $recibido)
-                                                        <option value="{{ $recibido->RFC_ALTA }}">
-                                                            {{ $recibido->NOMBRE_DIRECTORIO }}
-                                                        </option>
-                                                        @endforeach
-                                                    </optgroup>
-                                                </select>
-                                            </div>
-                                            <div class="col-6 mt-3 ">
-                                                <label class="form-label">Recibido por </label>
-                                                <input type="text" class="form-control" id="VALIDADO_POR" name="VALIDADO_POR">
-                                            </div>
-                                            <div class="col-6 mt-3 text-center">
-                                                <label class="form-label">Firma (Retornado por)</label>
-                                                <div style="border: 1px dashed #ffffffff; border-radius: 5px; padding: 10px; text-align:center;">
-                                                    <canvas id="firmaCanvas3" width="400" height="200" style="border:1px solid #ccc; cursor: crosshair;">
-                                                        Tu navegador no soporta canvas.
-                                                    </canvas>
-                                                    <br>
-                                                    <button type="button" class="btn btn-danger btn-sm mt-2" id="btnLimpiarFirma3">
-                                                        Borrar firma
-                                                    </button>
-                                                </div>
-                                                <input type="hidden" id="FIRMA_VERIFICADO_POR" name="FIRMA_VERIFICADO_POR">
-                                            </div>
-                                            <div class="col-6 mt-3 text-center">
-                                                <label class="form-label">Firma (Recibido por)</label>
-                                                <div style="border: 1px dashed #ffffffff; border-radius: 5px; padding: 10px; text-align:center;">
-                                                    <canvas id="firmaCanvas4" width="400" height="200" style="border:1px solid #ccc; cursor: crosshair;">
-                                                        Tu navegador no soporta canvas.
-                                                    </canvas>
-                                                    <br>
-                                                    <button type="button" class="btn btn-danger btn-sm mt-2" id="btnLimpiarFirma4">
-                                                        Borrar firma
-                                                    </button>
-                                                </div>
-                                                <input type="hidden" id="FIRMA_VALIDADO_POR" name="FIRMA_VALIDADO_POR">
+                                <div class="col-12 mt-3">
+                                    <div class="row">
+                                        <div class="col-6 mt-2">
+                                            <label class="form-label">Fecha de regreso *</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_REGRESO_VEHICULOS" name="FECHA_REGRESO_VEHICULOS" required>
+                                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                                             </div>
                                         </div>
+                                        <div class="col-6 mt-2">
+                                            <label class="form-label">Regreso de la unidad / horario aprox *</label>
+                                            <input type="time" id="HORAREGRESO_VEHICULOS" name="HORAREGRESO_VEHICULOS" class="form-control" required>
+                                        </div>
                                     </div>
-
-
                                 </div>
                             </div>
+
+                            <div class="col-12" id="FIRMA_REGRESO_VEHICULO" style="display: none;">
+                                <div class="row">
+                                    <div class="col-6 mt-3">
+                                        <label class="form-label">Retornado por</label>
+                                        <select class="form-control" id="VERIFICA_POR" name="VERIFICA_POR" required>
+                                            <option value="">Seleccione una opción</option>
+                                            <optgroup label="Colaboradores">
+                                                @foreach ($colaboradores as $recibido)
+                                                <option value="{{ $recibido->CURP }}">
+                                                    {{ $recibido->NOMBRE_COLABORADOR }} {{ $recibido->PRIMER_APELLIDO }} {{ $recibido->SEGUNDO_APELLIDO }}
+                                                </option>
+                                                @endforeach
+                                            </optgroup>
+                                            <optgroup label="Proveedores">
+                                                @foreach ($proveedores as $recibido)
+                                                <option value="{{ $recibido->RFC_ALTA }}">
+                                                    {{ $recibido->NOMBRE_DIRECTORIO }}
+                                                </option>
+                                                @endforeach
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 mt-3 ">
+                                        <label class="form-label">Recibido por </label>
+                                        <input type="text" class="form-control" id="VALIDADO_POR" name="VALIDADO_POR">
+                                    </div>
+                                    <div class="col-6 mt-3 text-center">
+                                        <label class="form-label">Firma (Retornado por)</label>
+                                        <div style="border: 1px dashed #ffffffff; border-radius: 5px; padding: 10px; text-align:center;">
+                                            <canvas id="firmaCanvas3" width="400" height="200" style="border:1px solid #ccc; cursor: crosshair;">
+                                                Tu navegador no soporta canvas.
+                                            </canvas>
+                                            <br>
+                                            <button type="button" class="btn btn-danger btn-sm mt-2" id="btnLimpiarFirma3">
+                                                Borrar firma
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="FIRMA_VERIFICADO_POR" name="FIRMA_VERIFICADO_POR">
+                                    </div>
+                                    <div class="col-6 mt-3 text-center">
+                                        <label class="form-label">Firma (Recibido por)</label>
+                                        <div style="border: 1px dashed #ffffffff; border-radius: 5px; padding: 10px; text-align:center;">
+                                            <canvas id="firmaCanvas4" width="400" height="200" style="border:1px solid #ccc; cursor: crosshair;">
+                                                Tu navegador no soporta canvas.
+                                            </canvas>
+                                            <br>
+                                            <button type="button" class="btn btn-danger btn-sm mt-2" id="btnLimpiarFirma4">
+                                                Borrar firma
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="FIRMA_VALIDADO_POR" name="FIRMA_VALIDADO_POR">
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-success" id="guardaBITACORA" style="display: block;">Guardar</button>
-                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success" id="guardaBITACORA" style="display: block;">Guardar</button>
+                </div>
             </form>
         </div>
     </div>
