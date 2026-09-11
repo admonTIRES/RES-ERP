@@ -36,13 +36,33 @@ class enviocomprobandepagoController extends Controller
                     'fa.RAZON_SOCIAL_ALTA',
                     'fa.RFC_ALTA'
                 )
+
+                ->selectSub(function ($query) {
+                    $query->from('relacionpagosproveedores as rp')
+                        ->select('rp.FECHA_RELACION')
+                        ->where('rp.ESTADO_APROBACION', 'Aprobada')
+                        ->whereRaw("
+                        JSON_SEARCH(
+                            rp.JSON_RELACIONES,
+                            'one',
+                            CAST(cp.ID_FORMULARIO_FACTURACION AS CHAR),
+                            NULL,
+                            '$[*].ID_FORMULARIO_FACTURACION'
+                        ) IS NOT NULL
+                    ")
+                        ->orderByDesc('rp.FECHA_RELACION')
+                        ->limit(1);
+                }, 'FECHA_RELACION')
+
                 ->where(function ($query) {
                     $query->whereNull('cp.SUBIR_RECIBO_PAGO')
                         ->orWhere('cp.SUBIR_RECIBO_PAGO', '');
                 })
+
                 ->whereExists(function ($subquery) {
                     $subquery->select(DB::raw(1))
                         ->from('relacionpagosproveedores as rp')
+                        ->where('rp.ESTADO_APROBACION', 'Aprobada')
                         ->whereRaw("
                         JSON_SEARCH(
                             rp.JSON_RELACIONES,
@@ -53,66 +73,144 @@ class enviocomprobandepagoController extends Controller
                         ) IS NOT NULL
                     ");
                 })
+
                 ->get();
+
 
             foreach ($tabla as $value) {
 
-                $value->RFC_PROVEEDOR_TEXTO = ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE') .' (' .($value->RFC_ALTA ?? $value->RFC_PROVEEDOR) .')';
+                $value->RFC_PROVEEDOR_TEXTO =
+                    ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE')
+                    . ' (' .
+                    ($value->RFC_ALTA ?? $value->RFC_PROVEEDOR)
+                    . ')';
 
-             
-                $value->BTN_SUBIR_RECIBO_PAGO = '<button type="button" class="btn btn-primary btn-custom rounded-pill SUBIR_RECIBO_PAGO" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                    data-proveedor="' . htmlspecialchars($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE',ENT_QUOTES,'UTF-8') . '" title="Subir comprobante de pago" >
+
+                $value->BTN_SUBIR_RECIBO_PAGO =
+                    '<button type="button" class="btn btn-primary btn-custom rounded-pill SUBIR_RECIBO_PAGO"
+                    data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                    data-proveedor="' . htmlspecialchars(
+                        $value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) . '"
+                    title="Subir comprobante de pago">
                     <i class="bi bi-arrow-bar-up"></i>
                 </button>';
 
+
                 if ($value->ACTIVO == 0) {
 
-                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"> <i class="bi bi-eye"></i></button>';
+                    $value->BTN_VISUALIZAR =
+                        '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                        <i class="bi bi-eye"></i>
+                    </button>';
 
-                    $value->BTN_ELIMINAR = '<label class="switch"> <input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span>
+                    $value->BTN_ELIMINAR =
+                        '<label class="switch">
+                        <input type="checkbox"
+                            class="ELIMINAR"
+                            data-id="' . $value->ID_FORMULARIO_FACTURACION . '">
+                        <span class="slider round"></span>
                     </label>';
 
                     $value->BTN_EDITAR =
-                        '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
+                        '<button type="button"
+                        class="btn btn-secondary btn-custom rounded-pill EDITAR"
+                        disabled>
+                        <i class="bi bi-ban"></i>
+                    </button>';
 
-                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+                    $value->BTN_SOPORTES =
+                        '<button
+                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes"
+                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento">
+                        <i class="bi bi-filetype-pdf"></i>
+                    </button>';
 
-                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+                    $value->BTN_FACTURA =
+                        '<button
+                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura"
+                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento">
+                        <i class="bi bi-filetype-pdf"></i>
+                    </button>';
                 } else {
 
-                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked>
-                        <span class="slider round"></span></label>';
+                    $value->BTN_ELIMINAR =
+                        '<label class="switch">
+                        <input type="checkbox"
+                            class="ELIMINAR"
+                            data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                            checked>
+                        <span class="slider round"></span>
+                    </label>';
 
-                    $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
+                    $value->BTN_EDITAR =
+                        '<button type="button"
+                        class="btn btn-warning btn-custom rounded-pill EDITAR">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>';
 
-                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+                    $value->BTN_VISUALIZAR =
+                        '<button type="button"
+                        class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
+                        <i class="bi bi-eye"></i>
+                    </button>';
 
-                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+                    $value->BTN_SOPORTES =
+                        '<button
+                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes"
+                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento">
+                        <i class="bi bi-filetype-pdf"></i>
+                    </button>';
 
-                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+                    $value->BTN_FACTURA =
+                        '<button
+                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura"
+                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento">
+                        <i class="bi bi-filetype-pdf"></i>
+                    </button>';
                 }
+
 
                 if ($value->TIPO_FACTURA == 'CONTRATO') {
-                    $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
+
+                    $value->TIPO_FACTURA_FORMATO =
+                        'Contrato (No. ' . $value->NO_CONTRATO . ')';
                 } elseif ($value->TIPO_FACTURA == 'OC') {
-                    $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción <br> (PO: ' . $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
+
+                    $value->TIPO_FACTURA_FORMATO =
+                        'Orden de Compra y Recepción <br> (PO: '
+                        . $value->NO_PO
+                        . ' | GR: '
+                        . $value->NO_GR
+                        . ')';
                 } else {
-                    $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
+
+                    $value->TIPO_FACTURA_FORMATO =
+                        $value->TIPO_FACTURA;
                 }
+
 
                 if ($value->ESTATUS_FACTURA == 1) {
 
-                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
+                    $value->ESTADO_FACTURA_TEXTO =
+                        '<span class="badge bg-success">Aprobada</span>';
                 } elseif ($value->ESTATUS_FACTURA == 2) {
-                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
+
+                    $value->ESTADO_FACTURA_TEXTO =
+                        '<span class="badge bg-danger">Rechazada</span>';
                 } else {
-                    $value->ESTADO_FACTURA_TEXTO ='<span class="badge bg-secondary">En revisión</span>';
+
+                    $value->ESTADO_FACTURA_TEXTO =
+                        '<span class="badge bg-secondary">En revisión</span>';
                 }
             }
+
 
             return response()->json([
                 'data' => $tabla,
@@ -126,8 +224,6 @@ class enviocomprobandepagoController extends Controller
             ], 500);
         }
     }
-
-
 
     public function cargarcomprobantepago(Request $request)
     {
