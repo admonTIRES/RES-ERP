@@ -642,12 +642,20 @@ var Tablafacturaproveedores = $("#Tablafacturaproveedores").DataTable({
         { data: 'BTN_SOPORTES' },
         { data: 'BTN_FACTURA' },
         { data: 'BTN_VISUALIZAR' },
-        { data: 'ESTADO_FACTURA_TEXTO' },
+       {
+            data: null,
+            render: function (data, type, row) {
+                if (row.ESTATUS_FACTURA == 2 && row.BTN_MOTIVO_RECHAZO) {
+                    return row.ESTADO_FACTURA_TEXTO + '<br>' + row.BTN_MOTIVO_RECHAZO;
+                }
+                return row.ESTADO_FACTURA_TEXTO;
+            }
+        },
         {
             data: null,
             render: function (data, type, row) {
                 if (!row.ARCHIVO_RECIBO_PAGO || row.ARCHIVO_RECIBO_PAGO.trim() === '') {
-                    return '-';
+                    return row.BTN_NO_COMPROBANTE;
                 }
                 return row.BTN_COMPROBANTE;
             }
@@ -665,6 +673,19 @@ var Tablafacturaproveedores = $("#Tablafacturaproveedores").DataTable({
 
     ]
 });
+
+
+$(document).on('click', '.ver-motivo-link', function () {
+    let texto = $(this).attr('data-motivo');
+
+    Swal.fire({
+        title: 'Motivo del rechazo',
+        html: '<div style="text-align:left;">' + texto + '</div>',
+        width: 600,
+        confirmButtonText: 'Cerrar'
+    });
+});
+
 
 
 $('#Tablafacturaproveedores').on('click', '.ver-archivo-soportes', function () {

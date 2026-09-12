@@ -17,6 +17,16 @@
         margin: 0 !important;
         padding-left: 40px !important;
     }
+
+
+    .ver-motivo-link {
+        color: #0d6efd;
+        cursor: pointer;
+        font-size: 12px;
+        display: inline-block;
+        margin-top: 4px;
+    }
+
 </style>
 
 <div class="contenedor-contenido">

@@ -244,63 +244,78 @@ class facturaproveedorController extends Controller
         ]);
     }
 
-    public function Tablafacturaproveedores()
-    {
-        try {
-            $userRFC = Auth::user()->RFC_PROVEEDOR;
+        public function Tablafacturaproveedores()
+        {
+            try {
+                $userRFC = Auth::user()->RFC_PROVEEDOR;
 
-            $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)->get();
+                $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)->get();
 
-            foreach ($tabla as $value) {
-                
-                if ($value->ACTIVO == 0) {
-                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span></label>';
-                    $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
-                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-                } else {
-                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked><span class="slider round"></span></label>';
-                    $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
-                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+                foreach ($tabla as $value) {
+                    
+                    if ($value->ACTIVO == 0) {
+                        $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+                        $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span></label>';
+                        $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
+                        $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+                        $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+                    } else {
+                        $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked><span class="slider round"></span></label>';
+                        $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
+                        $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+                        $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+                        $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
 
 
-                    $value->BTN_COMPROBANTE = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-comprobante" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+                        $value->BTN_COMPROBANTE = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-comprobante" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
 
+
+                    }
+
+
+
+                        $value->BTN_NO_COMPROBANTE = '<button type="button" class="btn btn-secondary btn-custom rounded-pill" disabled><i class="bi bi-ban"></i></button>';
+
+
+
+                    if ($value->TIPO_FACTURA == 'CONTRATO') {
+                        $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
+                    } elseif ($value->TIPO_FACTURA == 'OC') {
+                        $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: '. $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
+                    } else {
+                        $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
+                    }
+
+                    if ($value->ESTATUS_FACTURA == 1) {
+                        $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
+                        $value->BTN_MOTIVO_RECHAZO = '';
+                    } elseif ($value->ESTATUS_FACTURA == 2) {
+                        $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
+
+                        if (!empty($value->MOTIVO_RECHAZO_FACTURA)) {
+                            $motivo = htmlspecialchars($value->MOTIVO_RECHAZO_FACTURA, ENT_QUOTES, 'UTF-8');
+                            $value->BTN_MOTIVO_RECHAZO = '<span class="ver-motivo-link" data-motivo="' . $motivo . '">Ver motivo</span>';
+                        } else {
+                            $value->BTN_MOTIVO_RECHAZO = '';
+                        }
+                    } else {
+                        $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
+                        $value->BTN_MOTIVO_RECHAZO = '';
+                    }
 
                 }
 
-                if ($value->TIPO_FACTURA == 'CONTRATO') {
-                    $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
-                } elseif ($value->TIPO_FACTURA == 'OC') {
-                    $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: '. $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
-                } else {
-                    $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
-                }
-
-                if ($value->ESTATUS_FACTURA == 1) {
-                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
-                } elseif ($value->ESTATUS_FACTURA == 2) {
-                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
-                } else {
-                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
-                }
-
+                return response()->json([
+                    'data' => $tabla,
+                    'msj' => 'Información consultada correctamente'
+                ]);
+            } catch (Exception $e) {
+                return response()->json([
+                    'msj' => 'Error ' . $e->getMessage(),
+                    'data' => 0
+                ]);
             }
-
-            return response()->json([
-                'data' => $tabla,
-                'msj' => 'Información consultada correctamente'
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'msj' => 'Error ' . $e->getMessage(),
-                'data' => 0
-            ]);
         }
-    }
 
 
     public function mostrarsoportefactura($id)
