@@ -447,31 +447,6 @@ class grController extends Controller
 
 
 
-
-
-
-
-    private function generarNoGR()
-    {
-        $anio = date('y'); 
-        $prefijo = "RES-GR{$anio}-";
-
-        $ultimo = DB::table('formulario_bitacoragr')
-            ->where('NO_GR', 'like', $prefijo . '%')
-            ->orderBy('NO_GR', 'desc')
-            ->value('NO_GR');
-
-        if ($ultimo) {
-            $num = (int) substr($ultimo, -3); 
-            $nuevo = str_pad($num + 1, 3, '0', STR_PAD_LEFT);
-        } else {
-            $nuevo = "001";
-        }
-
-        return $prefijo . $nuevo;
-    }
-
-
     private function generarNoRecepcion()
     {
         $anio = date('y'); 
@@ -517,6 +492,18 @@ class grController extends Controller
 
                 if ($idGR && $idGR > 0) {
                     // ======================== EDITAR ========================
+
+
+                    $noRecepcionActual = DB::table('formulario_bitacoragr')
+                        ->where('ID_GR', $idGR)
+                        ->value('NO_RECEPCION');
+
+                    if (is_null($noRecepcionActual) || trim($noRecepcionActual) === '') {
+                        $noRecepcionActual = $this->generarNoRecepcion();
+                    }
+
+
+                    
                     DB::table('formulario_bitacoragr')
                         ->where('ID_GR', $idGR)
                         ->update([
@@ -528,7 +515,7 @@ class grController extends Controller
                             'USUARIO_ID'          => $usuarioId,
                             'GENEROGR_ID'         => $request->GENEROGR_ID,
                             'FECHA_EMISION'       => $request->DESDE_ACREDITACION,
-                            'NO_RECEPCION'        => $request->NO_RECEPCION,
+                            'NO_RECEPCION'        => $noRecepcionActual,
                             'MANDAR_USUARIO_VOBO' => $request->MANDAR_USUARIO_VOBO,
                             'VO_BO_USUARIO'       => $request->VO_BO_USUARIO,
                             'FECHA_VOUSUARIO'     => $request->FECHA_VOUSUARIO,
@@ -852,21 +839,15 @@ class grController extends Controller
     }
 
 
-
-
     /**
      * Crear GR Parcial con cantidades remanentes
      */
-   
-
 
 
     private function crearGRParcial(Request $request, $usuarioId)
     {
-        $noRecepcion = $this->generarNoRecepcion();
         $usuario = Auth::user();
         $idUsuario = $usuario->ID_USUARIO;
-
 
         $idGRParcial = DB::table('formulario_bitacoragr')->insertGetId([
             'NO_GR'            => null,
@@ -876,11 +857,11 @@ class grController extends Controller
             'USUARIO_SOLICITO' => $request->modal_usuario_nombre,
             'USUARIO_ID'       => $usuarioId,
             'GENEROGR_ID'      => $idUsuario,
-            'NO_RECEPCION'     => $noRecepcion,
             'CREATED_AT'       => now(),
         ]);
 
         foreach ($request->DESCRIPCION as $i => $desc) {
+
             if (($request->BIENS_PARCIAL[$i] ?? null) !== "Sí") {
                 continue;
             }
@@ -894,18 +875,26 @@ class grController extends Controller
                     ->value('DESCRIPCION_TIPO');
             }
 
+         
+
+            $cantidadSolicitada = (float)($request->CANTIDAD[$i] ?? 0);
+            $cantidadEntregada = (float)($request->CANTIDAD_ENTRA_ALMACEN[$i] ?? 0);
+            $cantidadPendiente = $cantidadSolicitada - $cantidadEntregada;
+
+            if ($cantidadPendiente < 0) {
+                $cantidadPendiente = 0;
+            }
+
             DB::table('formulario_bitacoragr_detalle')->insert([
-                'ID_GR'                 => $idGRParcial,
-                'DESCRIPCION'           => $desc,
-                'CANTIDAD'              => $request->CANTIDAD[$i] ?? 0, 
-                'PRECIO_UNITARIO'       => $request->PRECIO_UNITARIO[$i] ?? '',
-                // 'PRECIO_TOTAL_MR'       => $request->PRECIO_TOTAL_MR[$i] ?? '',
-                'UNIDAD'                => $request->UNIDAD[$i] ?? '',
-                'TIPO_EQUIPO'           => $tipoEquipoDesc,
+                'ID_GR'           => $idGRParcial,
+                'DESCRIPCION'     => $desc,
+                'CANTIDAD'        => $cantidadPendiente,
+                'PRECIO_UNITARIO' => $request->PRECIO_UNITARIO[$i] ?? '',
+                'UNIDAD'          => $request->UNIDAD[$i] ?? '',
+                'TIPO_EQUIPO'     => $tipoEquipoDesc,
             ]);
         }
     }
-
 
     public function consultarGR(Request $request)
     {
