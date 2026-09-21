@@ -222,7 +222,7 @@
                                 <div class="col-4">
                                     <label>Fecha *</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_APRUEBA_SOLICITUD" name="FECHA_APRUEBA_SOLICITUD" style="pointer-events:none; background-color:#e9ecef;">
+                                        <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_APRUEBA_SOLICITUD" name="FECHA_APRUEBA_SOLICITUD" style="pointer-events:none; background-color:#e9ecef;" tabindex="-1" required>
                                         <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                                     </div>
                                 </div>
@@ -251,9 +251,7 @@
                                 <label>Fecha *</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_ALMACEN_SOLICITUD" name="FECHA_ALMACEN_SOLICITUD"
-                                        style="background-color:#e9ecef;" readonly tabindex="-1" required>
-                                    <!-- <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_ALMACEN_SOLICITUD" name="FECHA_ALMACEN_SOLICITUD" required>
-                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span> -->
+                                        style="pointer-events:none; background-color:#e9ecef;" tabindex="-1" required>
                                 </div>
                             </div>
                         </div>

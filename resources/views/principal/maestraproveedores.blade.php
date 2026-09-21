@@ -122,13 +122,6 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown" style="margin-left: 8px;">
-                        {{-- <a class="nav-link BOTON" href="{{ url('/Alta') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
-                        <i class="bi bi-speedometer" style="margin-right: 5px;"></i> <span class="d-lg-none">Alta y actualización </span><span class="d-none d-lg-inline">Alta y actualización </span>
-                        </a> --}}
-                    </li>
-                </ul>
             </div>
         </div>
     </nav>

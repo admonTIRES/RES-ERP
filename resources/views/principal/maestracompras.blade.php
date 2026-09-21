@@ -48,6 +48,7 @@
     @if(request()->is('listaproveedorescriticos'))
     <!-- form_wizard_steps -->
     <link href="/assets/plugins/form_wizard_steps_bootstrap/form_wizard_style.css" rel="stylesheet">
+
     </link>
     @endif
 
@@ -443,11 +444,13 @@
                                         </li>
 
                                         <hr class="dropdown-divider">
+                                        @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
                                         <li>
                                             <a class="dropdown-item" href="{{ url('/relacionpagosaprobar') }}">
                                                 Aprobación
                                             </a>
                                         </li>
+                                        @endif
                                     </ul>
                                 </li>
                                 <hr class="dropdown-divider">

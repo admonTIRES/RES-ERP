@@ -524,36 +524,36 @@
                     </li>
                     @endif
                     @if(auth()->check() && auth()->user()->hasRoles(['Superusuario','Administrador','externo','Líder de Operaciones']))
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown" style="margin-left: 8px;">
-                            <a class="nav-link dropdown-toggle BOTON" href="#" style="color: #fff; font-weight: bold; text-decoration: none;" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-file-earmark-fill" style="margin-right: 5px;"></i>
-                                <span class="d-lg-none">Catálogos</span>
-                                <span class="d-none d-lg-inline">Catálogos</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
+                
+                    <li class="nav-item dropdown" style="margin-left: 8px;">
+                        <a class="nav-link dropdown-toggle BOTON" href="#" style="color: #fff; font-weight: bold; text-decoration: none;" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-file-earmark-fill" style="margin-right: 5px;"></i>
+                            <span class="d-lg-none">Catálogos</span>
+                            <span class="d-none d-lg-inline">Catálogos</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo']))
 
-                                <li><a class="dropdown-item" href="{{url('/catalogoppt')}}">Catálogos de PPT</a>
-                                </li>
-                                <hr class="dropdown-divider">
-                                <li><a class="dropdown-item" href="{{url('/catalogodpt')}}">Catálogos de DPT</a>
-                                </li>
-                                <hr class="dropdown-divider">
-                                <li><a class="dropdown-item" href="{{url('/catalogorequisicion')}}">Catálogos de Requisición</a>
-                                </li>
-                                <hr class="dropdown-divider">
-                                <li><a class="dropdown-item" href="{{url('/catalogogenerales')}}">Catálogos generales</a>
-                                </li>
-                                @endif
-                                @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Líder de Operaciones']))
-                                <hr class="dropdown-divider">
-                                <li><a class="dropdown-item" href="{{url('/catalogoscapacitacion')}}">Catálogos capacitación</a>
-                                </li>
-                                @endif
-                            </ul>
-                        </li>
-                    </ul>
+                            <li><a class="dropdown-item" href="{{url('/catalogoppt')}}">Catálogos de PPT</a>
+                            </li>
+                            <hr class="dropdown-divider">
+                            <li><a class="dropdown-item" href="{{url('/catalogodpt')}}">Catálogos de DPT</a>
+                            </li>
+                            <hr class="dropdown-divider">
+                            <li><a class="dropdown-item" href="{{url('/catalogorequisicion')}}">Catálogos de Requisición</a>
+                            </li>
+                            <hr class="dropdown-divider">
+                            <li><a class="dropdown-item" href="{{url('/catalogogenerales')}}">Catálogos generales</a>
+                            </li>
+                            @endif
+                            @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Líder de Operaciones']))
+                            <hr class="dropdown-divider">
+                            <li><a class="dropdown-item" href="{{url('/catalogoscapacitacion')}}">Catálogos capacitación</a>
+                            </li>
+                            @endif
+                        </ul>
+                    </li>
+                   
                     @endif
 
                     @if(auth()->check() && auth()->user()->hasRoles(['Superusuario','Administrador']))
