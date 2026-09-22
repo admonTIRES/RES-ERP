@@ -122,9 +122,6 @@
 
     <div class="card-body">
 
-
-
-
         <div class="tabla-scroll-wrapper">
             <div class="tabla-scroll-top">
                 <div class="scroll-inner"></div>
