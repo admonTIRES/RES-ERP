@@ -18,8 +18,6 @@ class enviocomprobandepagoController extends Controller
 {
 
 
-
-
     public function Tablacomprobantedepago()
     {
         try {
@@ -79,135 +77,72 @@ class enviocomprobandepagoController extends Controller
 
             foreach ($tabla as $value) {
 
-                $value->RFC_PROVEEDOR_TEXTO =
-                    ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE')
-                    . ' (' .
-                    ($value->RFC_ALTA ?? $value->RFC_PROVEEDOR)
-                    . ')';
+                $value->RFC_PROVEEDOR_TEXTO = ($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE'). ' (' .($value->RFC_ALTA ?? $value->RFC_PROVEEDOR). ')';
+
+                if (!is_null($value->FOLIO_FISCAL) && $value->FOLIO_FISCAL != '') 
+                {
+                    $numeroFactura = $value->FOLIO_FISCAL;
+                } else {
+                    $numeroFactura = $value->NO_FACTURA_EXTRANJERO;
+                }
 
 
-                $value->BTN_SUBIR_RECIBO_PAGO =
-                    '<button type="button" class="btn btn-primary btn-custom rounded-pill SUBIR_RECIBO_PAGO"
-                    data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                    data-proveedor="' . htmlspecialchars(
-                        $value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE',
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ) . '"
-                    title="Subir comprobante de pago">
-                    <i class="bi bi-arrow-bar-up"></i>
+                $value->CHECK_RECIBO_PAGO = '<input type="checkbox" class="form-check-input CHECK_RECIBO_PAGO" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                    data-rfc="' . htmlspecialchars($value->RFC_PROVEEDOR, ENT_QUOTES, 'UTF-8') . '" data-proveedor="' . htmlspecialchars($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE', ENT_QUOTES, 'UTF-8') . '" data-factura="' . htmlspecialchars($numeroFactura ?? 'SIN NÚMERO', ENT_QUOTES, 'UTF-8') . '">';
+
+
+                $value->BTN_SUBIR_RECIBO_PAGO = '<button type="button" class="btn btn-primary btn-custom rounded-pill SUBIR_RECIBO_PAGO" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                    data-rfc="' . htmlspecialchars($value->RFC_PROVEEDOR, ENT_QUOTES, 'UTF-8') . '" data-proveedor="' . htmlspecialchars($value->RAZON_SOCIAL_ALTA ?? 'SIN NOMBRE', ENT_QUOTES, 'UTF-8') . '" data-factura="' . htmlspecialchars($numeroFactura ?? 'SIN NÚMERO', ENT_QUOTES, 'UTF-8') . '" title="Subir comprobante de pago"><i class="bi bi-arrow-bar-up"></i>
                 </button>';
 
 
                 if ($value->ACTIVO == 0) {
 
-                    $value->BTN_VISUALIZAR =
-                        '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
-                        <i class="bi bi-eye"></i>
-                    </button>';
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
 
-                    $value->BTN_ELIMINAR =
-                        '<label class="switch">
-                        <input type="checkbox"
-                            class="ELIMINAR"
-                            data-id="' . $value->ID_FORMULARIO_FACTURACION . '">
-                        <span class="slider round"></span>
-                    </label>';
+                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '">
+                        <span class="slider round"></span></label>';
 
-                    $value->BTN_EDITAR =
-                        '<button type="button"
-                        class="btn btn-secondary btn-custom rounded-pill EDITAR"
-                        disabled>
-                        <i class="bi bi-ban"></i>
-                    </button>';
+                    $value->BTN_EDITAR ='<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled>
+                        <i class="bi bi-ban"></i></button>';
 
-                    $value->BTN_SOPORTES =
-                        '<button
-                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes"
-                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento">
-                        <i class="bi bi-filetype-pdf"></i>
-                    </button>';
+                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
 
-                    $value->BTN_FACTURA =
-                        '<button
-                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura"
-                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento">
-                        <i class="bi bi-filetype-pdf"></i>
-                    </button>';
+                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
                 } else {
 
-                    $value->BTN_ELIMINAR =
-                        '<label class="switch">
-                        <input type="checkbox"
-                            class="ELIMINAR"
-                            data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                            checked>
-                        <span class="slider round"></span>
-                    </label>';
+                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked>
+                        <span class="slider round"></span></label>';
 
-                    $value->BTN_EDITAR =
-                        '<button type="button"
-                        class="btn btn-warning btn-custom rounded-pill EDITAR">
-                        <i class="bi bi-pencil-square"></i>
-                    </button>';
+                    $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
 
-                    $value->BTN_VISUALIZAR =
-                        '<button type="button"
-                        class="btn btn-primary btn-custom rounded-pill VISUALIZAR">
-                        <i class="bi bi-eye"></i>
-                    </button>';
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"> <i class="bi bi-eye"></i> </button>';
 
-                    $value->BTN_SOPORTES =
-                        '<button
-                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes"
-                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento">
-                        <i class="bi bi-filetype-pdf"></i>
-                    </button>';
+                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento"> <i class="bi bi-filetype-pdf"></i></button>';
 
-                    $value->BTN_FACTURA =
-                        '<button
-                        class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura"
-                        data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
-                        title="Ver documento">
-                        <i class="bi bi-filetype-pdf"></i>
-                    </button>';
+                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"
+                        title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
                 }
 
 
                 if ($value->TIPO_FACTURA == 'CONTRATO') {
-
-                    $value->TIPO_FACTURA_FORMATO =
-                        'Contrato (No. ' . $value->NO_CONTRATO . ')';
+                    $value->TIPO_FACTURA_FORMATO ='Contrato (No. ' . $value->NO_CONTRATO . ')';
                 } elseif ($value->TIPO_FACTURA == 'OC') {
-
-                    $value->TIPO_FACTURA_FORMATO =
-                        'Orden de Compra y Recepción <br> (PO: '
-                        . $value->NO_PO
-                        . ' | GR: '
-                        . $value->NO_GR
-                        . ')';
+                    $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción <br> (PO: ' .$value->NO_PO .' | GR: ' .$value->NO_GR .')';
                 } else {
-
-                    $value->TIPO_FACTURA_FORMATO =
-                        $value->TIPO_FACTURA;
+                    $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
                 }
 
 
                 if ($value->ESTATUS_FACTURA == 1) {
-
-                    $value->ESTADO_FACTURA_TEXTO =
-                        '<span class="badge bg-success">Aprobada</span>';
+                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
                 } elseif ($value->ESTATUS_FACTURA == 2) {
-
-                    $value->ESTADO_FACTURA_TEXTO =
-                        '<span class="badge bg-danger">Rechazada</span>';
+                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
                 } else {
-
-                    $value->ESTADO_FACTURA_TEXTO =
-                        '<span class="badge bg-secondary">En revisión</span>';
+                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
                 }
             }
 
@@ -225,107 +160,225 @@ class enviocomprobandepagoController extends Controller
         }
     }
 
+
     public function cargarcomprobantepago(Request $request)
     {
         try {
 
-            $factura = facturacionModel::where('ID_FORMULARIO_FACTURACION', $request->ID_FORMULARIO_FACTURACION)->first();
+            $idsFacturas = $request->input('IDS_FORMULARIOS');
 
-            if (!$factura) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Factura no encontrada.'
-                ], 404);
+            if (is_string($idsFacturas)) {
+                $idsFacturas = json_decode($idsFacturas, true);
             }
 
-            if (!is_null($factura->SUBIR_RECIBO_PAGO) && $factura->SUBIR_RECIBO_PAGO != '' && $factura->SUBIR_RECIBO_PAGO != 0) {
+            if (!is_array($idsFacturas) || count($idsFacturas) == 0) {
+
+                if ($request->ID_FORMULARIO_FACTURACION) {
+
+                    $idsFacturas = [$request->ID_FORMULARIO_FACTURACION];
+                } else {
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No se recibieron las facturas seleccionadas.'
+                    ], 422);
+                }
+            }
+
+
+            $idsFacturas = array_values(array_unique(array_filter($idsFacturas)));
+
+
+            if (count($idsFacturas) == 0) {
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'Esta factura ya tiene un comprobante de pago.'
-                ]);
+                    'message' => 'Debe seleccionar al menos una factura.'
+                ], 422);
             }
+
 
             if (!$request->hasFile('ARCHIVO_RECIBO_PAGO')) {
+
                 return response()->json([
                     'success' => false,
                     'message' => 'No se seleccionó ningún comprobante de pago.'
-                ]);
+                ], 422);
             }
 
-            $proveedor = DB::table('formulario_altaproveedor')->where('RFC_ALTA', $factura->RFC_PROVEEDOR)->orderBy('ID_FORMULARIO_ALTA', 'desc')->first();
-
-            $rfc = $factura->RFC_PROVEEDOR;
             $file = $request->file('ARCHIVO_RECIBO_PAGO');
-            $folderPath = "proveedores/{$rfc}/Facturas/{$factura->ID_FORMULARIO_FACTURACION}/Recibo de pago/{$factura->ID_FORMULARIO_FACTURACION}";
-            $fileName = $file->getClientOriginalName();
-            $filePath = $file->storeAs($folderPath, $fileName);
 
-            if (!$filePath) {
+            if (!$file->isValid()) {
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'No fue posible guardar el comprobante de pago.'
-                ]);
+                    'message' => 'El archivo seleccionado no es válido.'
+                ], 422);
             }
 
-            $factura->ARCHIVO_RECIBO_PAGO = $filePath;
-            $factura->SUBIR_RECIBO_PAGO = 1;
-            $factura->save();
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if ($extension !== 'pdf') {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El comprobante de pago debe estar en formato PDF.'
+                ], 422);
+            }
+
+
+            $facturas = facturacionModel::whereIn('ID_FORMULARIO_FACTURACION',$idsFacturas)->get();
+
+            if ($facturas->count() != count($idsFacturas)) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Una o más facturas seleccionadas no fueron encontradas.'
+                ], 404);
+            }
+
+
+            $rfcs = $facturas->pluck('RFC_PROVEEDOR')->unique()->values();
+
+
+            if ($rfcs->count() > 1) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Solo puede enviar un comprobante para facturas del mismo proveedor.'
+                ], 422);
+            }
+
+
+            foreach ($facturas as $factura) {
+
+                if (!is_null($factura->SUBIR_RECIBO_PAGO) && $factura->SUBIR_RECIBO_PAGO != '' && $factura->SUBIR_RECIBO_PAGO != 0) 
+                {
+                    return response()->json([
+                        'success' => false,
+                        'message' =>
+                        'La factura con ID ' .$factura->ID_FORMULARIO_FACTURACION .' ya tiene un comprobante de pago.'
+                    ], 422);
+                }
+            }
+
+
+            $rfc = $facturas->first()->RFC_PROVEEDOR;
+
+            $proveedor = DB::table('formulario_altaproveedor')
+                ->where('RFC_ALTA', $rfc)
+                ->orderBy('ID_FORMULARIO_ALTA','desc')
+                ->first();
+
+
+            $fileName = $file->getClientOriginalName();
+
+
+            $rutasArchivos = [];
+
+
+            foreach ($facturas as $factura) {
+
+                $folderPath = "proveedores/{$rfc}/Facturas/" .$factura->ID_FORMULARIO_FACTURACION ."/Recibo de pago/" .$factura->ID_FORMULARIO_FACTURACION;
+                $filePath = $file->storeAs($folderPath,$fileName);
+
+
+                if (!$filePath) {
+
+                    return response()->json([
+                        'success' => false,
+                        'message' =>
+                        'No fue posible guardar el comprobante de pago de la factura ' .$factura->ID_FORMULARIO_FACTURACION .'.'
+                    ], 500);
+                }
+
+                $factura->ARCHIVO_RECIBO_PAGO = $filePath;
+                $factura->SUBIR_RECIBO_PAGO = 1;
+                $factura->save();
+                $rutasArchivos[] = $filePath;
+            }
+
+
+            if (count($idsFacturas) > 1) {
+
+                DB::table('comprobantes_pago_agrupados')->insert([
+                        'RFC_PROVEEDOR' => $rfc,
+                        'IDS_FACTURAS' => json_encode(array_map('intval',$idsFacturas)),
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+            }
+
 
             if (!$proveedor) {
+
                 return response()->json([
                     'success' => true,
                     'correo_enviado' => false,
-                    'message' => 'El comprobante se guardó correctamente, pero no se encontró la información del proveedor.'
+                    'message' => 'El comprobante se guardó correctamente en las facturas seleccionadas, pero no se encontró la información del proveedor.'
                 ]);
             }
 
+
             if (!$proveedor->CORREO_DIRECTORIO) {
+
                 return response()->json([
                     'success' => true,
                     'correo_enviado' => false,
-                    'message' => 'El comprobante se guardó correctamente, pero el proveedor no tiene correo registrado.'
+                    'message' => 'El comprobante se guardó correctamente en las facturas seleccionadas, pero el proveedor no tiene correo registrado.'
                 ]);
             }
+
 
             try {
 
-                $rutaArchivoCompleta = storage_path('app/' . $filePath);
+                $rutaArchivoCompleta = storage_path('app/' .$rutasArchivos[0]);
 
-                Mail::send('emails.enviarcomprobantepago', [
-                    'proveedor' => $proveedor,
-                    'factura' => $factura
-                ], function ($mail) use ($proveedor, $rutaArchivoCompleta, $fileName) {
 
-                    $mail->to($proveedor->CORREO_DIRECTORIO)->subject('Comprobante de pago disponible');
-
-                    $mail->attach($rutaArchivoCompleta, [
-                        'as' => $fileName,
-                        'mime' => 'application/pdf'
-                    ]);
-                });
+                Mail::send('emails.enviarcomprobantepago',
+                    [
+                        'proveedor' => $proveedor,
+                        'facturas' => $facturas
+                    ],
+                    function ($mail) use ($proveedor,$rutaArchivoCompleta,$fileName) 
+                    {
+                        $mail->to($proveedor->CORREO_DIRECTORIO)->subject('Comprobante de pago disponible');
+                        $mail->attach( $rutaArchivoCompleta,
+                            [
+                                'as' => $fileName,
+                                'mime' => 'application/pdf'
+                            ]
+                        );
+                    }
+                );
             } catch (\Exception $correoError) {
 
                 return response()->json([
                     'success' => true,
                     'correo_enviado' => false,
-                    'message' => 'El comprobante se guardó correctamente, pero ocurrió un error al enviar el correo.',
-                    'error_correo' => $correoError->getMessage()
+                    'message' =>
+                    'El comprobante se guardó correctamente en las facturas seleccionadas, pero ocurrió un error al enviar el correo.',
+                    'error_correo' =>
+                    $correoError->getMessage()
                 ]);
             }
 
+
             return response()->json([
+
                 'success' => true,
                 'correo_enviado' => true,
-                'message' => 'El comprobante de pago se guardó y el correo se envió correctamente.'
+                'message' => count($facturas) == 1 ? 'El comprobante de pago se guardó y el correo se envió correctamente.': 'El comprobante de pago se guardó correctamente en las ' .count($facturas) .' facturas y el correo se envió correctamente.'
             ]);
         } catch (\Exception $e) {
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error al subir el comprobante de pago: ' . $e->getMessage()
+                'message' => 'Error al subir el comprobante de pago: ' .$e->getMessage()
             ], 500);
         }
     }
+
 
 
     public function store(Request $request)

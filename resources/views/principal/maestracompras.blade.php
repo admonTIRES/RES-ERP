@@ -797,7 +797,7 @@
     @endif
 
     @if(request()->is('comprobantepagos'))
-    <script src="/assets/js_sitio/proveedor/comprobantepago.js?v=1"></script>
+    <script src="/assets/js_sitio/proveedor/comprobantepago.js?v=2"></script>
     @endif
 
     @if(request()->is('listarep'))

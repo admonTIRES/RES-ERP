@@ -1,21 +1,28 @@
 @extends('principal.maestracompras')
 
 @section('contenido')
-
 <div class="contenedor-contenido">
+
     <ol class="breadcrumb mt-2" style="display: flex; justify-content: center; align-items: center;">
         <h3 style="color: #ffffff; margin: 0;">
             <i class="bi bi-file-earmark-fill"></i>&nbsp;&nbsp;Comprobante de pago
         </h3>
-
     </ol>
 
+    <div class="d-flex justify-content-center mb-3">
+        <button type="button" class="btn btn-primary btn-custom rounded-pill" id="botonEnviarComprobanteSeleccionadas" disabled>
+            <i class="bi bi-send"></i>
+            Enviar comprobante
+        </button>
+    </div>
+
     <div class="card-body">
-        <table id="Tablacomprobantedepago" class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
+        <table id="Tablacomprobantedepago"
+            class="table table-hover bg-white table-bordered text-center w-100 TableCustom">
         </table>
     </div>
-</div>
 
+</div>
 
 
 
@@ -151,36 +158,52 @@
             <form id="formSubirReciboPago" enctype="multipart/form-data">
                 {{ csrf_field() }}
 
-
                 <div class="modal-header">
                     <h5 class="modal-title"> Subir comprobante de pago</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
+
                 <div class="modal-body">
+
                     <input type="hidden" id="ID_FACTURA_RECIBO_PAGO" name="ID_FORMULARIO_FACTURACION">
+                    <input type="hidden" id="IDS_FORMULARIOS" name="IDS_FORMULARIOS">
+
                     <div class="alert alert-info">
                         <strong>Proveedor:</strong>
-                        <span id="NOMBRE_PROVEEDOR_RECIBO"></span>
+                        <span id="NOMBRE_PROVEEDOR_RECIBO"> </span>
                     </div>
+
                     <div class="mb-3">
-                        <label for="ARCHIVO_RECIBO_PAGO" class="form-label">
-                            Comprobante de pago en PDF
-                        </label>
+                        <label class="form-label"> Facturas seleccionadas</label>
+                        <div id="LISTA_FACTURAS_RECIBO_PAGO" class="border rounded p-3 bg-light"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"> Comprobante de pago en PDF</label>
                         <input type="file" class="form-control" id="ARCHIVO_RECIBO_PAGO" name="ARCHIVO_RECIBO_PAGO" accept="application/pdf,.pdf" required>
+
                         <div class="form-text">
                             Únicamente se permite un archivo PDF.
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-success" id="botonGuardarReciboPago">Subir comprobante</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+
+                    <button type="submit" class="btn btn-success" id="botonGuardarReciboPago">
+                        Subir comprobante
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+
 
 
 @endsection

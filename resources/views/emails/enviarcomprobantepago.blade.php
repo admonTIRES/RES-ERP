@@ -1,7 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
+
+
     <meta charset="UTF-8">
 
     <style>
@@ -54,7 +57,19 @@
             margin-top: 15px;
         }
 
-        .factura-box p {
+        .factura-item {
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .factura-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .factura-item p {
             margin: 6px 0;
         }
 
@@ -112,59 +127,84 @@
             font-weight: bold;
         }
     </style>
+
 </head>
 
 <body>
 
+
     <div class="container">
-        <div class="header">
-            Comprobante de pago disponible
-        </div>
+        <div class="header">Comprobante de pago disponible</div>
+
         <div class="content">
             <p>
                 Estimado proveedor
-                <b>{{ $proveedor->RAZON_SOCIAL_ALTA }}</b>,
+                <b>
+                    {{ $proveedor->RAZON_SOCIAL_ALTA }}
+                </b>,
             </p>
-            <div class="estatus-comprobante">
-                Su comprobante de pago ha sido cargado correctamente en nuestro sistema.
-            </div>
+
+            <div class="estatus-comprobante"> Su comprobante de pago ha sido cargado correctamente en nuestro sistema.</div>
+
+            @if(count($facturas) == 1)
             <p>
                 Le informamos que el comprobante correspondiente a la siguiente factura se encuentra disponible.
             </p>
+            @else
+            <p>
+                Le informamos que el comprobante corresponde a las siguientes facturas y se encuentra disponible.
+            </p>
+
+            @endif
+
             <div class="factura-box">
-                @if($proveedor->TIPO_PERSONA_ALTA == 1)
-                <p>
-                    <b>Folio fiscal:</b><br>
-                    {{ $factura->FOLIO_FISCAL }}
-                </p>
-                @else
-                <p>
-                    <b>No. de factura:</b><br>
-                    {{ $factura->NO_FACTURA_EXTRANJERO }}
-                </p>
-                @endif
+
+                @foreach($facturas as $factura)
+
+                <div class="factura-item">
+
+                    @if($proveedor->TIPO_PERSONA_ALTA == 1)
+                    <p>
+                        <b>
+                            Folio fiscal:
+                        </b>
+                        <br>
+                        {{ $factura->FOLIO_FISCAL }}
+                    </p>
+                    @else
+                    <p>
+                        <b>
+                            No. de factura:
+                        </b>
+                        <br>
+                        {{ $factura->NO_FACTURA_EXTRANJERO }}
+                    </p>
+                    @endif
+                </div>
+                @endforeach
             </div>
+
             <div class="archivo-box">
                 El comprobante de pago en formato PDF se encuentra adjunto en este correo y se encuentra disponible en el sistema.
             </div>
+
             <div class="button">
-                <a href="https://results-erp.results-in-performance.com/login">
-                    Ingresar al sistema
+                <a href="https://results-erp.results-in-performance.com/login">Ingresar al sistema
                 </a>
             </div>
+
             <div class="no-reply">
-                NO responda a este correo electrónico.<br>
-                Si tiene alguna duda o aclaración contacte a:<br>
-                <a href="mailto:vlicona@results-in-performance.com">
-                    vlicona@results-in-performance.com
-                </a>
+                NO responda a este correo electrónico.
+                <br>
+                Si tiene alguna duda o aclaración contacte a:
+                <br>
+                <a href="mailto:vlicona@results-in-performance.com">vlicona@results-in-performance.com</a>
             </div>
         </div>
+
         <div class="footer">
             © {{ date('Y') }}
-            <a href="https://results-in-performance.com">
-                Results In Performance
-            </a>
+            <a href="https://results-in-performance.com">Results In Performance</a>
             <br>
             Todos los derechos reservados.
         </div>
