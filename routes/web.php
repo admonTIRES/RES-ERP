@@ -1201,6 +1201,8 @@ Route::get('/generarCodigoAF', [inventarioController::class, 'generarCodigoAF'])
 Route::get('/generarCodigoANF', [inventarioController::class, 'generarCodigoANF']);
 Route::get('/cantidadEquipoReadonly', [inventarioController::class, 'cantidadEquipoReadonly']);
 Route::get('/metricasInventario', [inventarioController::class, 'metricasInventario']);
+Route::get('/descargarInventario', [inventarioController::class, 'descargarInventario']);
+
 
 /// TABLA INVENTARIO INACIVO 
 Route::get('/inventarioinactivo', [inventarioController::class, 'indexinactivo']);
