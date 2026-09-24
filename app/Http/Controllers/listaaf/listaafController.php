@@ -58,6 +58,7 @@ class listaafController extends Controller
                 $value->FOTO_EQUIPO_HTML = '<img src="/equipofoto/' . $value->ID_FORMULARIO_INVENTARIO . '" alt="Foto" class="img-fluid" width="50" height="60">';
 
 
+                // CAMPOS
                 $campos = [
                     'DESCRIPCION_EQUIPO',
                     'MARCA_EQUIPO',
@@ -81,30 +82,27 @@ class listaafController extends Controller
                     'DETALLAR_ARTICULOS'
                 ];
 
-
                 $completo = true;
                 foreach ($campos as $campo) {
-                    if (empty($value->$campo)) {
+                    if (!isset($value->$campo) || $value->$campo === '') {
                         $completo = false;
                         break;
                     }
                 }
 
-                if (!is_null($value->LIMITEMINIMO_EQUIPO) && $value->LIMITEMINIMO_EQUIPO !== '') {
-                    $cantidad = (float)$value->CANTIDAD_EQUIPO;
-                    $minimo = (float)$value->LIMITEMINIMO_EQUIPO;
+                $cantidad = (float)$value->CANTIDAD_EQUIPO;
+                $minimo = (float)$value->LIMITEMINIMO_EQUIPO;
+                $tieneMinimo = (!is_null($value->LIMITEMINIMO_EQUIPO) && $value->LIMITEMINIMO_EQUIPO !== '' && $minimo > 0);
 
-                    if ($cantidad <= $minimo) {
-                        $value->ROW_CLASS = 'bg-amarrillo-suave';
-                    } else {
-                        $value->ROW_CLASS = $completo ? 'bg-verde-suave' : 'bg-rojo-suave';
-                    }
-                } else {
-                    $value->ROW_CLASS = $completo ? 'bg-verde-suave' : 'bg-rojo-suave';
-                }
 
                 if ($value->ASIGNADO == 1) {
                     $value->ROW_CLASS = 'bg-naranja-suave';
+                } elseif ($tieneMinimo && $cantidad <= $minimo) {
+                    $value->ROW_CLASS = 'bg-amarrillo-suave';
+                } elseif ($cantidad == 0) {
+                    $value->ROW_CLASS = $completo ? 'bg-rojo-suave' : 'bg-azul-suave';
+                } else {
+                    $value->ROW_CLASS = $completo ? 'bg-verde-suave' : 'bg-azul-suave';
                 }
             }
 
