@@ -474,7 +474,7 @@
     @endif
 
     @if(request()->is('listadeafn'))
-    <script src="/assets/js_sitio/listadeafn/listaafn.js?v=8"></script>
+    <script src="/assets/js_sitio/listadeafn/listaafn.js?v=9"></script>
     @endif
 
     @if(request()->is('listadecomercializacion'))

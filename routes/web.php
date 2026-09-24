@@ -1250,13 +1250,12 @@ Route::post('/SalidalmacenSave', [salidalmacenController::class, 'store']);
 //==============================================    LISTA DE AF   ============================================== 
 Route::get('/listadeaf', [listaafController::class, 'index']);
 Route::get('/Tablalistadeaf', [listaafController::class, 'Tablalistadeaf']);
-
 Route::get('/descargarListaActivoFijo', [listaafController::class, 'descargarListaActivoFijo']);
-
 
 //==============================================    LISTA DE AFN   ============================================== 
 Route::get('/listadeafn', [listaafnController::class, 'index']);
 Route::get('/Tablalistadeafn', [listaafnController::class, 'Tablalistadeafn']);
+Route::get('/descargarListaActivoNoFijo', [listaafnController::class, 'descargarListaActivoNoFijo']);
 
 //==============================================    LISTA DE COMERCIALIZACION   ==============================================
 Route::get('/listadecomercializacion', [listacomercializacionController::class, 'index']);
