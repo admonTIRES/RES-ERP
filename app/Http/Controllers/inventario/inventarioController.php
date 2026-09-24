@@ -15,6 +15,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 
 use App\Models\inventario\inventarioModel;
@@ -24,6 +29,11 @@ use App\Models\inventario\entradasinventarioModel;
 use App\Models\proveedor\altaproveedorModel;
 use App\Models\proveedor\proveedortempModel;
 use App\Models\inventario\detallearticuloModel;
+
+
+
+
+
 
 use DB;
 
@@ -569,6 +579,135 @@ class inventarioController extends Controller
     }
 
 
+
+    public function descargarInventario()
+    {
+         $inventario = inventarioModel::all();
+
+
+
+
+        $spreadsheet = new Spreadsheet();
+        $hoja = $spreadsheet->getActiveSheet();
+        $hoja->setTitle('Activo fijo');
+
+        // Fila 1: título.
+        $hoja->mergeCells('A1:H1');
+        $hoja->setCellValue('A1', 'Inventario');
+        $hoja->getStyle('A1:H1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '1F4E78'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+        $hoja->getRowDimension(1)->setRowHeight(30);
+
+        // Fila 2: encabezados.
+        $encabezados = [
+            'A2' => '#',
+            'B2' => 'Descripción',
+            'C2' => 'Cantidad',
+            'D2' => 'Marca',
+            'E2' => 'Modelo',
+            'F2' => 'Serie',
+            'G2' => 'Ubicación',
+            'H2' => 'Código de identificación',
+        ];
+
+        foreach ($encabezados as $celda => $titulo) {
+            $hoja->setCellValue($celda, $titulo);
+        }
+
+        $hoja->getStyle('A2:H2')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '4472C4'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
+        $hoja->getRowDimension(2)->setRowHeight(32);
+
+        // Fila 3 en adelante: artículos.
+        $fila = 3;
+        $numero = 1;
+
+        foreach ($inventario as $articulo) {
+            $cantidad = (string) ($articulo->CANTIDAD_EQUIPO ?? '');
+            $unidad = trim((string) ($articulo->UNIDAD_MEDIDA ?? ''));
+
+            $cantidadConUnidad = $cantidad;
+            if ($unidad !== '') {
+                $cantidadConUnidad .= ' (' . $unidad . ')';
+            }
+
+            $hoja->setCellValue("A{$fila}", $numero);
+            $hoja->setCellValueExplicit("B{$fila}", (string) ($articulo->DESCRIPCION_EQUIPO ?? ''), DataType::TYPE_STRING);
+            $hoja->setCellValueExplicit("C{$fila}", $cantidadConUnidad, DataType::TYPE_STRING);
+            $hoja->setCellValueExplicit("D{$fila}", (string) ($articulo->MARCA_EQUIPO ?? ''), DataType::TYPE_STRING);
+            $hoja->setCellValueExplicit("E{$fila}", (string) ($articulo->MODELO_EQUIPO ?? ''), DataType::TYPE_STRING);
+            $hoja->setCellValueExplicit("F{$fila}", (string) ($articulo->SERIE_EQUIPO ?? ''), DataType::TYPE_STRING);
+            $hoja->setCellValueExplicit("G{$fila}", (string) ($articulo->UBICACION_EQUIPO ?? ''), DataType::TYPE_STRING);
+            $hoja->setCellValueExplicit("H{$fila}", (string) ($articulo->CODIGO_EQUIPO ?? ''), DataType::TYPE_STRING);
+
+            $fila++;
+            $numero++;
+        }
+
+        $ultimaFila = max(2, $fila - 1);
+
+        $hoja->getStyle("A2:H{$ultimaFila}")->getBorders()->getAllBorders()->setBorderStyle(
+            Border::BORDER_THIN
+        );
+
+        $hoja->getStyle("A3:A{$ultimaFila}")->getAlignment()->setHorizontal(
+            Alignment::HORIZONTAL_CENTER
+        );
+
+        $anchos = [
+            'A' => 8,
+            'B' => 45,
+            'C' => 22,
+            'D' => 22,
+            'E' => 22,
+            'F' => 25,
+            'G' => 32,
+            'H' => 30,
+        ];
+
+        foreach ($anchos as $columna => $ancho) {
+            $hoja->getColumnDimension($columna)->setWidth($ancho);
+        }
+
+        $hoja->freezePane('A3');
+        $hoja->setAutoFilter("A2:H{$ultimaFila}");
+
+        $nombreArchivo = 'Lista activo fijo.xlsx';
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer, $spreadsheet) {
+            $writer->save('php://output');
+            $spreadsheet->disconnectWorksheets();
+        }, $nombreArchivo, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
 
     /////////////////////////////////// ENTRADA INVENTARIO /////////////////////////////////// 
 

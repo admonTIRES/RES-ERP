@@ -135,6 +135,15 @@
         </div>
     </ol>
 
+
+    <div class="d-flex justify-content-center mb-3">
+        <button type="button" class="btn btn-success btn-custom rounded-pill" id="btnDescargarInventario">
+            Descargar inventario
+        </button>
+    </div>
+
+
+
     <div class="row justify-content-center align-items-end mb-4">
         <div class="col-md-6 text-center">
             <label>Ubicación</label>

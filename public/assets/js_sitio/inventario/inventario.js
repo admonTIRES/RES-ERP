@@ -1704,3 +1704,61 @@ $('#Tabladetallearticulos').on('change', 'td>label>input.ELIMINAR', function () 
 
     eliminarDatoTabla(data, [Tabladetallearticulos], 'inventarioDelete');
 });
+
+
+
+
+$('#btnDescargarInventario').on('click', function () {
+    var boton = $(this);
+
+    boton.prop('disabled', true);
+
+    Swal.fire({
+        title: 'Preparando Excel',
+        text: 'Espere un momento...',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: function () {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: '/descargarInventario',
+        type: 'GET',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (archivo) {
+            var urlArchivo = URL.createObjectURL(archivo);
+            var enlace = document.createElement('a');
+
+            enlace.href = urlArchivo;
+            enlace.download = 'Inventario.xlsx';
+
+            document.body.appendChild(enlace);
+            enlace.click();
+            enlace.remove();
+
+            setTimeout(function () {
+                URL.revokeObjectURL(urlArchivo);
+            }, 60000);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Excel listo',
+                text: 'La descarga ha comenzado.'
+            });
+        },
+        error: function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No fue posible generar el Excel. Inténtalo de nuevo.'
+            });
+        },
+        complete: function () {
+            boton.prop('disabled', false);
+        }
+    });
+});
