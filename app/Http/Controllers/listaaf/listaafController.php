@@ -57,6 +57,7 @@ class listaafController extends Controller
 
                 $value->FOTO_EQUIPO_HTML = '<img src="/equipofoto/' . $value->ID_FORMULARIO_INVENTARIO . '" alt="Foto" class="img-fluid" width="50" height="60">';
 
+
                 $campos = [
                     'DESCRIPCION_EQUIPO',
                     'MARCA_EQUIPO',
@@ -67,11 +68,17 @@ class listaafController extends Controller
                     'UBICACION_EQUIPO',
                     'ESTADO_EQUIPO',
                     'FECHA_ADQUISICION',
-                    'PROVEEDOR_EQUIPO',
                     'UNITARIO_EQUIPO',
                     'TOTAL_EQUIPO',
                     'TIPO_EQUIPO',
-                    'OBSERVACION_EQUIPO'
+                    'OBSERVACION_EQUIPO',
+                    'FOTO_EQUIPO',
+                    'UNIDAD_MEDIDA',
+                    'ITEM_CRITICO',
+                    'PROVEEDOR_ALTA',
+                    'REQUIERE_ARTICULO',
+                    'LIMITEMINIMO_EQUIPO',
+                    'DETALLAR_ARTICULOS'
                 ];
 
 

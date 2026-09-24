@@ -337,6 +337,7 @@ $('#Tablalistainfraestructura tbody').on('click', 'td>button.EDITAR', function (
     var row = Tablalistainfraestructura.row(tr);
     ID_FORMULARIO_INVENTARIO = row.data().ID_FORMULARIO_INVENTARIO;
 
+  
     inventario_id = row.data().ID_FORMULARIO_INVENTARIO;
 
     $("#tab1-info").click();
@@ -851,98 +852,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-////////////////////////////////// SUBIR EXCEL //////////////////////////////////
-
-$(document).ready(function () {
-
-    $('#boton_cargarExcelEquipos').on('click', function (e) {
-        e.preventDefault();
-
-        $('#divCargaEquipos').css('display', 'none');
-        $('#alertaVerificacion').css('display', 'none');
-
-        $('#formExcelEquipos')[0].reset();
-
-        $('#modal_excel_equipo').modal({
-            backdrop: false,
-            keyboard: true
-        }).modal('show');
-    });
-
-    $('#modal_excel_equipo').on('hidden.bs.modal', function () {
-        $('#formExcelEquipos')[0].reset();
-        $('#divCargaEquipos').css('display', 'none');
-        $('#alertaVerificacion').css('display', 'none');
-    });
-
- $("#botonCargarExcelEquipos").click(function (e) {
-    e.preventDefault();
-
-    let form = $('#formExcelEquipos')[0];
-    let formData = new FormData(form);
-    formData.append("api", 2);
-
-    $.ajax({
-        url: "/InventarioSave",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        beforeSend: function () {
-            $('#botonCargarExcelEquipos').prop('disabled', true);
-            $('#divCargaEquipos').css('display', 'block');
-        },
-        success: function (dato) {
-            $('#botonCargarExcelEquipos').prop('disabled', false);
-            $('#divCargaEquipos').css('display', 'none');
-
-            if (dato.code == 200) {
-                Tablalistainfraestructura.ajax.reload();
-                $('#modal_excel_equipo').modal('hide');
-
-                swal({
-                    title: "Equipos cargados",
-                    text: dato.msj,
-                    type: "success",
-                    showConfirmButton: true
-                });
-            } else {
-                swal({
-                    title: "Error",
-                    text: dato.msj,
-                    type: "error",
-                    showConfirmButton: true
-                });
-            }
-        },
-        error: function (xhr) {
-            $('#botonCargarExcelEquipos').prop('disabled', false);
-            $('#divCargaEquipos').css('display', 'none');
-
-            swal({
-                title: "Error",
-                text: xhr.responseText,
-                type: "error"
-            });
-        }
-    });
-});
-
-
-  $('#excelEquipos').change(function() {
-        if ($(this).val()) {
-            
-            $('#alertaVerificacion').css('display', 'block');
-
-        } else {
-            $('#alertaVerificacion').css('display', 'none');
-            
-        }
-    });
-
-});
-
 ////////////////////////////////// DOCUMENTOS ARTICULO //////////////////////////////////
 
 
@@ -987,7 +896,7 @@ function guardarRequiereItem() {
     .then(data => {
 
         if (data.code === 1) {
-            Tablalistainfraestructura.ajax.reload(null, false);
+            Tablainventario.ajax.reload(null, false);
         } else {
             alert('Error al guardar calibración');
         }
@@ -1376,7 +1285,7 @@ function guardarDetallearticulo() {
     .then(data => {
 
         if (data.code === 1) {
-            Tablalistainfraestructura.ajax.reload(null, false);
+            Tablainventario.ajax.reload(null, false);
         } else {
             alert('Error al guardar calibración');
         }
@@ -1387,8 +1296,6 @@ function guardarDetallearticulo() {
     });
 }
 
-
-//////////////////////////////////  DETALLE ARTICULO //////////////////////////////////
 
 const Modaldetalle= document.getElementById('miModal_DETALLE')
 Modaldetalle.addEventListener('hidden.bs.modal', event => {

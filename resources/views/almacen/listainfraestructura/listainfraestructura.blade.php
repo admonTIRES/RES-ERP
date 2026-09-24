@@ -118,8 +118,6 @@
 
 
 
-
-
 <div id="Modal_inventario" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
     <div class="modal-dialog modal-lg" style="min-width: 86%;">
         <div class="modal-content">
@@ -518,87 +516,6 @@
 </div>
 
 <!-- ============================================================== -->
-<!-- MODAL CARGAR EXCEL  -->
-<!-- ============================================================== -->
-
-<div id="modal_excel_equipo" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form enctype="multipart/form-data" method="post" name="formExcelEquipos" id="formExcelEquipos">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Carga de Equipos por medio de un Excel</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        {!! csrf_field() !!}
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label> Documento Excel *</label>
-                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                                    <div class="form-control" data-trigger="fileinput" id="input_file_excel_documento_equipo">
-                                        <i class="fa fa-file fileinput-exists"></i>
-                                        <span class="fileinput-filename"></span>
-                                    </div>
-                                    <span class="input-group-text btn btn-secondary btn-file">
-                                        <span class="fileinput-new">Seleccione</span>
-                                        <span class="fileinput-exists">Cambiar</span>
-                                        <input type="file" accept=".xls,.xlsx" name="excelEquipos" id="excelEquipos" required>
-                                    </span>
-                                    <a href="#" class="input-group-text btn btn-secondary fileinput-exists" data-dismiss="fileinput">Quitar</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- <div class="row mx-2" id="alertaVerificacion" style="display:none">
-                        <p class="text-danger">
-                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                            Por favor, asegúrese de que el archivo Excel contenga la fecha en el formato válido:
-                            <b>'2024-01-01'</b> (no se admiten fechas con texto) y también que el campo
-                            <b>tipo</b> contenga únicamente uno de los siguientes valores, escritos <b>tal y como están</b>:
-                            <u>Consumible</u>, <u>AF</u>, <u>ANF</u>, <u>Comercialización</u>,
-                            <u>Material para curso</u>, <u>EPP</u>, <u>Vehículos</u>, <u>Donación</u>.
-                        </p>
-                    </div> -->
-
-                    <div class="row mx-2" id="alertaVerificacion" style="display:none">
-                        <p class="text-danger">
-                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                            Por favor, asegúrese de que el archivo Excel contenga la fecha en el formato válido:
-                            <b>'2024-01-01'</b> (no se admiten fechas con texto) y también que el campo
-                            <b>tipo</b> contenga únicamente uno de los siguientes valores, escritos <b>tal y como están</b>:
-                            @foreach($tipoinventario as $tipo)
-                            <u>{{ $tipo->DESCRIPCION_TIPO }}</u>@if(!$loop->last),@endif
-                            @endforeach
-                            .
-                        </p>
-                    </div>
-
-                    <div class="row mt-3" id="divCargaEquipos" style="display: none;">
-
-                        <div class="col-12 text-center">
-                            <h2>Cargando equipos espere un momento...</h2>
-                        </div>
-                        <div class="col-12 text-center">
-                            <i class='fa fa-spin fa-spinner fa-5x'></i>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-
-
-                    <button type="submit" class="btn btn-success" id="botonCargarExcelEquipos">Guardar</button>
-
-
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================================== -->
 <!-- MODAL DOCUMENTACION  -->
 <!-- ============================================================== -->
 
@@ -760,6 +677,7 @@
         </div>
     </div>
 </div>
+
 
 
 @endsection

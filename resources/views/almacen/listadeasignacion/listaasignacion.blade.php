@@ -115,12 +115,9 @@
             </div>
         </div>
     </div>
-
-
 </div>
 
-
-<div id="Modal_inventario" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="Modal_inventario" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
     <div class="modal-dialog modal-lg" style="min-width: 86%;">
         <div class="modal-content">
             <form method="post" enctype="multipart/form-data" id="formularioINVENTARIO" style="background-color: #ffffff;">
@@ -221,7 +218,6 @@
                                                 </div>
                                                 <div class="col-12 mt-2" id="DATOS_VEHICULOS" style="display: none;">
                                                     <div class="row">
-
                                                         <div class="col-6 mt-2">
                                                             <div class="form-group">
                                                                 <label>Placas *</label>
@@ -518,8 +514,6 @@
     </div>
 </div>
 
-
-
 <!-- ============================================================== -->
 <!-- MODAL DOCUMENTACION  -->
 <!-- ============================================================== -->
@@ -641,7 +635,7 @@
 
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Nombre componente</label>
-                                <input type="text" class="form-control" name="NOMBRE_COMPONENTE" id="NOMBRE_COMPONENTE">
+                                <input type="text" class="form-control" name="NOMBRE_COMPONENTE" id="NOMBRE_COMPONENTE" required>
                             </div>
 
                             <div class="col-md-3 mb-3">
@@ -651,7 +645,7 @@
 
                             <div class="col-md-2 mb-3">
                                 <label class="form-label">Cantidad </label>
-                                <input type="number" class="form-control" name="CANTIDAD_DETALLE" id="CANTIDAD_DETALLE">
+                                <input type="number" class="form-control" name="CANTIDAD_DETALLE" id="CANTIDAD_DETALLE" required>
                             </div>
 
                             <div class="col-md-2 mb-3">
@@ -682,5 +676,6 @@
         </div>
     </div>
 </div>
+
 
 @endsection
