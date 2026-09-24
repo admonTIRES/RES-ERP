@@ -470,7 +470,7 @@
     @endif
 
     @if(request()->is('listadeaf'))
-    <script src="/assets/js_sitio/listadeaf/listaaf.js?v=8"></script>
+    <script src="/assets/js_sitio/listadeaf/listaaf.js?v=9"></script>
     @endif
 
     @if(request()->is('listadeafn'))

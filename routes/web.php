@@ -1251,6 +1251,9 @@ Route::post('/SalidalmacenSave', [salidalmacenController::class, 'store']);
 Route::get('/listadeaf', [listaafController::class, 'index']);
 Route::get('/Tablalistadeaf', [listaafController::class, 'Tablalistadeaf']);
 
+Route::get('/descargarListaActivoFijo', [listaafController::class, 'descargarListaActivoFijo']);
+
+
 //==============================================    LISTA DE AFN   ============================================== 
 Route::get('/listadeafn', [listaafnController::class, 'index']);
 Route::get('/Tablalistadeafn', [listaafnController::class, 'Tablalistadeafn']);

@@ -84,6 +84,15 @@
     </ol>
 
 
+
+    <div class="d-flex justify-content-center mb-3">
+        <button type="button" class="btn btn-success btn-custom rounded-pill" id="btnDescargarActivoFijo">
+            Descargar lista de activo fijo
+        </button>
+    </div>
+
+
+
     <div class="card-body">
         <div class="tabla-scroll-wrapper">
             <div class="tabla-scroll-top">
