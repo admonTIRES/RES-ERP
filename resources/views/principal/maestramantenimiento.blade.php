@@ -290,7 +290,8 @@
                         </li>
                     </ul>
                     @endif
-                    @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Técnico en mantenimiento junior','Asistente de planeación y logística']))
+                    
+                    <!-- @if(auth()->user()->hasRoles(['Superusuario','Administrador','externo','Técnico en mantenimiento junior','Asistente de planeación y logística']))
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown" style="margin-left: -2px;">
                             <a class="nav-link BOTON" href="{{ url('/reportesalidamtto') }}" style="color: #fff; font-weight: bold; text-decoration: none; ">
@@ -298,7 +299,7 @@
                             </a>
                         </li>
                     </ul>
-                    @endif
+                    @endif -->
 
                 </ul>
             </div>

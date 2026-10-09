@@ -2,9 +2,11 @@
 
 
 var Tablareciborep = $("#Tablareciborep").DataTable({
-   language: {
+
+    language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
     },
+
     scrollX: true,
     autoWidth: false,
     responsive: false,
@@ -12,80 +14,176 @@ var Tablareciborep = $("#Tablareciborep").DataTable({
     searching: true,
     filtering: true,
     lengthChange: true,
-    info: true,   
+    info: true,
     scrollY: false,
     scrollCollapse: false,
-    fixedHeader: false,    
+    fixedHeader: false,
     destroy: true,
+
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
+
     ajax: {
+
         dataType: 'json',
         data: {},
         method: 'GET',
         cache: false,
         url: '/Tablareciborep',
+
         beforeSend: function () {
             mostrarCarga();
         },
+
         complete: function () {
-            Tablareciborep.columns.adjust().draw(); 
+            Tablareciborep.columns.adjust();
             ocultarCarga();
         },
+
         error: function (jqXHR, textStatus, errorThrown) {
+            ocultarCarga();
             alertErrorAJAX(jqXHR, textStatus, errorThrown);
         },
+
         dataSrc: 'data'
     },
+
     order: [[0, 'asc']],
+
     columns: [
-        { 
-            data: null,
-            render: function(data, type, row, meta) {
-                return meta.row + 1; 
-            }
-        },
-        { data: 'RFC_PROVEEDOR_TEXTO' },
-        { data: 'TIPO_FACTURA_FORMATO' },
+
         {
             data: null,
-            render: function (data, type, row) {
-                if (row.FOLIO_FISCAL === null || row.FOLIO_FISCAL === '') {
-                    return row.NO_FACTURA_EXTRANJERO;
-                }
-                return row.FOLIO_FISCAL;
+            render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
             }
         },
+
         {
-            data: null,
-            render: function (data, type, row) {
-                if (row.FECHA_FACTURA === null || row.FECHA_FACTURA === '') {
-                    return row.FECHA_FACTURA_EXTRANJERO;
-                }
-                return row.FECHA_FACTURA;
-            }
-        },
-         {
-            data: 'created_at',
+            data: 'RFC_PROVEEDOR_TEXTO',
             render: function (data) {
-                if (!data) return '';
-                return data.substring(0, 10);
+                return $('<div>').text(data || '').html();
             }
         },
-        { data: 'BTN_FACTURA' },
+
+        {
+            data: 'TIPO_FACTURA_FORMATO'
+        },
+
         {
             data: null,
+
             render: function (data, type, row) {
-                if (!row.ARCHIVO_REP || row.ARCHIVO_REP.trim() === '') {
+
+                if (row.ES_GRUPO) {
+
+                    return row.FACTURAS_AGRUPADAS.map(function (factura) {
+
+                        return '<div class="mb-2">' +
+                            $('<div>').text(factura.numero || 'Sin número').html() +
+                            '</div>';
+
+                    }).join('');
+                }
+
+                return $('<div>')
+                    .text(row.FOLIO_FISCAL || row.NO_FACTURA_EXTRANJERO || '')
+                    .html();
+            }
+        },
+
+        {
+            data: null,
+
+            render: function (data, type, row) {
+
+                if (row.ES_GRUPO) {
+
+                    return row.FACTURAS_AGRUPADAS.map(function (factura) {
+
+                        return '<div class="mb-2">' +
+                            $('<div>').text(factura.fecha || '').html() +
+                            '</div>';
+
+                    }).join('');
+                }
+
+                return $('<div>')
+                    .text(row.FECHA_FACTURA || row.FECHA_FACTURA_EXTRANJERO || '')
+                    .html();
+            }
+        },
+
+        {
+            data: null,
+
+            render: function (data, type, row) {
+
+                if (row.ES_GRUPO) {
+
+                    return row.FACTURAS_AGRUPADAS.map(function (factura) {
+
+                        return '<div class="mb-2">' +
+                            $('<div>').text(
+                                factura.created_at
+                                    ? String(factura.created_at).substring(0, 10)
+                                    : ''
+                            ).html() +
+                            '</div>';
+
+                    }).join('');
+                }
+
+                return row.created_at
+                    ? String(row.created_at).substring(0, 10)
+                    : '';
+            }
+        },
+
+        {
+            data: null,
+
+            render: function (data, type, row) {
+
+                return row.FACTURAS_AGRUPADAS.map(function (factura) {
+
+                    if (!factura.factura_pdf) {
+                        return '<div class="mb-2">N/A</div>';
+                    }
+
+                    return '<div class="mb-2">' +
+                        '<button type="button" ' +
+                        'class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" ' +
+                        'data-id="' + factura.id + '" ' +
+                        'title="Ver factura">' +
+                        '<i class="bi bi-filetype-pdf"></i>' +
+                        '</button>' +
+                        '</div>';
+
+                }).join('');
+            }
+        },
+
+        {
+            data: null,
+
+            render: function (data, type, row) {
+
+                if (!row.ARCHIVO_REP || !String(row.ARCHIVO_REP).trim()) {
                     return 'N/A';
                 }
+
                 return row.BTN_REP;
             }
         },
-        { data: 'BTN_VISUALIZAR' },
-        { data: 'BTN_VOBO' },
+
+        {
+            data: 'BTN_VOBO'
+        }
+
     ],
+
     columnDefs: [
-        { targets: 0, title: '#', className: 'all  text-center' },
+        { targets: 0, title: '#', className: 'all text-center' },
         { targets: 1, title: 'Proveedor', className: 'all text-center nombre-column' },
         { targets: 2, title: 'Factura por', className: 'all text-center nombre-column' },
         { targets: 3, title: 'No. Factura', className: 'all text-center nombre-column' },
@@ -93,51 +191,56 @@ var Tablareciborep = $("#Tablareciborep").DataTable({
         { targets: 5, title: 'Fecha de recepción', className: 'all text-center nombre-column' },
         { targets: 6, title: 'Factura', className: 'all text-center' },
         { targets: 7, title: 'Archivo REP', className: 'all text-center' },
-        { targets: 8, title: 'Visualizar', className: 'all text-center' },
-        { targets: 9, title: 'Estatus', className: 'all text-center' },
+        { targets: 8, title: 'Estatus', className: 'all text-center' }
     ],
-     infoCallback: function (settings, start, end, max, total, pre) {
+
+    infoCallback: function (settings, start, end, max, total, pre) {
         return `Total de ${total} registros`;
-    },
+    }
+
 });
+
 
 
 
 $('#Tablareciborep').on('click', '.ver-archivo-rep', function () {
-    var tr = $(this).closest('tr');
-    var row = Tablareciborep.row(tr).data();
+
     var id = $(this).data('id');
 
-    if (!id || !row.ARCHIVO_REP || row.ARCHIVO_REP.trim() === "") {
+    if (!id) {
+
         Swal.fire({
             icon: 'warning',
             title: 'Sin documento',
-            text: 'Este registro no tiene documento.',
+            text: 'Este registro no tiene documento.'
         });
+
         return;
     }
 
-    var url = '/mostrareciboelectronico/' + id;
-    window.open(url, '_blank');
+    window.open('/mostrareciboelectronico/' + id, '_blank');
+
 });
 
 $('#Tablareciborep').on('click', '.ver-archivo-factura', function () {
-    var tr = $(this).closest('tr');
-    var row = Tablareciborep.row(tr).data();
+
     var id = $(this).data('id');
 
-    if (!id || !row.FACTURA_PDF || row.FACTURA_PDF.trim() === "") {
+    if (!id) {
+
         Swal.fire({
             icon: 'warning',
             title: 'Sin documento',
-            text: 'Este registro no tiene documento.',
+            text: 'Este registro no tiene documento.'
         });
+
         return;
     }
 
-    var url = '/mostrarfactura/' + id;
-    window.open(url, '_blank');
+    window.open('/mostrarfactura/' + id, '_blank');
+
 });
+
 
 
 
@@ -252,127 +355,210 @@ function toggleCamposFactura(tipo) {
 
 
 
-$(document).on('click', '.aprobar-rep', function () {
 
-    let id = $(this).data('id');
+
+
+
+$('#Tablareciborep').on('click', '.aprobar-rep', function () {
+
+    var row = Tablareciborep.row($(this).closest('tr')).data();
+
+    if (!row) {
+        return;
+    }
+
+    var ids = row.IDS_FACTURAS_GRUPO;
 
     Swal.fire({
+
         title: '¿Aceptar Recibo Electrónico de Pago?',
-        text: 'El Recibo Electrónico de Pago será aprobado.',
+
+        text: ids.length > 1
+            ? 'Se aprobará el REP de las ' + ids.length + ' facturas agrupadas.'
+            : 'El Recibo Electrónico de Pago será aprobado.',
+
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
 
-        if (result.isConfirmed) {
+    }).then(function (result) {
 
-            $.ajax({
-                url: '/aprobarRechazarREP',
-                type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    id: id,
-                    estatus: 1
-                },
-                success: function (resp) {
+        if (!result.isConfirmed) {
+            return;
+        }
 
-                    if (resp.success) {
+        Swal.fire({
+            title: 'Espere un momento',
+            text: 'Estamos aprobando el REP y notificando al proveedor.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: function () {
+                Swal.showLoading();
+            }
+        });
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Recibo Electrónico de Pago aprobado',
-                            text: resp.message
-                        });
+        $.ajax({
 
-                        Tablareciborep.ajax.reload();
+            url: '/aprobarRechazarREP',
+            type: 'POST',
 
-                    } else {
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                ids: ids,
+                estatus: 1
+            },
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: resp.message
-                        });
-                    }
-                },
-                error: function (xhr) {
+            success: function (resp) {
+
+                Swal.close();
+
+                if (resp.success) {
+
+                    Swal.fire({
+                        icon: resp.advertencia ? 'warning' : 'success',
+                        title: 'Recibo Electrónico de Pago aprobado',
+                        text: resp.advertencia
+                            ? resp.message + '. ' + resp.advertencia
+                            : resp.message
+                    });
+
+                    Tablareciborep.ajax.reload(null, false);
+
+                } else {
 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Ocurrió un error al aprobar el Recibo Electrónico de Pago.'
+                        text: resp.message
                     });
                 }
-            });
-        }
+            },
+
+            error: function (xhr) {
+
+                Swal.close();
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON && xhr.responseJSON.message
+                        ? xhr.responseJSON.message
+                        : 'Ocurrió un error al aprobar el REP.'
+                });
+            }
+        });
     });
 });
 
 
-$(document).on('click', '.rechazar-rep', function () {
 
-    let id = $(this).data('id');
+
+$('#Tablareciborep').on('click', '.rechazar-rep', function () {
+
+    var row = Tablareciborep.row($(this).closest('tr')).data();
+
+    if (!row) {
+        return;
+    }
+
+    var ids = row.IDS_FACTURAS_GRUPO;
 
     Swal.fire({
+
         title: 'Rechazar Recibo Electrónico de Pago',
+
+        text: ids.length > 1
+            ? 'Se rechazará el REP de las ' + ids.length + ' facturas agrupadas.'
+            : 'Se rechazará el Recibo Electrónico de Pago.',
+
         input: 'textarea',
+
         inputPlaceholder: 'Escriba el motivo del rechazo...',
+
         inputAttributes: {
             'aria-label': 'Motivo del rechazo'
         },
+
         showCancelButton: true,
         confirmButtonText: 'Rechazar',
         cancelButtonText: 'Cancelar',
-        inputValidator: (value) => {
+
+        inputValidator: function (value) {
 
             if (!value || !value.trim()) {
                 return 'Debe escribir el motivo del rechazo';
             }
         }
-    }).then((result) => {
 
-        if (result.isConfirmed) {
+    }).then(function (result) {
 
-            $.ajax({
-                url: '/aprobarRechazarREP',
-                type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    id: id,
-                    estatus: 2,
-                    justificacion: result.value
-                },
-                success: function (resp) {
+        if (!result.isConfirmed) {
+            return;
+        }
 
-                    if (resp.success) {
+        Swal.fire({
+            title: 'Espere un momento',
+            text: 'Estamos rechazando el REP y notificando al proveedor.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: function () {
+                Swal.showLoading();
+            }
+        });
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Recibo Electrónico de Pago rechazado',
-                            text: resp.message
-                        });
+        $.ajax({
 
-                        Tablareciborep.ajax.reload();
+            url: '/aprobarRechazarREP',
+            type: 'POST',
 
-                    } else {
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                ids: ids,
+                estatus: 2,
+                justificacion: result.value
+            },
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: resp.message
-                        });
-                    }
-                },
-                error: function (xhr) {
+            success: function (resp) {
+
+                Swal.close();
+
+                if (resp.success) {
+
+                    Swal.fire({
+                        icon: resp.advertencia ? 'warning' : 'success',
+                        title: 'Recibo Electrónico de Pago rechazado',
+                        text: resp.advertencia
+                            ? resp.message + '. ' + resp.advertencia
+                            : resp.message
+                    });
+
+                    Tablareciborep.ajax.reload(null, false);
+
+                } else {
 
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Ocurrió un error al rechazar el Recibo Electrónico de Pago.'
+                        text: resp.message
                     });
                 }
-            });
-        }
+            },
+
+            error: function (xhr) {
+
+                Swal.close();
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON && xhr.responseJSON.message
+                        ? xhr.responseJSON.message
+                        : 'Ocurrió un error al rechazar el REP.'
+                });
+            }
+        });
     });
 });

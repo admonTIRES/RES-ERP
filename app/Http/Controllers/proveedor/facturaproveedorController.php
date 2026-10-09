@@ -30,6 +30,7 @@ use App\Models\proveedor\facturacionModel;
 
 
 
+use Illuminate\Support\Facades\Validator;
 
 
 class facturaproveedorController extends Controller
@@ -244,136 +245,15 @@ class facturaproveedorController extends Controller
         ]);
     }
 
-        public function Tablafacturaproveedores()
-        {
-            try {
-                $userRFC = Auth::user()->RFC_PROVEEDOR;
-
-                $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)->get();
-
-                foreach ($tabla as $value) {
-                    
-                    if ($value->ACTIVO == 0) {
-                        $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-                        $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span></label>';
-                        $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
-                        $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-                        $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-                    } else {
-                        $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked><span class="slider round"></span></label>';
-                        $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
-                        $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
-                        $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-                        $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-
-
-                        $value->BTN_COMPROBANTE = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-comprobante" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-
-
-                    }
-
-
-
-                        $value->BTN_NO_COMPROBANTE = '<button type="button" class="btn btn-secondary btn-custom rounded-pill" disabled><i class="bi bi-ban"></i></button>';
-
-
-
-                    if ($value->TIPO_FACTURA == 'CONTRATO') {
-                        $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
-                    } elseif ($value->TIPO_FACTURA == 'OC') {
-                        $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: '. $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
-                    } else {
-                        $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
-                    }
-
-                    if ($value->ESTATUS_FACTURA == 1) {
-                        $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
-                        $value->BTN_MOTIVO_RECHAZO = '';
-                    } elseif ($value->ESTATUS_FACTURA == 2) {
-                        $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
-
-                        if (!empty($value->MOTIVO_RECHAZO_FACTURA)) {
-                            $motivo = htmlspecialchars($value->MOTIVO_RECHAZO_FACTURA, ENT_QUOTES, 'UTF-8');
-                            $value->BTN_MOTIVO_RECHAZO = '<span class="ver-motivo-link" data-motivo="' . $motivo . '">Ver motivo</span>';
-                        } else {
-                            $value->BTN_MOTIVO_RECHAZO = '';
-                        }
-                    } else {
-                        $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
-                        $value->BTN_MOTIVO_RECHAZO = '';
-                    }
-
-                }
-
-                return response()->json([
-                    'data' => $tabla,
-                    'msj' => 'Información consultada correctamente'
-                ]);
-            } catch (Exception $e) {
-                return response()->json([
-                    'msj' => 'Error ' . $e->getMessage(),
-                    'data' => 0
-                ]);
-            }
-        }
-
-
-    public function mostrarsoportefactura($id)
-    {
-        $archivo = facturacionModel::findOrFail($id)->DOCUMENTOS_SOPORTE_FACTURA;
-        return Storage::response($archivo);
-    }
-
-    public function mostrarfactura($id)
-    {
-        $archivo = facturacionModel::findOrFail($id)->FACTURA_PDF;
-        return Storage::response($archivo);
-    }
-
-
-
-    public function mostrareciboelectronico($id)
-    {
-        $archivo = facturacionModel::findOrFail($id)->ARCHIVO_REP;
-        return Storage::response($archivo);
-    }
-
-
-
-    /////// RECIBO ELECTRIONICO DE PAGO 
-
-
-    public function Tablacargarrecp()
+    public function Tablafacturaproveedores()
     {
         try {
             $userRFC = Auth::user()->RFC_PROVEEDOR;
 
-            // $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)
-            //     ->where('ESTATUS_FACTURA', 1)
-            //     ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
-            //     ->where(function ($query) {
-            //         $query->whereNull('SUBIR_REP')
-            //             ->orWhere('SUBIR_REP', 0);
-            //     })
-            //     ->where('SUBIR_RECIBO_PAGO', 1) 
-            //     ->get();
-
-
-            $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)
-                ->where('ESTATUS_FACTURA', 1)
-                ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
-                ->where('SUBIR_RECIBO_PAGO', 1)
-                ->where(function ($query) {
-                    $query->where(function ($q) {
-                        $q->whereNull('SUBIR_REP')
-                            ->orWhere('SUBIR_REP', 0);
-                    })
-                        ->orWhere('ESTATUS_REP', 2);
-                })
-                ->get();
+            $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)->get();
 
             foreach ($tabla as $value) {
-
+                
                 if ($value->ACTIVO == 0) {
                     $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
                     $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span></label>';
@@ -382,27 +262,48 @@ class facturaproveedorController extends Controller
                     $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
                 } else {
                     $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked><span class="slider round"></span></label>';
-                    $value->BTN_EDITAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill CARGARREP"><i class="bi bi-arrow-bar-up"></i></button>';
+                    $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
                     $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
                     $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
                     $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+
+
+                    $value->BTN_COMPROBANTE = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-comprobante" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
+
+
                 }
+
+
+
+                    $value->BTN_NO_COMPROBANTE = '<button type="button" class="btn btn-secondary btn-custom rounded-pill" disabled><i class="bi bi-ban"></i></button>';
+
+
 
                 if ($value->TIPO_FACTURA == 'CONTRATO') {
                     $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
                 } elseif ($value->TIPO_FACTURA == 'OC') {
-                    $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: ' . $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
+                    $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: '. $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
                 } else {
                     $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
                 }
 
                 if ($value->ESTATUS_FACTURA == 1) {
                     $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
+                    $value->BTN_MOTIVO_RECHAZO = '';
                 } elseif ($value->ESTATUS_FACTURA == 2) {
                     $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
+
+                    if (!empty($value->MOTIVO_RECHAZO_FACTURA)) {
+                        $motivo = htmlspecialchars($value->MOTIVO_RECHAZO_FACTURA, ENT_QUOTES, 'UTF-8');
+                        $value->BTN_MOTIVO_RECHAZO = '<span class="ver-motivo-link" data-motivo="' . $motivo . '">Ver motivo</span>';
+                    } else {
+                        $value->BTN_MOTIVO_RECHAZO = '';
+                    }
                 } else {
                     $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
+                    $value->BTN_MOTIVO_RECHAZO = '';
                 }
+
             }
 
             return response()->json([
@@ -418,6 +319,616 @@ class facturaproveedorController extends Controller
     }
 
 
+    public function mostrarsoportefactura($id)
+    {
+        $archivo = facturacionModel::findOrFail($id)->DOCUMENTOS_SOPORTE_FACTURA;
+        return Storage::response($archivo);
+    }
+
+    public function mostrarfactura($id)
+    {
+        $archivo = facturacionModel::findOrFail($id)->FACTURA_PDF;
+        return Storage::response($archivo);
+    }
+
+
+    public function mostrareciboelectronico($id)
+    {
+        $archivo = facturacionModel::findOrFail($id)->ARCHIVO_REP;
+        return Storage::response($archivo);
+    }
+
+
+
+    /////// RECIBO ELECTRIONICO DE PAGO 
+
+
+
+    // public function Tablacargarrecp()
+    // {
+    //     try {
+
+    //         $userRFC = Auth::user()->RFC_PROVEEDOR;
+
+    //         $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)
+    //             ->where('ESTATUS_FACTURA', 1)
+    //             ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
+    //             ->where('SUBIR_RECIBO_PAGO', 1)
+    //             ->where(function ($query) {
+    //                 $query->where(function ($q) {
+    //                     $q->whereNull('SUBIR_REP')
+    //                         ->orWhere('SUBIR_REP', 0);
+    //                 })
+    //                     ->orWhere('ESTATUS_REP', 2);
+    //             })
+    //             ->get();
+
+    //         $grupos = DB::table('comprobantes_pago_agrupados')
+    //             ->where('RFC_PROVEEDOR', $userRFC)
+    //             ->get();
+
+    //         $facturasProcesadas = [];
+
+    //         $resultado = collect();
+
+    //         foreach ($grupos as $grupo) {
+
+    //             $idsGrupo = json_decode($grupo->IDS_FACTURAS, true);
+
+    //             if (!is_array($idsGrupo)) {
+    //                 continue;
+    //             }
+
+    //             $facturasGrupo = $tabla->filter(function ($factura) use ($idsGrupo, $facturasProcesadas) {
+
+    //                 return in_array(
+    //                     $factura->ID_FORMULARIO_FACTURACION,
+    //                     $idsGrupo
+    //                 ) && !in_array(
+    //                     $factura->ID_FORMULARIO_FACTURACION,
+    //                     $facturasProcesadas
+    //                 );
+    //             })->values();
+
+    //             if ($facturasGrupo->count() < 2) {
+    //                 continue;
+    //             }
+
+    //             $facturaPrincipal = clone $facturasGrupo->first();
+
+    //             $facturaPrincipal->ES_GRUPO = true;
+
+    //             $facturaPrincipal->ID_GRUPO_REP = $grupo->ID_COMPROBANTE_AGRUPADO;
+
+    //             $facturaPrincipal->IDS_FACTURAS_GRUPO = $facturasGrupo
+    //                 ->pluck('ID_FORMULARIO_FACTURACION')
+    //                 ->values()
+    //                 ->all();
+
+    //             $facturaPrincipal->FACTURAS_AGRUPADAS = $facturasGrupo->map(function ($factura) {
+
+    //                 return [
+    //                     'id' => $factura->ID_FORMULARIO_FACTURACION,
+    //                     'numero' => !empty($factura->FOLIO_FISCAL)
+    //                         ? $factura->FOLIO_FISCAL
+    //                         : $factura->NO_FACTURA_EXTRANJERO
+    //                 ];
+    //             })->values()->all();
+
+    //             $resultado->push($facturaPrincipal);
+
+    //             foreach ($facturasGrupo as $factura) {
+    //                 $facturasProcesadas[] = $factura->ID_FORMULARIO_FACTURACION;
+    //             }
+    //         }
+
+    //         foreach ($tabla as $factura) {
+
+    //             if (in_array(
+    //                 $factura->ID_FORMULARIO_FACTURACION,
+    //                 $facturasProcesadas
+    //             )) {
+    //                 continue;
+    //             }
+
+    //             $factura->ES_GRUPO = false;
+
+    //             $factura->ID_GRUPO_REP = null;
+
+    //             $factura->IDS_FACTURAS_GRUPO = [
+    //                 $factura->ID_FORMULARIO_FACTURACION
+    //             ];
+
+    //             $factura->FACTURAS_AGRUPADAS = [
+    //                 [
+    //                     'id' => $factura->ID_FORMULARIO_FACTURACION,
+    //                     'numero' => !empty($factura->FOLIO_FISCAL)
+    //                         ? $factura->FOLIO_FISCAL
+    //                         : $factura->NO_FACTURA_EXTRANJERO
+    //                 ]
+    //             ];
+
+    //             $resultado->push($factura);
+    //         }
+
+    //         foreach ($resultado as $value) {
+
+    //             if ($value->ACTIVO == 0) {
+
+    //                 $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+
+    //                 $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span></label>';
+
+    //                 $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
+
+    //                 $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+
+    //                 $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+    //             } else {
+
+    //                 $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked><span class="slider round"></span></label>';
+
+    //                 $value->BTN_EDITAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill CARGARREP"><i class="bi bi-arrow-bar-up"></i></button>';
+
+    //                 $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+
+    //                 $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+
+    //                 $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+    //             }
+
+    //             if ($value->TIPO_FACTURA == 'CONTRATO') {
+
+    //                 $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
+    //             } elseif ($value->TIPO_FACTURA == 'OC') {
+
+    //                 $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: ' . $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
+    //             } else {
+
+    //                 $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
+    //             }
+
+    //             if ($value->ESTATUS_FACTURA == 1) {
+
+    //                 $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
+    //             } elseif ($value->ESTATUS_FACTURA == 2) {
+
+    //                 $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
+    //             } else {
+
+    //                 $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'data' => $resultado->values(),
+    //             'msj' => 'Información consultada correctamente'
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'msj' => 'Error ' . $e->getMessage(),
+    //             'data' => []
+    //         ]);
+    //     }
+    // }
+
+
+
+
+    public function Tablacargarrecp()
+    {
+        try {
+
+            $userRFC = Auth::user()->RFC_PROVEEDOR;
+
+            $tabla = facturacionModel::where('RFC_PROVEEDOR', $userRFC)
+                ->where('ESTATUS_FACTURA', 1)
+                ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
+                ->where('SUBIR_RECIBO_PAGO', 1)
+                ->where(function ($query) {
+                    $query->where(function ($q) {
+                        $q->whereNull('SUBIR_REP')
+                            ->orWhere('SUBIR_REP', 0);
+                    })
+                        ->orWhere('ESTATUS_REP', 2);
+                })
+                ->get();
+
+            $grupos = DB::table('comprobantes_pago_agrupados')
+                ->where('RFC_PROVEEDOR', $userRFC)
+                ->orderBy('ID_COMPROBANTE_AGRUPADO', 'asc')
+                ->get();
+
+            $facturasPorId = $tabla->keyBy('ID_FORMULARIO_FACTURACION');
+
+            $facturasProcesadas = [];
+
+            $resultado = collect();
+
+            foreach ($grupos as $grupo) {
+
+                $idsGrupo = json_decode($grupo->IDS_FACTURAS, true);
+
+                if (!is_array($idsGrupo)) {
+                    continue;
+                }
+
+                $facturasGrupo = collect();
+
+                foreach ($idsGrupo as $idFactura) {
+
+                    $idFactura = (int) $idFactura;
+
+                if ($facturasPorId->has($idFactura) && !in_array($idFactura, $facturasProcesadas)) 
+                    {
+                    $facturasGrupo->push($facturasPorId->get($idFactura));
+                    }
+                }
+
+                if ($facturasGrupo->count() < 2) {
+                    continue;
+                }
+
+                $facturaPrincipal = clone $facturasGrupo->first();
+
+                $facturaPrincipal->ES_GRUPO = true;
+
+                $facturaPrincipal->ID_GRUPO_REP = $grupo->ID_COMPROBANTE_AGRUPADO;
+
+                $facturaPrincipal->IDS_FACTURAS_GRUPO = $facturasGrupo
+                    ->pluck('ID_FORMULARIO_FACTURACION')
+                    ->values()
+                    ->all();
+
+                $facturaPrincipal->TOTAL_FACTURA = round(
+                    $facturasGrupo->sum(function ($factura) {
+                        return (float) $factura->TOTAL_FACTURA;
+                    }),2
+                );
+
+                $facturaPrincipal->FACTURAS_AGRUPADAS = $facturasGrupo
+                    ->map(function ($factura) {
+                        return [
+                            'id' => $factura->ID_FORMULARIO_FACTURACION,
+                            'numero' => !empty($factura->FOLIO_FISCAL) ? $factura->FOLIO_FISCAL : $factura->NO_FACTURA_EXTRANJERO,
+                            'total' => $factura->TOTAL_FACTURA
+                        ];
+                    })
+                    ->values()
+                    ->all();
+
+                $resultado->push($facturaPrincipal);
+
+                foreach ($facturasGrupo as $factura) {
+                    $facturasProcesadas[] = (int) $factura->ID_FORMULARIO_FACTURACION;
+                }
+            }
+
+            foreach ($tabla as $factura) {
+
+                $idFactura = (int) $factura->ID_FORMULARIO_FACTURACION;
+
+                if (in_array($idFactura, $facturasProcesadas)) {
+                    continue;
+                }
+
+                $factura->ES_GRUPO = false;
+                $factura->ID_GRUPO_REP = null;
+                $factura->IDS_FACTURAS_GRUPO = [$idFactura];
+                $factura->FACTURAS_AGRUPADAS = [
+                    [
+                        'id' => $idFactura,
+                        'numero' => !empty($factura->FOLIO_FISCAL) ? $factura->FOLIO_FISCAL : $factura->NO_FACTURA_EXTRANJERO,
+                        'total' => $factura->TOTAL_FACTURA
+                    ]
+                ];
+
+                $resultado->push($factura);
+            }
+
+            foreach ($resultado as $value) {
+
+                if ($value->ACTIVO == 0) {
+
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+
+                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '"><span class="slider round"></span></label>';
+
+                    $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
+
+                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+
+                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+                } else {
+
+                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" checked><span class="slider round"></span></label>';
+
+                    $value->BTN_EDITAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill CARGARREP"><i class="bi bi-arrow-bar-up"></i></button>';
+
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+
+                    $value->BTN_SOPORTES = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-soportes" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+
+                    $value->BTN_FACTURA = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $value->ID_FORMULARIO_FACTURACION . '" title="Ver documento"><i class="bi bi-filetype-pdf"></i></button>';
+                }
+
+                if ($value->TIPO_FACTURA == 'CONTRATO') {
+
+                    $value->TIPO_FACTURA_FORMATO = 'Contrato (No. ' . $value->NO_CONTRATO . ')';
+                } elseif ($value->TIPO_FACTURA == 'OC') {
+
+                    $value->TIPO_FACTURA_FORMATO = 'Orden de Compra y Recepción (PO: ' . $value->NO_PO . ' | GR: ' . $value->NO_GR . ')';
+                } else {
+
+                    $value->TIPO_FACTURA_FORMATO = $value->TIPO_FACTURA;
+                }
+
+                if ($value->ESTATUS_FACTURA == 1) {
+
+                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-success">Aprobada</span>';
+                } elseif ($value->ESTATUS_FACTURA == 2) {
+
+                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-danger">Rechazada</span>';
+                } else {
+
+                    $value->ESTADO_FACTURA_TEXTO = '<span class="badge bg-secondary">En revisión</span>';
+                }
+
+                if ($value->ES_GRUPO) {
+
+                    $idsFacturas = $value->IDS_FACTURAS_GRUPO;
+
+                    $facturasDelGrupo = $tabla->whereIn('ID_FORMULARIO_FACTURACION',$idsFacturas);
+
+                    $todasActivas = $facturasDelGrupo->every(function ($factura) {
+                        return (int) $factura->ACTIVO !== 0;
+                    });
+
+                    if (!$todasActivas) {
+
+                        $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
+                    }
+                }
+            }
+
+            return response()->json([
+                'data' => $resultado->values(),
+                'msj' => 'Información consultada correctamente'
+            ]);
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'data' => [],
+                'msj' => 'Error ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    public function guardarREPFacturas(Request $request)
+    {
+        $request->validate([
+            'IDS_FACTURAS_REP' => 'required|json',
+            'ARCHIVO_REP' => 'required|file|mimes:pdf|max:20480',
+            'XML_REP' => 'required|file|mimes:xml|max:20480'
+        ]);
+
+        $idsFacturas = json_decode($request->IDS_FACTURAS_REP, true);
+
+        if (
+            !is_array($idsFacturas) ||
+            count($idsFacturas) === 0
+        ) {
+            return response()->json([
+                'success' => false,
+                'msj' => 'No se seleccionaron facturas.'
+            ], 422);
+        }
+
+        foreach ($idsFacturas as $id) {
+
+            if (
+                !filter_var($id, FILTER_VALIDATE_INT) ||
+                (int) $id <= 0
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'msj' => 'Los identificadores de las facturas no son válidos.'
+                ], 422);
+            }
+        }
+
+        $idsFacturas = array_map('intval', $idsFacturas);
+
+        if (count($idsFacturas) !== count(array_unique($idsFacturas))) {
+            return response()->json([
+                'success' => false,
+                'msj' => 'La selección contiene facturas repetidas.'
+            ], 422);
+        }
+
+        $rfc = Auth::user()->RFC_PROVEEDOR;
+
+        $archivosNuevos = [];
+
+        $archivosAnteriores = [];
+
+        try {
+
+            DB::beginTransaction();
+
+            $facturas = facturacionModel::where('RFC_PROVEEDOR', $rfc)
+                ->whereIn('ID_FORMULARIO_FACTURACION', $idsFacturas)
+                ->where('ESTATUS_FACTURA', 1)
+                ->whereRaw("UPPER(TRIM(METODO_PAGO)) = 'PPD'")
+                ->where('SUBIR_RECIBO_PAGO', 1)
+                ->where(function ($query) {
+                    $query->where(function ($q) {
+                        $q->whereNull('SUBIR_REP')
+                            ->orWhere('SUBIR_REP', 0);
+                    })
+                        ->orWhere('ESTATUS_REP', 2);
+                })
+                ->lockForUpdate()
+                ->get();
+
+            if ($facturas->count() !== count($idsFacturas)) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'msj' => 'Una o varias facturas no están disponibles para cargar el REP.'
+                ], 422);
+            }
+
+            if ($facturas->contains(function ($factura) {
+                return (int) $factura->ACTIVO === 0;
+            })) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'msj' => 'Una o varias facturas están inactivas.'
+                ], 422);
+            }
+
+            if (count($idsFacturas) > 1) {
+
+                $grupos = DB::table('comprobantes_pago_agrupados')
+                    ->where('RFC_PROVEEDOR', $rfc)
+                    ->get();
+
+                $grupoValido = false;
+
+                foreach ($grupos as $grupo) {
+
+                    $idsGrupo = json_decode($grupo->IDS_FACTURAS, true);
+
+                    if (!is_array($idsGrupo)) {
+                        continue;
+                    }
+
+                    $idsGrupo = array_map('intval', $idsGrupo);
+
+                    if (count(array_diff($idsFacturas, $idsGrupo)) === 0) {
+
+                        $grupoValido = true;
+
+                        break;
+                    }
+                }
+
+                if (!$grupoValido) {
+
+                    DB::rollBack();
+
+                    return response()->json([
+                        'success' => false,
+                        'msj' => 'Las facturas seleccionadas no pertenecen al mismo grupo.'
+                    ], 422);
+                }
+            }
+
+            $totalFacturas = round(
+                $facturas->sum(function ($factura) {
+                    return (float) $factura->TOTAL_FACTURA;
+                }),
+                2
+            );
+
+            foreach ($facturas as $cuentas) {
+
+                $idFactura = $cuentas->ID_FORMULARIO_FACTURACION;
+
+                $folderPDF = "proveedores/{$rfc}/Facturas/{$idFactura}/Recibo Electrónico de Pago/PDF/{$idFactura}";
+
+                $folderXML = "proveedores/{$rfc}/Facturas/{$idFactura}/Recibo Electrónico de Pago/XML/{$idFactura}";
+
+                $nombrePDF = uniqid('REP_', true) . '.pdf';
+
+                $nombreXML = uniqid('REP_', true) . '.xml';
+
+                $rutaPDF = $request->file('ARCHIVO_REP')->storeAs(
+                    $folderPDF,
+                    $nombrePDF
+                );
+
+                if (!$rutaPDF) {
+                    throw new \Exception('No se pudo guardar el archivo PDF.');
+                }
+
+                $archivosNuevos[] = $rutaPDF;
+
+                $rutaXML = $request->file('XML_REP')->storeAs(
+                    $folderXML,
+                    $nombreXML
+                );
+
+                if (!$rutaXML) {
+                    throw new \Exception('No se pudo guardar el archivo XML.');
+                }
+
+                $archivosNuevos[] = $rutaXML;
+
+                if (!empty($cuentas->ARCHIVO_REP)) {
+                    $archivosAnteriores[] = $cuentas->ARCHIVO_REP;
+                }
+
+                if (!empty($cuentas->XML_REP)) {
+                    $archivosAnteriores[] = $cuentas->XML_REP;
+                }
+
+                $cuentas->ARCHIVO_REP = $rutaPDF;
+                $cuentas->XML_REP = $rutaXML;
+                $cuentas->SUBIR_REP = 1;
+                $cuentas->ESTATUS_REP = null;
+
+                $cuentas->save();
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            foreach ($archivosNuevos as $ruta) {
+                Storage::delete($ruta);
+            }
+
+            return response()->json([
+                'success' => false,
+                'msj' => 'Error al guardar el REP: ' . $e->getMessage()
+            ], 500);
+        }
+
+        foreach (array_unique($archivosAnteriores) as $rutaAnterior) {
+
+            try {
+
+                if (!in_array($rutaAnterior, $archivosNuevos) && Storage::exists($rutaAnterior)) 
+                {
+                    Storage::delete($rutaAnterior);
+                }
+            } catch (\Throwable $e) {
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'msj' => count($idsFacturas) > 1
+                ? 'El REP se guardó correctamente en las ' . count($idsFacturas) . ' facturas.'
+                : 'El REP se guardó correctamente.',
+            'facturas_actualizadas' => count($idsFacturas),
+            'total_facturas' => $totalFacturas
+        ]);
+    }
+
+
+   
     public function store(Request $request)
     {
         try {

@@ -22,36 +22,64 @@
 </div>
 
 
+
+
 <div class="modal fade" id="miModal_factura" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <form method="post" enctype="multipart/form-data" id="formularioFACTURA" style="background-color: #ffffff;">
+
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Cargar REP</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
+
                     {!! csrf_field() !!}
+
                     <div class="row" id="datosFactura">
 
                         <input type="hidden" id="SUBIR_REP" name="SUBIR_REP" value="1">
                         <input type="hidden" id="ESTATUS_REP" name="ESTATUS_REP" value="">
                         <input type="hidden" id="TOTAL_FACTURA" name="TOTAL_FACTURA" value="">
+                        <input type="hidden" id="IDS_FACTURAS_REP" name="IDS_FACTURAS_REP" value="">
 
                         <div class="col-md-12 mb-3">
-                            <label class="form-label"> Recibo Electrónico PDF *</label>
+                            <label class="form-label fw-bold">Facturas que recibirán el REP</label>
+                            <div id="LISTA_FACTURAS_REP" class="border rounded p-3 bg-light"></div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Total de las facturas </label>
+                            <div class="border rounded p-3 bg-light">
+                                <strong id="TOTAL_FACTURAS_REP_TEXTO">$0.00</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Recibo Electrónico PDF *</label>
                             <input type="file" class="form-control" name="ARCHIVO_REP" id="ARCHIVO_REP" accept=".pdf" required>
                         </div>
+
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Recibo Electrónico XML *</label>
                             <input type="file" class="form-control" name="XML_REP" id="XML_REP" accept=".xml" required>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-success" id="btnGuardarFactura">Guardar</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+
+                    <button type="submit" class="btn btn-success" id="btnGuardarFactura">
+                        Guardar
+                    </button>
+
                 </div>
             </form>
         </div>

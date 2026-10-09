@@ -155,10 +155,17 @@
             @endif
 
             <p>
-                El Recibo Electrónico de Pago asociado con la siguiente factura:
+                El Recibo Electrónico de Pago está asociado con
+                {{ $facturas->count() > 1 ? 'las siguientes facturas:' : 'la siguiente factura:' }}
             </p>
 
+            @foreach($facturas as $factura)
+
             <div class="factura-box">
+
+                <b>Factura {{ $loop->iteration }}</b>
+
+                <br><br>
 
                 @if($proveedor->TIPO_PERSONA_ALTA == 1)
 
@@ -174,6 +181,8 @@
 
             </div>
 
+            @endforeach
+
             @if($estatus == 2)
 
             <p>
@@ -185,7 +194,9 @@
             </div>
 
             <p>
-                Le solicitamos realizar las correcciones correspondientes y cargar nuevamente el Recibo Electrónico de Pago en el sistema.
+                Le solicitamos realizar las correcciones correspondientes
+                y cargar nuevamente el Recibo Electrónico de Pago
+                en el sistema.
             </p>
 
             <div class="button">

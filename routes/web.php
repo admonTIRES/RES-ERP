@@ -1169,6 +1169,7 @@ Route::get('/obtenerContratosProveedor', [facturaproveedorController::class, 'ob
 // CARGAR RECIBO ELECTRONICO (REP)
 Route::get('/reciboelectronico', function () {return view('compras.proveedores.factura.reciborep');});
 Route::get('/Tablacargarrecp', [facturaproveedorController::class, 'Tablacargarrecp']);
+Route::post('/guardarREPFacturas', [facturaproveedorController::class, 'guardarREPFacturas']);
 Route::get('/mostrareciboelectronico/{id}', [facturaproveedorController::class, 'mostrareciboelectronico']);
 
 Route::get('/limpiarValidacionFactura', function () {

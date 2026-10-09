@@ -19,101 +19,24 @@ ModalArea.addEventListener('hidden.bs.modal', event => {
 })
 
 
-$("#btnGuardarFactura").click(function (e) {
-    e.preventDefault();
 
-    formularioValido = validarFormulario3($('#formularioFACTURA'))
+var ID_FORMULARIO_FACTURACION = null;
 
-    if (formularioValido) {
-
-    if (ID_FORMULARIO_FACTURACION == 0) {
-        
-        alertMensajeConfirm({
-            title: "¿Desea guardar la información?",
-            text: "Al guardarla, se podra usar",
-            icon: "question",
-        },async function () { 
-
-            await loaderbtn('btnGuardarFactura')
-            await ajaxAwaitFormData({ api: 2, ID_FORMULARIO_FACTURACION: ID_FORMULARIO_FACTURACION }, 'FacturacionSave', 'formularioFACTURA', 'btnGuardarFactura', { callbackAfter: true, callbackBefore: true }, () => {
-        
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Espere un momento',
-                    text: 'Estamos guardando la información',
-                    showConfirmButton: false
-                })
-
-                $('.swal2-popup').addClass('ld ld-breath')
-        
-                
-            }, function (data) {
-                    
-
-                alertMensaje('success', 'Información guardada correctamente', 'Esta información esta lista para usarse', null, null, 1500)
-                $('#miModal_factura').modal('hide')
-                document.getElementById('formularioFACTURA').reset();
-                window.location.reload();
-
-
-            })
-            
-            
-        }, 1)
-        
-    } else {
-            alertMensajeConfirm({
-             title: "¿Desea guardar la información?",
-            text: "Al guardarla, se podra usar",
-            icon: "question",
-        },async function () { 
-
-            await loaderbtn('btnGuardarFactura')
-            await ajaxAwaitFormData({ api: 2, ID_FORMULARIO_FACTURACION: ID_FORMULARIO_FACTURACION }, 'FacturacionSave', 'formularioFACTURA', 'btnGuardarFactura', { callbackAfter: true, callbackBefore: true }, () => {
-        
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Espere un momento',
-                    text: 'Estamos guardando la información',
-                    showConfirmButton: false
-                })
-
-                $('.swal2-popup').addClass('ld ld-breath')
-        
-                
-            }, function (data) {
-                    
-                setTimeout(() => {
-
-                  
-                    alertMensaje('success', 'Información guardada correctamente', 'Información guardada')
-                     $('#miModal_factura').modal('hide')
-                    document.getElementById('formularioFACTURA').reset();
-                    window.location.reload();
- 
-                }, 300);  
-            })
-        }, 1)
-    }
-
-} else {
-    // Muestra un mensaje de error o realiza alguna otra acción
-    alertToast('Por favor, complete todos los campos del formulario.', 'error', 2000)
-
-}
-    
-});
-
-
-
+var xmlREPValidado = false;
 
 var Tablacargarrecp = $("#Tablacargarrecp").DataTable({
-    language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
+
+    language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+    },
+
     lengthChange: true,
+
     lengthMenu: [
         [10, 25, 50, -1],
         [10, 25, 50, 'All']
     ],
+
     info: false,
     paging: true,
     searching: true,
@@ -122,46 +45,105 @@ var Tablacargarrecp = $("#Tablacargarrecp").DataTable({
     scrollCollapse: true,
     responsive: true,
     destroy: true,
+
     ajax: {
+
         dataType: 'json',
         data: {},
         method: 'GET',
         cache: false,
         url: '/Tablacargarrecp',
+
         beforeSend: function () {
             $('#loadingIcon1').css('display', 'inline-block');
         },
+
         complete: function () {
             $('#loadingIcon1').css('display', 'none');
-            Tablacargarrecp.columns.adjust().draw(); 
         },
+
         error: function (jqXHR, textStatus, errorThrown) {
             $('#loadingIcon1').css('display', 'none');
             alertErrorAJAX(jqXHR, textStatus, errorThrown);
         },
+
         dataSrc: 'data'
     },
+
     order: [[0, 'asc']],
+
     columns: [
-        { 
+
+        {
             data: null,
-            render: function(data, type, row, meta) {
-                return meta.row + 1; 
+            render: function (data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
             }
         },
+
         { data: 'TIPO_FACTURA_FORMATO' },
-        { data: 'FOLIO_FISCAL' },
-        { data: 'BTN_FACTURA' },
+        {
+            data: null,
+            render: function (data, type, row) {
+                if (row.ES_GRUPO && row.FACTURAS_AGRUPADAS) {
+                    var contenido = '';
+                    row.FACTURAS_AGRUPADAS.forEach(function (factura) {
+                        contenido +=
+                            '<div class="mb-2">' +
+                            $('<div>').text(factura.numero || 'Sin número').html() +
+                            '</div>';
+                    });
+
+                    return contenido;
+                }
+
+                return $('<div>')
+                    .text(row.FOLIO_FISCAL || row.NO_FACTURA_EXTRANJERO || '')
+                    .html();
+            }
+        },
+
+        {
+            data: null,
+            render: function (data, type, row) {
+
+                if (row.ES_GRUPO && row.FACTURAS_AGRUPADAS) {
+
+                    var botones = '';
+
+                    row.FACTURAS_AGRUPADAS.forEach(function (factura) {
+
+                        botones +=
+                            '<div class="mb-2">' +
+                            '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" ' +
+                            'data-id="' + factura.id + '" ' +
+                            'title="Ver documento">' +
+                            '<i class="bi bi-filetype-pdf"></i>' +
+                            '</button>' +
+                            '</div>';
+                    });
+
+                    return botones;
+                }
+
+                return row.BTN_FACTURA;
+            }
+        },
+
         { data: 'BTN_EDITAR' }
-        
+
     ],
+
     columnDefs: [
-        { targets: 0, title: '#', className: 'all  text-center' },
-        { targets: 1, title: 'Factura por', className: 'all text-center nombre-column' },
-        { targets: 2, title: 'Folio fiscal', className: 'all text-center' },
-        { targets: 3, title: 'Visualizar factura', className: 'all text-center' },
-        { targets: 4, title: 'Cargar REP', className: 'all text-center' },
+
+        {targets: 0,title: '#',className: 'all text-center'},
+        {targets: 1,title: 'Factura por',className: 'all text-center nombre-column'},
+        {targets: 2,title: 'Folio fiscal',className: 'all text-center'},
+        {targets: 3,title: 'Visualizar factura',className: 'all text-center'},
+        {targets: 4,title: 'Cargar REP',className: 'all text-center'}
+
     ]
+
 });
 
 
@@ -176,33 +158,213 @@ $('#Tablacargarrecp').on('click', '.ver-archivo-factura', function () {
 })
 
 
+$('#Tablacargarrecp tbody').on('click', 'button.CARGARREP', function () {
 
-$('#Tablacargarrecp tbody').on('click', 'td>button.CARGARREP', function () {
     var tr = $(this).closest('tr');
+
+    if (tr.hasClass('child')) {
+        tr = tr.prev();
+    }
+
     var row = Tablacargarrecp.row(tr);
-    ID_FORMULARIO_FACTURACION = row.data().ID_FORMULARIO_FACTURACION;
 
+    var datos = row.data();
 
-    document.getElementById('SUBIR_REP').value = "1"; 
-    
+    if (!datos) {
+        return;
+    }
 
-    $("#TOTAL_FACTURA").val(row.data().TOTAL_FACTURA);
+    ID_FORMULARIO_FACTURACION = datos.ID_FORMULARIO_FACTURACION;
 
-$('#btnGuardarFactura').prop('disabled', false);
+    var idsFacturas = datos.ES_GRUPO
+        ? datos.IDS_FACTURAS_GRUPO
+        : [datos.ID_FORMULARIO_FACTURACION];
 
+    document.getElementById('formularioFACTURA').reset();
+
+    xmlREPValidado = false;
+
+    $('#IDS_FACTURAS_REP').val(JSON.stringify(idsFacturas));
+    $('#SUBIR_REP').val('1');
+    $('#ESTATUS_REP').val('');
+    $('#TOTAL_FACTURA').val(datos.TOTAL_FACTURA);
+    $('#LISTA_FACTURAS_REP').empty();
+
+    if (datos.FACTURAS_AGRUPADAS) {
+
+        datos.FACTURAS_AGRUPADAS.forEach(function (factura) {
+
+            var elemento = $('<div>').addClass('d-flex justify-content-between border-bottom py-2');
+
+            elemento.append($('<span>').text(factura.numero || 'Sin número'));
+            elemento.append($('<strong>').text('$' + parseFloat(factura.total || 0).toFixed(2)));
+            $('#LISTA_FACTURAS_REP').append(elemento);
+        });
+    }
+
+    $('#TOTAL_FACTURAS_REP_TEXTO').text('$' + parseFloat(datos.TOTAL_FACTURA || 0).toFixed(2));
+
+    $('#btnGuardarFactura').prop('disabled', false);
     $('#miModal_factura').modal('show');
 
 });
+
+
+
+$("#btnGuardarFactura").click(function (e) {
+
+    e.preventDefault();
+
+    var formularioValido = validarFormulario3($('#formularioFACTURA'));
+
+    if (!formularioValido) {
+
+        alertToast(
+            'Por favor, complete todos los campos del formulario.',
+            'error',
+            2000
+        );
+
+        return;
+    }
+
+    if (!xmlREPValidado) {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'XML pendiente',
+            text: 'Debes seleccionar un archivo XML válido.'
+        });
+
+        return;
+    }
+
+    Swal.fire({
+
+        title: '¿Desea guardar la información?',
+        text: 'Se cargará el REP en las facturas seleccionadas.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+
+    }).then(function (result) {
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        var formulario = document.getElementById('formularioFACTURA');
+
+        var formData = new FormData(formulario);
+
+        $('#btnGuardarFactura').prop('disabled', true);
+
+        Swal.fire({
+
+            icon: 'info',
+            title: 'Espere un momento',
+            text: 'Estamos cargando los archivos PDF y XML del REP.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+
+            didOpen: function () {
+                Swal.showLoading();
+            }
+
+        });
+
+        $.ajax({
+
+            url: '/guardarREPFacturas',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+
+            success: function (response) {
+
+                Swal.close();
+
+                if (response.success) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Información guardada correctamente',
+                        text: response.msj,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(function () {
+
+                        $('#miModal_factura').modal('hide');
+
+                        document.getElementById('formularioFACTURA').reset();
+
+                        window.location.reload();
+
+                    });
+
+                } else {
+
+                    $('#btnGuardarFactura').prop('disabled', false);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.msj || 'No fue posible guardar el REP.'
+                    });
+                }
+            },
+
+            error: function (jqXHR) {
+
+                Swal.close();
+
+                $('#btnGuardarFactura').prop('disabled', false);
+
+                var mensaje = 'Ocurrió un error al guardar los archivos.';
+
+                if (jqXHR.responseJSON) {
+
+                    if (jqXHR.responseJSON.msj) {
+                        mensaje = jqXHR.responseJSON.msj;
+                    }
+
+                    if (jqXHR.responseJSON.message) {
+                        mensaje = jqXHR.responseJSON.message;
+                    }
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al guardar',
+                    text: mensaje
+                });
+            }
+
+        });
+
+    });
+
+});
+
+
 
 
 $(document).on('change', '#XML_REP', function () {
 
     const file = this.files[0];
 
-    if (!file) return;
+    xmlREPValidado = false;
 
+    if (!file) {
+        return;
+    }
 
-    $('#btnGuardarFactura').prop('disabled', false);
+    $('#btnGuardarFactura').prop('disabled', true);
 
     const reader = new FileReader();
 
@@ -216,8 +378,11 @@ $(document).on('change', '#XML_REP', function () {
 
             const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
-            let montoREP = null;
+            if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+                throw new Error('XML inválido');
+            }
 
+            let montoREP = null;
 
             const pagos20 = xmlDoc.getElementsByTagName("pago20:Pagos");
 
@@ -233,30 +398,26 @@ $(document).on('change', '#XML_REP', function () {
                 }
             }
 
-          
-
             const pagos10 = xmlDoc.getElementsByTagName("pago10:Pagos");
 
             if (pagos10.length > 0 && montoREP === null) {
 
-                const pago = xmlDoc.getElementsByTagName("pago10:Pago");
+                const pagos = xmlDoc.getElementsByTagName("pago10:Pago");
 
-                if (pago.length > 0) {
+                if (pagos.length > 0) {
 
-                    montoREP = parseFloat(
-                        pago[0].getAttribute("Monto")
-                    );
+                    montoREP = Array.from(pagos).reduce(function (suma, pago) {
+                        return suma + parseFloat(pago.getAttribute("Monto") || 0);
+                    }, 0);
                 }
             }
-
-           
 
             if (montoREP === null || isNaN(montoREP)) {
 
                 Swal.fire({
                     icon: 'error',
                     title: 'XML inválido',
-                    text: 'El archivo XML no corresponde a un REP válido'
+                    text: 'El archivo XML no corresponde a un REP válido.'
                 });
 
                 $('#XML_REP').val('');
@@ -266,17 +427,14 @@ $(document).on('change', '#XML_REP', function () {
                 return;
             }
 
-         
-
             let totalFactura = parseFloat($('#TOTAL_FACTURA').val());
-
 
             if (isNaN(totalFactura)) {
 
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'No se encontró el total de la factura'
+                    text: 'No se encontró el total de las facturas.'
                 });
 
                 $('#XML_REP').val('');
@@ -286,39 +444,11 @@ $(document).on('change', '#XML_REP', function () {
                 return;
             }
 
-            // =========================================
-            // REDONDEAR
-            // =========================================
-
             montoREP = parseFloat(montoREP.toFixed(2));
 
             totalFactura = parseFloat(totalFactura.toFixed(2));
 
-            // =========================================
-            // VALIDAR QUE NO EXCEDA
-            // =========================================
-
-            // if (montoREP > totalFactura) {
-
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Monto inválido',
-            //         html:
-            //             '<b>Total factura:</b> $' + totalFactura.toFixed(2) +
-            //             '<br><b>Monto REP:</b> $' + montoREP.toFixed(2) +
-            //             '<br><br>El monto del REP no puede ser mayor al total de la factura.'
-            //     });
-
-            //     $('#XML_REP').val('');
-
-            //     $('#btnGuardarFactura').prop('disabled', true);
-
-            //     return;
-            // }
-
-            // =========================================
-            // XML CORRECTO
-            // =========================================
+            xmlREPValidado = true;
 
             $('#btnGuardarFactura').prop('disabled', false);
 
@@ -334,17 +464,36 @@ $(document).on('change', '#XML_REP', function () {
 
             console.error(error);
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No fue posible leer el XML'
-            });
+            xmlREPValidado = false;
 
             $('#XML_REP').val('');
 
             $('#btnGuardarFactura').prop('disabled', true);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No fue posible leer el XML.'
+            });
         }
     };
 
+    reader.onerror = function () {
+
+        xmlREPValidado = false;
+
+        $('#XML_REP').val('');
+
+        $('#btnGuardarFactura').prop('disabled', true);
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No fue posible leer el archivo XML.'
+        });
+    };
+
     reader.readAsText(file);
+
 });
+

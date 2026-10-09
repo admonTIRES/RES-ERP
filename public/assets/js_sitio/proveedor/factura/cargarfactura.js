@@ -362,7 +362,6 @@ function validarTextoFactura() {
 }
 
 
-
 $(document).on('change', '#FACTURA_XML', function () {
 
     if (tipoProveedor != 1) return; 
