@@ -930,7 +930,7 @@ class notificacionController extends Controller
 
             $notiRevisionREP = collect([]);
 
-            $usuariosRevisionREP = [1, 3];
+            $usuariosRevisionREP = [1, 3, 6];
 
             if (in_array($idUsuario, $usuariosRevisionREP)) {
 
