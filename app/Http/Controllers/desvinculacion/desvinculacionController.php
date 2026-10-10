@@ -34,8 +34,9 @@ class desvinculacionController extends Controller
                 'formulario_desvinculacion.*',
                 DB::raw("CONCAT(formulario_contratacion.NOMBRE_COLABORADOR, ' ', formulario_contratacion.PRIMER_APELLIDO, ' ', formulario_contratacion.SEGUNDO_APELLIDO) AS NOMBRE_COLABORADOR")
             )
-            ->leftJoin('formulario_contratacion', 'formulario_desvinculacion.CURP', '=', 'formulario_contratacion.CURP')
-            ->get();
+                ->leftJoin('formulario_contratacion', 'formulario_desvinculacion.CURP', '=', 'formulario_contratacion.CURP')
+                ->orderBy('formulario_desvinculacion.ID_FORMULARIO_DESVINCULACION', 'asc')
+                ->get();
     
             foreach ($tabla as $value) {
                 if ($value->ACTIVO == 0) {
