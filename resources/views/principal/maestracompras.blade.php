@@ -801,7 +801,7 @@
     @endif
 
     @if(request()->is('listarep'))
-    <script src="/assets/js_sitio/proveedor/listarep.js?v=2"></script>
+    <script src="/assets/js_sitio/proveedor/listarep.js?v=3"></script>
     @endif
 
     @if(request()->is('relacionpagosaprobar'))

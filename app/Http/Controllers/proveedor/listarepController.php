@@ -268,6 +268,10 @@ class listarepController extends Controller
 
                     $value->BTN_VISUALIZAR =
                         '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+
+
+
+                        
                 }
 
                 $value->BTN_REP =
@@ -275,6 +279,15 @@ class listarepController extends Controller
 
                 $value->BTN_FACTURA =
                     '<button type="button" class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-factura" data-id="' . $id . '" title="Ver factura"><i class="bi bi-filetype-pdf"></i></button>';
+
+
+
+                $value->BTN_COMPROBANTE =
+                    '<button type="button" class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-comprobante" data-id="' . $id . '" title="Ver comprobante de pago "><i class="bi bi-filetype-pdf"></i></button>';
+
+
+
+
 
                 if ($value->TIPO_FACTURA == 'CONTRATO') {
 

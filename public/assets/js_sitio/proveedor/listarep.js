@@ -175,7 +175,18 @@ var Tablareciborep = $("#Tablareciborep").DataTable({
                 return row.BTN_REP;
             }
         },
+        {
+            data: null,
 
+            render: function (data, type, row) {
+
+                if (!row.ARCHIVO_RECIBO_PAGO || !String(row.ARCHIVO_RECIBO_PAGO).trim()) {
+                    return 'N/A';
+                }
+
+                return row.BTN_COMPROBANTE;
+            }
+        },
         {
             data: 'BTN_VOBO'
         }
@@ -191,7 +202,8 @@ var Tablareciborep = $("#Tablareciborep").DataTable({
         { targets: 5, title: 'Fecha de recepción', className: 'all text-center nombre-column' },
         { targets: 6, title: 'Factura', className: 'all text-center' },
         { targets: 7, title: 'Archivo REP', className: 'all text-center' },
-        { targets: 8, title: 'Estatus', className: 'all text-center' }
+        { targets: 8, title: 'Archivo comprobante', className: 'all text-center' },
+        { targets: 9, title: 'Estatus', className: 'all text-center' }
     ],
 
     infoCallback: function (settings, start, end, max, total, pre) {
@@ -241,6 +253,26 @@ $('#Tablareciborep').on('click', '.ver-archivo-factura', function () {
 
 });
 
+
+
+$('#Tablareciborep').on('click', '.ver-archivo-comprobante', function () {
+
+    var id = $(this).data('id');
+
+    if (!id) {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin documento',
+            text: 'Este registro no tiene documento.'
+        });
+
+        return;
+    }
+
+    window.open('/mostrarecibodepago/' + id, '_blank');
+
+});
 
 
 
