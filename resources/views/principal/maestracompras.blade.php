@@ -793,7 +793,7 @@
     @endif
 
     @if(request()->is('relacionpagos'))
-    <script src="/assets/js_sitio/proveedor/relacionpago.js?v=6"></script>
+    <script src="/assets/js_sitio/proveedor/relacionpago.js?v=7"></script>
     @endif
 
     @if(request()->is('comprobantepagos'))
@@ -805,7 +805,7 @@
     @endif
 
     @if(request()->is('relacionpagosaprobar'))
-    <script src="/assets/js_sitio/proveedor/relacionpagoaprobar.js"></script>
+    <script src="/assets/js_sitio/proveedor/relacionpagoaprobar.js?v=2"></script>
     @endif
 
     <script src="/assets/js_sitio/externo.js?v=1.0"></script>

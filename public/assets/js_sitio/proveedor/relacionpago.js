@@ -301,9 +301,8 @@ function calcularTotalesRelacion() {
 
     });
 
-    $('#MONTO_MXN').val(totalMXN);
-
-    $('#MONTO_USD').val(totalUSD);
+    $('#MONTO_MXN').val(totalMXN.toFixed(2));
+    $('#MONTO_USD').val(totalUSD.toFixed(2));
 
 }
 
