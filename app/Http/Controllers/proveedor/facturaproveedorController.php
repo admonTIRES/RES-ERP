@@ -1002,8 +1002,62 @@ class facturaproveedorController extends Controller
 
                             $request->validate([
                                 'FACTURA_PDF' => 'required|file|mimes:pdf',
-                                'FACTURA_XML' => 'required|file|mimes:xml',
-                                'FECHA_FACTURA' => 'required',
+                                'FACTURA_XML' => [
+                                    'required',
+                                    'file',
+                                    function ($attribute, $value, $fail) {
+
+                                        if (strtolower($value->getClientOriginalExtension()) !== 'xml') {
+                                            $fail('El archivo debe tener extensión XML.');
+                                            return;
+                                        }
+
+                                        libxml_use_internal_errors(true);
+
+                                        $dom = new \DOMDocument();
+
+                                        $cargado = $dom->load(
+                                            $value->getRealPath(),
+                                            LIBXML_NONET
+                                        );
+
+                                        if (!$cargado) {
+                                            $fail('El archivo XML no tiene una estructura válida.');
+                                            libxml_clear_errors();
+                                            return;
+                                        }
+
+                                        $root = $dom->documentElement;
+
+                                        if (!$root || $root->localName !== 'Comprobante') {
+                                            $fail('El archivo no corresponde a un comprobante CFDI.');
+                                            libxml_clear_errors();
+                                            return;
+                                        }
+
+                                        $version = $root->getAttribute('Version');
+
+                                        $namespacesPermitidos = [
+                                            '3.2' => 'http://www.sat.gob.mx/cfd/3',
+                                            '3.3' => 'http://www.sat.gob.mx/cfd/3',
+                                            '4.0' => 'http://www.sat.gob.mx/cfd/4'
+                                        ];
+
+                                        if (!isset($namespacesPermitidos[$version])) {
+                                            $fail('La versión del CFDI no está permitida.');
+                                            libxml_clear_errors();
+                                            return;
+                                        }
+
+                                        if ($root->namespaceURI !== $namespacesPermitidos[$version]) {
+                                            $fail('El namespace del XML no corresponde a su versión CFDI.');
+                                            libxml_clear_errors();
+                                            return;
+                                        }
+
+                                        libxml_clear_errors();
+                                    }
+                                ],                                'FECHA_FACTURA' => 'required',
                                 'SUBTOTAL_FACTURA' => 'required',
                                 'IVA_FACTURA' => 'required',
                                 'TOTAL_FACTURA' => 'required',
