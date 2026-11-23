@@ -72,7 +72,10 @@ class recemplaedosModel extends Model
         'AREA_VACACIONES',
         'DOCUMENTO_SOLICITUD',
         'SUBIR_DOCUMENTO',
+        'CONTRATO_ID',
 
-        'CONTRATO_ID'
+        'APLAZAR_RETORNO_ALMACEN',
+        'FECHA_APLAZAMIENTO',
+        'MOTIVO_APLAZAMIENTO'
     ];
 }

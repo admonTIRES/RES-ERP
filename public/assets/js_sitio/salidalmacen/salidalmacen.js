@@ -9,7 +9,9 @@ Modalmr.addEventListener('hidden.bs.modal', event => {
     document.getElementById('formularioRECURSOSEMPLEADO').reset();
 
     $('#FECHA_ESTIMADA').hide();
-    $('#SOLIDA_ALMACEN').hide();
+    $('#APLAZAR_RETORNO').hide();
+    $('#DIV_APLAZAR_RETORNO').hide();
+    $('#SALIDA_ALMACEN').hide();
     $('#PERMISO_AUSENCIA').hide();
     $('#SOLICITUD_VACACIONES').hide();
     $('#EXPLIQUE_PERMISO').hide();
@@ -353,16 +355,16 @@ $(document).ready(function() {
          
     if (row.data().TIPO_SOLICITUD === "1") {
         $('#PERMISO_AUSENCIA').show();
-        $('#SOLIDA_ALMACEN').hide();
+        $('#SALIDA_ALMACEN').hide();
         $('#SOLICITUD_VACACIONES').hide();
     } else if (row.data().TIPO_SOLICITUD === "2") {
-        $('#SOLIDA_ALMACEN').show();
+        $('#SALIDA_ALMACEN').show();
         $('#PERMISO_AUSENCIA').hide();
         $('#SOLICITUD_VACACIONES').hide();
     } else if (row.data().TIPO_SOLICITUD === "3") {
         $('#SOLICITUD_VACACIONES').show();
         $('#PERMISO_AUSENCIA').hide();
-        $('#SOLIDA_ALMACEN').hide();
+        $('#SALIDA_ALMACEN').hide();
     }
 
     if (row.data().CONCEPTO_PERMISO === "9") {
@@ -375,6 +377,12 @@ $(document).ready(function() {
         $('#DIV_FIRMAR').hide();
     } else  {
         $('#DIV_FIRMAR').show();
+    } 
+        
+    if (row.data().APLAZAR_RETORNO_ALMACEN === "1") {
+        $('#DIV_APLAZAR_RETORNO').show();
+    } else  {
+        $('#DIV_APLAZAR_RETORNO').hide();
     } 
         
    if (row.data().DAR_BUENO == 1) { 
@@ -435,16 +443,16 @@ $('#Tablasalidalmacen tbody').on('click', 'td>button.EDITAR', function () {
 
     if (row.data().TIPO_SOLICITUD === "1") {
         $('#PERMISO_AUSENCIA').show();
-        $('#SOLIDA_ALMACEN').hide();
+        $('#SALIDA_ALMACEN').hide();
         $('#SOLICITUD_VACACIONES').hide();
     } else if (row.data().TIPO_SOLICITUD === "2") {
-        $('#SOLIDA_ALMACEN').show();
+        $('#SALIDA_ALMACEN').show();
         $('#PERMISO_AUSENCIA').hide();
         $('#SOLICITUD_VACACIONES').hide();
     } else if (row.data().TIPO_SOLICITUD === "3") {
         $('#SOLICITUD_VACACIONES').show();
         $('#PERMISO_AUSENCIA').hide();
-        $('#SOLIDA_ALMACEN').hide();
+        $('#SALIDA_ALMACEN').hide();
     }
 
     if (row.data().CONCEPTO_PERMISO === "9") {
@@ -458,7 +466,13 @@ $('#Tablasalidalmacen tbody').on('click', 'td>button.EDITAR', function () {
     } else  {
         $('#DIV_FIRMAR').show();
     } 
-        
+       
+    if (row.data().APLAZAR_RETORNO_ALMACEN === "1") {
+        $('#DIV_APLAZAR_RETORNO').show();
+    } else  {
+        $('#DIV_APLAZAR_RETORNO').hide();
+    } 
+
    if (row.data().DAR_BUENO == 1) { 
        $('#VISTO_BUENO_JEFE').show();
        $('#MOTIVO_RECHAZO_JEFE_DIV').hide();
@@ -3630,6 +3644,7 @@ function revisarSelects() {
         }
     });
     document.getElementById("FECHA_ESTIMADA").style.display = mostrar ? "block" : "none";
+    document.getElementById("APLAZAR_RETORNO").style.display = mostrar ? "block" : "none";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -3637,7 +3652,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const divs = {
         "1": document.getElementById("PERMISO_AUSENCIA"),
-        "2": document.getElementById("SOLIDA_ALMACEN"),
+        "2": document.getElementById("SALIDA_ALMACEN"),
         "3": document.getElementById("SOLICITUD_VACACIONES")
     };
 
@@ -3728,3 +3743,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
+$('#APLAZAR_RETORNO_ALMACEN').on('change', function () {
+    if ($(this).val() === '1') {
+        $('#DIV_APLAZAR_RETORNO').slideDown();
+    } else {
+		$("#FECHA_APLAZAMIENTO").val('');
+		$("#MOTIVO_APLAZAMIENTO").val('');
+        $('#DIV_APLAZAR_RETORNO').slideUp();
+
+    }
+});

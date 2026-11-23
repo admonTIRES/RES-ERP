@@ -172,14 +172,34 @@ class salidalmacenController extends Controller
                                 $color = 'bg-verde-suave';
                             } else {
                                 $color = 'bg-amarillo-suave';
-                                if (!empty($value->FECHA_ESTIMADA_SALIDA)) {
-                                    $fechaEstimada = strtotime($value->FECHA_ESTIMADA_SALIDA);
+
+                                // if (!empty($value->FECHA_ESTIMADA_SALIDA)) {
+                                //     $fechaEstimada = strtotime($value->FECHA_ESTIMADA_SALIDA);
+                                //     $fechaHoy = strtotime(date('Y-m-d'));
+                                //     if ($fechaEstimada !== false && $fechaHoy >= strtotime(date('Y-m-d', $fechaEstimada))) 
+                                //     {
+                                //         $color = 'bg-rojo-suave';
+                                //     }
+                                // }
+
+
+                                $fechaRetorno = ($value->APLAZAR_RETORNO_ALMACEN == 1)
+                                    ? $value->FECHA_APLAZAMIENTO
+                                    : $value->FECHA_ESTIMADA_SALIDA;
+
+                                if (!empty($fechaRetorno)) {
+
+                                    $fechaEstimada = strtotime($fechaRetorno);
                                     $fechaHoy = strtotime(date('Y-m-d'));
-                                    if ($fechaEstimada !== false && $fechaHoy >= strtotime(date('Y-m-d', $fechaEstimada))) 
-                                    {
+
+                                    if (
+                                        $fechaEstimada !== false &&
+                                        $fechaHoy >= strtotime(date('Y-m-d', $fechaEstimada))
+                                    ) {
                                         $color = 'bg-rojo-suave';
                                     }
                                 }
+                                
                             }
                         } else {
 

@@ -143,7 +143,7 @@
                         <div class="row">
                             <div class="col-9">
                                 <label class="form-label">Solicitante </label>
-                                <input type="text" class="form-control" " id=" SOLICITANTE_SALIDA" name="SOLICITANTE_SALIDA" readonly style="pointer-events:none; background-color:#e9ecef;">
+                                <input type="text" class="form-control" id=" SOLICITANTE_SALIDA" name="SOLICITANTE_SALIDA" readonly style="pointer-events:none; background-color:#e9ecef;">
                             </div>
 
                             <div class="col-3">
@@ -156,15 +156,10 @@
                         </div>
                     </div>
 
-
-                    <div id="SOLIDA_ALMACEN" style="display: none;">
-
-
+                    <div id="SALIDA_ALMACEN" style="display: none;">
                         <div class="mt-3">
                             <div class="materialesdiv mt-4"></div>
                         </div>
-
-
                         <div class="col-12 mt-3 d-flex align-items-center">
                             <div class="col-6" id="FECHA_ESTIMADA" style="display: none;">
                                 <label class="col-form-label me-2">Fecha estimada de retorno *</label>
@@ -175,23 +170,41 @@
                                 </div>
                             </div>
                         </div>
-
-
+                        <div class="col-12 mt-3" id="APLAZAR_RETORNO" style="display: none;">
+                            <label>Aplazar retorno</label>
+                            <select class="form-control" id="APLAZAR_RETORNO_ALMACEN" name="APLAZAR_RETORNO_ALMACEN">
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                <option value="1">Sí</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
                     </div>
 
+                    <div class="col-12 mt-3" id="DIV_APLAZAR_RETORNO" style="display: none;">
+                        <div class="row">
+                            <div class="col-5">
+                                <label class="form-label">Fecha de aplazamiento *</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_APLAZAMIENTO" name="FECHA_APLAZAMIENTO" required>
+                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                    <label class="form-label">Motivo del aplazamiento *</label>
+                                    <textarea class="form-control" id="MOTIVO_APLAZAMIENTO" name="MOTIVO_APLAZAMIENTO" rows="3" required></textarea>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="mt-3">
                         <label>Observaciones *</label>
                         <textarea class="form-control" id="OBSERVACIONES_REC" name="OBSERVACIONES_REC" rows="3" required style="pointer-events:none; background-color:#e9ecef;"></textarea>
                     </div>
 
-
                     <div class="mt-3">
                         <label class="form-label">Solicitado por:</label>
                         <input type="text" id="FIRMADO_POR" name="FIRMADO_POR" class="form-control" readonly required style="pointer-events:none; background-color:#e9ecef;">
                     </div>
-
-
 
                     <div id="APROBACION_DIRECCION" style="display: block;">
                         <div class="col-12 mt-3">
@@ -238,7 +251,6 @@
                             <option value="1">Sí</option>
                             <option value="2">No</option>
                         </select>
-
                     </div>
 
                     <div class="col-12 mt-3">
