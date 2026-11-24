@@ -434,29 +434,10 @@ $('#Tablamantenimiento tbody').on('click', 'td>button.EDITAR', function () {
     
 
     $("#tab4-mtto").off("click").on("click", function () {
-        SelectProveedormtto();
-        cargarInformacionMtto();
-
+        cargarTablaInformacionmtto();
     });
 
 });
-
-
-function SelectProveedormtto() {
-
-    const select = $('#PROVEEDOR_INTERNO_MTTO');
-
-    if (select.hasClass("select2-hidden-accessible")) {
-        select.select2('destroy');
-    }
-
-    select.select2({
-        dropdownParent: obtenerModalPadre(select),
-        width: '100%',
-        placeholder: 'Seleccionar proveedor',
-        allowClear: true
-    });
-}
 
 
 $(document).ready(function() {
@@ -603,8 +584,7 @@ $(document).ready(function() {
         
         
     $("#tab4-mtto").off("click").on("click", function () {
-        SelectProveedormtto();
-        cargarInformacionMtto();
+     
 
     });
         
@@ -1608,6 +1588,50 @@ $('#Tablacalibracionmantenimiento').on('click', '.ver-archivo-documentoscalibrac
 /// CRITERIO
 
 
+const Modalcriterio = document.getElementById('miModal_INFORMACIONMTTO')
+Modalcriterio.addEventListener('hidden.bs.modal', event => {
+     
+    ID_INFORMACION_MTTO = 0
+    document.getElementById('formularioINFORMACIONMTTO').reset();
+    $('#miModal_INFORMACIONMTTO .modal-title').html('Nuevo criterio');
+
+    $('#PROVEEDORES_INTERNO').hide();
+    $('#PROVEEDORES_EXTERNO').hide();
+
+})
+
+function seleccionarproveedorcriterio() {
+
+    const select = $('#PROVEEDOR_INTERNO_MTTO');
+
+    if (select.hasClass("select2-hidden-accessible")) {
+        select.select2('destroy');
+    }
+
+    select.select2({
+        dropdownParent: obtenerModalPadre(select),
+        width: '100%',
+        placeholder: 'Seleccionar proveedor',
+        allowClear: true
+    });
+}
+
+$("#NUEVA_CRITERIO").click(function (e) {
+    e.preventDefault();
+
+    seleccionarproveedorcriterio();
+
+    $('#formularioINFORMACIONMTTO').each(function(){
+        this.reset();
+    });
+
+    $('#PROVEEDORES_INTERNO').hide();
+    $('#PROVEEDORES_EXTERNO').hide();
+
+    $("#miModal_INFORMACIONMTTO").modal("show");
+   
+});
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const selectproveedores = document.getElementById('PROVEEDOR_INTEXT_MTTO');
@@ -1630,12 +1654,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-
-
 $("#guardarMTTO").click(function (e) {
     e.preventDefault();
 
-    formularioValido = validarFormulario3($('#formularioINVENTARIO'))
+    formularioValido = validarFormulario3($('#formularioINFORMACIONMTTO'))
 
     if (formularioValido) {
 
@@ -1648,7 +1670,7 @@ $("#guardarMTTO").click(function (e) {
         },async function () { 
 
             await loaderbtn('guardarMTTO')
-            await ajaxAwaitFormData({ api: 5,MANTENIMIENTO_ID:inventario_id, ID_INFORMACION_MTTO: ID_INFORMACION_MTTO }, 'MantenimientoSave', 'formularioINVENTARIO', 'guardarMTTO', { callbackAfter: true, callbackBefore: true }, () => {
+            await ajaxAwaitFormData({ api: 5,MANTENIMIENTO_ID:inventario_id, ID_INFORMACION_MTTO: ID_INFORMACION_MTTO }, 'MantenimientoSave', 'formularioINFORMACIONMTTO', 'guardarMTTO', { callbackAfter: true, callbackBefore: true }, () => {
                 Swal.fire({
                     icon: 'info',
                     title: 'Espere un momento',
@@ -1661,8 +1683,13 @@ $("#guardarMTTO").click(function (e) {
             }, function (data) {
                     
                 ID_INFORMACION_MTTO = data.cliente.ID_INFORMACION_MTTO
-                alertMensaje('success', 'Información guardada correctamente', 'Esta información esta lista para usarse', null, null, 1500)
-                
+                    alertMensaje('success','Información guardada correctamente', 'Esta información esta lista para usarse',null,null, 1500)
+                     $('#miModal_INFORMACIONMTTO').modal('hide')
+                    document.getElementById('formularioINFORMACIONMTTO').reset();
+  
+                    if ($.fn.DataTable.isDataTable('#Tablainformacionmtto')) {
+                        Tablainformacionmtto.ajax.reload(null, false); 
+                    }
 
             })
             
@@ -1676,7 +1703,7 @@ $("#guardarMTTO").click(function (e) {
         },async function () { 
 
             await loaderbtn('guardarMTTO')
-            await ajaxAwaitFormData({ api: 5,MANTENIMIENTO_ID:inventario_id ,ID_INFORMACION_MTTO: ID_INFORMACION_MTTO }, 'MantenimientoSave', 'formularioINVENTARIO', 'guardarMTTO', { callbackAfter: true, callbackBefore: true }, () => {
+            await ajaxAwaitFormData({ api: 5,MANTENIMIENTO_ID:inventario_id ,ID_INFORMACION_MTTO: ID_INFORMACION_MTTO }, 'MantenimientoSave', 'formularioINFORMACIONMTTO', 'guardarMTTO', { callbackAfter: true, callbackBefore: true }, () => {
                 Swal.fire({
                     icon: 'info',
                     title: 'Espere un momento',
@@ -1692,6 +1719,13 @@ $("#guardarMTTO").click(function (e) {
 
                     ID_INFORMACION_MTTO = data.cliente.ID_INFORMACION_MTTO
                     alertMensaje('success', 'Información editada correctamente', 'Información guardada')
+                     $('#miModal_INFORMACIONMTTO').modal('hide')
+                    document.getElementById('formularioINFORMACIONMTTO').reset();
+
+   
+                    if ($.fn.DataTable.isDataTable('#Tablainformacionmtto')) {
+                        Tablainformacionmtto.ajax.reload(null, false); 
+                    }
 
                 }, 300);  
             })
@@ -1705,62 +1739,150 @@ $("#guardarMTTO").click(function (e) {
     
 });
 
-
-function cargarInformacionMtto() {
-
-    document.getElementById('ID_INFORMACION_MTTO').value = 0;
-
-    document.getElementById('PROVEEDORES_INTERNO').style.display = 'none';
-    document.getElementById('PROVEEDORES_EXTERNO').style.display = 'none';
-
-    if (!inventario_id) {
-        return;
+function cargarTablaInformacionmtto() {
+    if ($.fn.DataTable.isDataTable('#Tablainformacionmtto')) {
+        Tablainformacionmtto.clear().destroy();
     }
 
-    fetch(`/obtenerInformacionMtto?MANTENIMIENTO_ID=${inventario_id}`)
-        .then(response => response.json())
-        .then(resp => {
+    Tablainformacionmtto = $("#Tablainformacionmtto").DataTable({
+        language: { url: "https://cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" },
+        lengthChange: true,
+        lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, 'All']
+        ],
+        info: false,
+        paging: true,
+        searching: true,
+        filtering: true,
+        scrollY: '65vh',
+        scrollCollapse: true,
+        responsive: true,
+        ajax: {
+            dataType: 'json',
+            data: { equipo: inventario_id }, 
+            method: 'GET',
+            cache: false,
+            url: '/Tablainformacionmtto',  
+            beforeSend: function () {
+                $('#loadingIcon3').css('display', 'inline-block');
+            },
+            complete: function () {
+                $('#loadingIcon3').css('display', 'none');
+                Tablainformacionmtto.columns.adjust().draw(); 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $('#loadingIcon3').css('display', 'none');
+                alertErrorAJAX(jqXHR, textStatus, errorThrown);
+            },
+            dataSrc: 'data'
+        },
+        order: [[0, 'desc']], 
+        columns: [
+            { data: null, render: function (data, type, row, meta) { return meta.row + 1; }, className: 'text-center' },
+            { data: 'CRITERIO_MTTO', className: 'text-center' },
+            { data: 'FECHA_ULTIMO_MTTO', className: 'text-center' },
+            { data: 'BTN_EDITAR', className: 'text-center' },
+            { data: 'BTN_VISUALIZAR', className: 'text-center' },
+            { data: 'BTN_ELIMINAR', className: 'text-center' },
 
-            if (!resp.success || !resp.data) {
-                return;
-            }
+        ],
+        columnDefs: [
+            { targets: 0, title: '#', className: 'all text-center' },
+            { targets: 1, title: 'Criterio', className: 'all text-center' },  
+            { targets: 2, title: 'Fecha ', className: 'all text-center' },  
+            { targets: 3, title: 'Editar', className: 'all text-center' }, 
+            { targets: 4, title: 'Visualizar', className: 'all text-center' }, 
+            { targets: 5, title: 'Activo', className: 'all text-center' }, 
 
-            const data = resp.data;
 
-            document.getElementById('ID_INFORMACION_MTTO').value =
-                data.ID_INFORMACION_MTTO ?? 0;
-
-            document.getElementById('CRITERIO_MTTO').value = data.CRITERIO_MTTO ?? '';
-            document.getElementById('TIPO_MTTO').value = data.TIPO_MTTO ?? '';
-            document.getElementById('PROVEEDOR_INTEXT_MTTO').value = data.PROVEEDOR_INTEXT_MTTO ?? '';
-            document.getElementById('FECHA_ULTIMO_MTTO').value = data.FECHA_ULTIMO_MTTO ?? '';
-
-            if (data.PROVEEDOR_INTEXT_MTTO == 1) {
-
-                document.getElementById('PROVEEDORES_INTERNO').style.display = 'block';
-                document.getElementById('PROVEEDORES_EXTERNO').style.display = 'none';
-
-                SelectProveedormtto();
-
-                $('#PROVEEDOR_INTERNO_MTTO')
-                    .val(data.PROVEEDOR_INTERNO_MTTO ?? '')
-                    .trigger('change');
-
-            } else if (data.PROVEEDOR_INTEXT_MTTO == 2) {
-
-                document.getElementById('PROVEEDORES_INTERNO').style.display = 'none';
-                document.getElementById('PROVEEDORES_EXTERNO').style.display = 'block';
-
-                document.getElementById('PROVEEDOR_EXTERNO_MTTO').value =
-                    data.PROVEEDOR_EXTERNO_MTTO ?? '';
-            }
-
-        })
-        .catch(error => {
-            console.error('Error al cargar información MTTO:', error);
-        });
+        ],
+       
+    });
 }
 
+$('#Tablainformacionmtto').on('click', 'td>button.EDITAR', function () {
+    var tr = $(this).closest('tr');
+    var row = Tablainformacionmtto.row(tr);
+
+    ID_INFORMACION_MTTO = row.data().ID_INFORMACION_MTTO;
+
+    editarDatoTabla(row.data(), 'formularioINFORMACIONMTTO', 'miModal_INFORMACIONMTTO', 1);
+
+    $('#miModal_INFORMACIONMTTO .modal-title').html(row.data().CRITERIO_MTTO);
+
+
+    if (row.data().PROVEEDOR_INTEXT_MTTO == 1) {
+        $('#PROVEEDORES_INTERNO').show();
+        $('#PROVEEDORES_EXTERNO').hide();
+         
+        seleccionarproveedorcriterio();
+
+        if (row.data().PROVEEDOR_INTERNO_MTTO) {
+            $('#PROVEEDOR_INTERNO_MTTO').val(row.data().PROVEEDOR_INTERNO_MTTO).trigger('change');
+        }
+         
+    } else {
+        $('#PROVEEDORES_INTERNO').hide();
+        $('#PROVEEDORES_EXTERNO').show();
+    }
+
+});
+
+
+$(document).ready(function() {
+    $('#Tablainformacionmtto').on('click', 'td>button.VISUALIZAR', function () {
+    var tr = $(this).closest('tr');
+    var row = Tablainformacionmtto.row(tr);
+        
+    hacerSoloLecturainventario(row.data(), '#miModal_INFORMACIONMTTO');
+    
+    ID_INFORMACION_MTTO = row.data().ID_INFORMACION_MTTO;
+
+   editarDatoTabla(row.data(), 'formularioINFORMACIONMTTO', 'miModal_INFORMACIONMTTO', 1);
+
+    $('#miModal_INFORMACIONMTTO .modal-title').html(row.data().CRITERIO_MTTO);
+
+
+    if (row.data().PROVEEDOR_INTEXT_MTTO == 1) {
+        $('#PROVEEDORES_INTERNO').show();
+        $('#PROVEEDORES_EXTERNO').hide();
+         
+        seleccionarproveedorcriterio();
+
+        if (row.data().PROVEEDOR_INTERNO_MTTO) {
+            $('#PROVEEDOR_INTERNO_MTTO').val(row.data().PROVEEDOR_INTERNO_MTTO).trigger('change');
+        }
+         
+    } else {
+        $('#PROVEEDORES_INTERNO').hide();
+        $('#PROVEEDORES_EXTERNO').show();
+    }
+   
+        
+        
+    });
+
+    $('#miModal_INFORMACIONMTTO').on('hidden.bs.modal', function () {
+        resetFormulario('#miModal_INFORMACIONMTTO');
+    });
+});
+
+
+$('#Tablainformacionmtto').on('change', 'td>label>input.ELIMINAR', function () {
+    var tr = $(this).closest('tr');
+    var row = Tablainformacionmtto.row(tr);
+
+    var estado = $(this).is(':checked') ? 1 : 0;
+
+    data = {
+        api: 5,
+        ELIMINAR: estado == 0 ? 1 : 0, 
+        ID_INFORMACION_MTTO: row.data().ID_INFORMACION_MTTO
+    };
+
+    eliminarDatoTabla(data, [Tablainformacionmtto], 'MantenimientoDelete');
+});
 
 //////////////////////////////////  DETALLE ARTICULO //////////////////////////////////
 
@@ -1901,14 +2023,14 @@ function cargarTablaDetallaArticulo() {
             cache: false,
             url: '/Tabladetallearticulos',  
             beforeSend: function () {
-                $('#loadingIcon2').css('display', 'inline-block');
+                $('#loadingIcon4').css('display', 'inline-block');
             },
             complete: function () {
-                $('#loadingIcon2').css('display', 'none');
+                $('#loadingIcon4').css('display', 'none');
                 Tabladetallearticulos.columns.adjust().draw(); 
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $('#loadingIcon2').css('display', 'none');
+                $('#loadingIcon4').css('display', 'none');
                 alertErrorAJAX(jqXHR, textStatus, errorThrown);
             },
             dataSrc: 'data'

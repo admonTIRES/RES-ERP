@@ -271,8 +271,6 @@ class listamantenimientoController extends Controller
                     $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_DOCUMENTO_CALIBRACION . '"><span class="slider round"></span></label>';
                     $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
                     $value->BTN_DOCUMENTO = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoscalibracion" data-id="' . $value->ID_DOCUMENTO_CALIBRACION . '" title="Ver documento "> <i class="bi bi-filetype-pdf"></i></button>';
-
-                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
                 } else {
 
                     $value->BTN_DOCUMENTO = '<button class="btn btn-danger btn-custom rounded-pill pdf-button ver-archivo-documentoscalibracion" data-id="' . $value->ID_DOCUMENTO_CALIBRACION . '" title="Ver documento"> <i class="bi bi-filetype-pdf"></i></button>';
@@ -378,6 +376,44 @@ class listamantenimientoController extends Controller
     }
 
 
+
+
+    public function Tablainformacionmtto(Request $request)
+    {
+        try {
+
+
+            $equipo = $request->get('equipo');
+
+            $tabla = informacionmttoModel::where('MANTENIMIENTO_ID', $equipo)->get();
+
+            foreach ($tabla as $value) {
+                if ($value->ACTIVO == 0) {
+
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_INFORMACION_MTTO . '"><span class="slider round"></span></label>';
+                    $value->BTN_EDITAR = '<button type="button" class="btn btn-secondary btn-custom rounded-pill EDITAR" disabled><i class="bi bi-ban"></i></button>';
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+                } else {
+
+                    $value->BTN_ELIMINAR = '<label class="switch"><input type="checkbox" class="ELIMINAR" data-id="' . $value->ID_INFORMACION_MTTO . '" checked><span class="slider round"></span></label>';
+                    $value->BTN_EDITAR = '<button type="button" class="btn btn-warning btn-custom rounded-pill EDITAR"><i class="bi bi-pencil-square"></i></button>';
+                    $value->BTN_VISUALIZAR = '<button type="button" class="btn btn-primary btn-custom rounded-pill VISUALIZAR"><i class="bi bi-eye"></i></button>';
+                }
+
+            }
+
+            return response()->json([
+                'data' => $tabla,
+                'msj' => 'Información consultada correctamente'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'msj' => 'Error ' . $e->getMessage(),
+                'data' => 0
+            ]);
+        }
+    }
 
 
 

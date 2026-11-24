@@ -500,99 +500,18 @@
                         </div>
 
                         <div class="tab-pane fade" id="contenido-mtto" role="tabpanel">
-                            <ol class="breadcrumb mt-3" style="display: flex; justify-content: center; align-items: center;">
+                            <ol class="breadcrumb mt-3">
                                 <h3 style="color: #ffffff; margin: 0;">&nbsp;Criterio</h3>
+                                <button type="button" class="btn btn-light waves-effect waves-light" id="NUEVA_CRITERIO" style="margin-left: auto;">
+                                    Nuevo &nbsp;<i class="bi bi-plus-circle"></i>
+                                </button>
                             </ol>
-                            <form method="post" enctype="multipart/form-data" id="formularioINVENTARIO" style="background-color: #ffffff;">
-
-                                <div class="col-12">
-                                    <div class="row">
-
-                                        <input type="hidden" class="form-control" name="ID_INFORMACION_MTTO" id="ID_INFORMACION_MTTO" value="0">
-
-                                        <div class="col-4 mt-2">
-                                            <label class="form-label">Definir criterio *</label>
-                                            <input type="text" class="form-control" name="CRITERIO_MTTO" id="CRITERIO_MTTO" required>
-                                        </div>
-                                        <div class="col-4 mt-2">
-                                            <label class="form-label"> Tipo de mantenimiento *</label>
-                                            <select class="form-control" name="TIPO_MTTO" id="TIPO_MTTO" required>
-                                                <option value="" selected disabled>Seleccione una opción</option>
-                                                <option value="1">Preventivo</option>
-                                                <option value="2">Correctivo</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-4 mt-2">
-                                            <label class="form-label">Proveedor interno/externo*</label>
-                                            <select class="form-control" name="PROVEEDOR_INTEXT_MTTO" id="PROVEEDOR_INTEXT_MTTO" required>
-                                                <option value="" selected disabled>Seleccione una opción</option>
-                                                <option value="1">Interno</option>
-                                                <option value="2">Externo</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 mt-3" id="PROVEEDORES_INTERNO" style="display: none;">
-                                            <label class="form-label">Proveedor *</label>
-                                            <select class="form-select text-center" id="PROVEEDOR_INTERNO_MTTO" name="PROVEEDOR_INTERNO_MTTO">
-                                                <option value="">Seleccionar proveedor</option>
-                                                <optgroup label="Proveedor oficial">
-                                                    @foreach ($proveedoresOficiales as $proveedor)
-                                                    <option value="{{ $proveedor->RFC_ALTA }}">
-                                                        {{ $proveedor->RAZON_SOCIAL_ALTA }} ({{ $proveedor->RFC_ALTA }})
-                                                    </option>
-                                                    @endforeach
-                                                </optgroup>
-                                                <optgroup label="Proveedores temporales">
-                                                    @foreach ($proveedoresTemporales as $proveedor)
-                                                    <option value="{{ $proveedor->RAZON_PROVEEDORTEMP }}">
-                                                        {{ $proveedor->RAZON_PROVEEDORTEMP }} ({{ $proveedor->NOMBRE_PROVEEDORTEMP }})
-                                                    </option>
-                                                    @endforeach
-                                                </optgroup>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 mt-3" id="PROVEEDORES_EXTERNO" style="display: none;">
-                                            <label class="form-label">Proveedor *</label>
-                                            <input type="text" class="form-control" id="PROVEEDOR_EXTERNO_MTTO" name="PROVEEDOR_EXTERNO_MTTO" required>
-                                        </div>
-
-
-                                    </div>
+                            <div class="card-body">
+                                <div class="card-body position-relative" id="tabla_activo" style="display: block;">
+                                    <i id="loadingIcon3" class="bi bi-arrow-repeat position-absolute spin" style="top: 10px; left: 10px; font-size: 24px; display: none;"></i>
+                                    <table id="Tablainformacionmtto" class="table table-hover bg-white table-bordered text-center w-100 TableCustom"></table>
                                 </div>
-
-
-                                <ol class="breadcrumb mt-3" style="display: flex; justify-content: center; align-items: center;">
-                                    <h3 style="color: #ffffff; margin: 0;">&nbsp;Programación</h3>
-                                </ol>
-
-
-                                <div class="mb-3">
-                                    <div class="col-12">
-                                        <div class="row justify-content-center">
-                                            <div class="col-6 mt-3">
-                                                <label class="form-label">Fecha del último mantenimiento *</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_ULTIMO_MTTO" name="FECHA_ULTIMO_MTTO" required>
-                                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 mt-3">
-                                    <div class="row justify-content-center">
-                                        <div class="col-6 text-center">
-                                            <button type="submit" class="btn btn-success" id="guardarMTTO">Guardar</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </form>
-
-                            <ol class="breadcrumb mt-5" style="display: flex; justify-content: center; align-items: center;">
-                                <h3 style="color: #ffffff; margin: 0;">&nbsp;Bitácora</h3>
-                            </ol>
-
+                            </div>
                         </div>
 
                         <!-- TAB 5: Detalle artículo  -->
@@ -607,7 +526,7 @@
 
                             <div class="card-body">
                                 <div class="card-body position-relative" id="tabla_activo" style="display: block;">
-                                    <i id="loadingIcon2" class="bi bi-arrow-repeat position-absolute spin" style="top: 10px; left: 10px; font-size: 24px; display: none;"></i>
+                                    <i id="loadingIcon4" class="bi bi-arrow-repeat position-absolute spin" style="top: 10px; left: 10px; font-size: 24px; display: none;"></i>
                                     <table id="Tabladetallearticulos" class="table table-hover bg-white table-bordered text-center w-100 TableCustom"></table>
                                 </div>
                             </div>
@@ -903,5 +822,98 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- ============================================================== -->
+<!-- MODAL INFORMACION MTTO  -->
+<!-- ============================================================== -->
+
+
+
+<div class="modal fade" id="miModal_INFORMACIONMTTO" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data" id="formularioINFORMACIONMTTO" style="background-color: #ffffff;">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo criterio</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {!! csrf_field() !!}
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12 mt-2">
+                                <label class="form-label">Definir criterio *</label>
+                                <textarea  class="form-control" name="CRITERIO_MTTO" id="CRITERIO_MTTO" rows="5" required></textarea>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <label class="form-label"> Tipo de mantenimiento *</label>
+                                <select class="form-control" name="TIPO_MTTO" id="TIPO_MTTO" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="1">Preventivo</option>
+                                    <option value="2">Correctivo</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <label class="form-label">Proveedor interno/externo*</label>
+                                <select class="form-control" name="PROVEEDOR_INTEXT_MTTO" id="PROVEEDOR_INTEXT_MTTO" required>
+                                    <option value="" selected disabled>Seleccione una opción</option>
+                                    <option value="1">Interno</option>
+                                    <option value="2">Externo</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-3" id="PROVEEDORES_INTERNO" style="display: none;">
+                                <label class="form-label">Proveedor *</label>
+                                <select class="form-select text-center" id="PROVEEDOR_INTERNO_MTTO" name="PROVEEDOR_INTERNO_MTTO">
+                                    <option value="">Seleccionar proveedor</option>
+                                    <optgroup label="Proveedor oficial">
+                                        @foreach ($proveedoresOficiales as $proveedor)
+                                        <option value="{{ $proveedor->RFC_ALTA }}">
+                                            {{ $proveedor->RAZON_SOCIAL_ALTA }} ({{ $proveedor->RFC_ALTA }})
+                                        </option>
+                                        @endforeach
+                                    </optgroup>
+                                    <optgroup label="Proveedores temporales">
+                                        @foreach ($proveedoresTemporales as $proveedor)
+                                        <option value="{{ $proveedor->RAZON_PROVEEDORTEMP }}">
+                                            {{ $proveedor->RAZON_PROVEEDORTEMP }} ({{ $proveedor->NOMBRE_PROVEEDORTEMP }})
+                                        </option>
+                                        @endforeach
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-3" id="PROVEEDORES_EXTERNO" style="display: none;">
+                                <label class="form-label">Proveedor *</label>
+                                <input type="text" class="form-control" id="PROVEEDOR_EXTERNO_MTTO" name="PROVEEDOR_EXTERNO_MTTO" required>
+                            </div>
+
+
+                            <div class="col-12 mt-3">
+                                <label class="form-label">Fecha *</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control mydatepicker" placeholder="aaaa-mm-dd" id="FECHA_ULTIMO_MTTO" name="FECHA_ULTIMO_MTTO" required>
+                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success" id="guardarMTTO">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 
 @endsection

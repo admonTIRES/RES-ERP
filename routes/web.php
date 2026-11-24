@@ -1345,7 +1345,7 @@ Route::get('/mostrardocumentocalibracion/{id}', [listamantenimientoController::c
 
 /// MTTO CRITERIO, PROGRAMACION Y BITACORA   
 Route::get('/obtenerInformacionMtto', [listamantenimientoController::class, 'obtenerInformacionMtto']);
-
+Route::get('/Tablainformacionmtto', [listamantenimientoController::class, 'Tablainformacionmtto']);
 
 //==============================================    LISTA DE MANTENIMIENTO DE INSTALACIONES   ============================================== 
 Route::get('/mantenimientoinstalaciones', [listainstalacionController::class, 'index']);
