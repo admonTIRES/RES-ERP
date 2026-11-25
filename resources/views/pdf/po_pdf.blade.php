@@ -339,7 +339,7 @@
 
         <tr>
             <td class="bg-gray bold">Teléfono</td>
-            <td>{{ $proveedor1->TELEFONO_DIRECOTORIO ?? '' }}</td>
+            <td>{{ $proveedor1->TELEFONO_OFICINA_ALTA ?? '' }}</td>
 
             <td class="bg-gray bold">Celular</td>
             <td>{{ $proveedor1->CELULAR_DIRECTORIO ?? '' }}</td>
@@ -355,7 +355,7 @@
         @endif
 
     </table>
-    
+
 
     <table class="tabla-info_2">
         <thead>

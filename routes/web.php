@@ -963,6 +963,11 @@ Route::get('/listafacturas', function () {return view('compras.listafactura.list
 Route::get('/Tablalistafacturasproveedores', [listafacturasController::class, 'Tablalistafacturasproveedores']);
 Route::post('/aprobarRechazarFactura', [listafacturasController::class, 'aprobarRechazarFactura']);
 
+// VISUALIZAR PO Y GR FACTURA 
+Route::get('/generarpofactura/{numero}', [listafacturasController::class, 'generarpofactura']);
+Route::get('/generargrfactura/{numero}', [listafacturasController::class, 'generargrfactura']);
+
+
 //============================================== RELACION DE PAGOS   ============================================== 
 Route::get('/relacionpagos', function () {return view('compras.relacionpagos.relacionpagos');});
 Route::get('/getFacturasRelacionPagos', [relacionpagoController::class, 'getFacturasRelacionPagos']);
