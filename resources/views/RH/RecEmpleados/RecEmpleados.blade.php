@@ -146,12 +146,12 @@
 
                                 <div class="col-1">
                                     <label class="form-label">No. días </label>
-                                    <input type="number" class="form-control" id="NODIAS_PERMISO" name="NODIAS_PERMISO">
+                                    <input type="number" class="form-control" id="NODIAS_PERMISO" name="NODIAS_PERMISO" required>
                                 </div>
 
                                 <div class="col-1">
                                     <label class="form-label">No. horas </label>
-                                    <input type="number" class="form-control" id="NOHORAS_PERMISO" name="NOHORAS_PERMISO">
+                                    <input type="number" class="form-control" id="NOHORAS_PERMISO" name="NOHORAS_PERMISO" required>
                                 </div>
 
 

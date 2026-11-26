@@ -462,27 +462,39 @@ $('#Tablarecempleados tbody').on('click', 'td>button.EDITAR', function () {
     document.getElementById("guardaRECEMPLEADOS").disabled = false;
 
     
-        const dias = document.getElementById("NODIAS_PERMISO");
-        const horas = document.getElementById("NOHORAS_PERMISO");
-
-        if (row.data().NODIAS_PERMISO && parseInt(row.data().NODIAS_PERMISO) > 0) {
-            dias.disabled = false;
-            horas.value = "";
-            horas.disabled = true;
-        }
-
-        else if (row.data().NOHORAS_PERMISO && parseInt(row.data().NOHORAS_PERMISO) > 0) {
-            horas.disabled = false;
-            dias.value = "";
-            dias.disabled = true;
-        }
-
-        else {
-            dias.disabled = false;
-            horas.disabled = false;
-        }
-
     
+    const dias = document.getElementById("NODIAS_PERMISO");
+    const horas = document.getElementById("NOHORAS_PERMISO");
+
+    if (row.data().NODIAS_PERMISO && parseInt(row.data().NODIAS_PERMISO) > 0) {
+        dias.disabled = false;
+        dias.required = false;
+        dias.classList.remove("validar", "error");
+
+        horas.value = "";
+        horas.disabled = true;
+        horas.required = false;
+        horas.classList.remove("validar", "error");
+    }
+
+    else if (row.data().NOHORAS_PERMISO && parseInt(row.data().NOHORAS_PERMISO) > 0) {
+        horas.disabled = false;
+        horas.required = false;
+        horas.classList.remove("validar", "error");
+
+        dias.value = "";
+        dias.disabled = true;
+        dias.required = false;
+        dias.classList.remove("validar", "error");
+    }
+
+    else {
+        dias.disabled = false;
+        dias.required = true;
+
+        horas.disabled = false;
+        horas.required = true;
+    }
     
     if (row.data().TIPO_SOLICITUD === "1") {
         $('#PERMISO_AUSENCIA').show();
@@ -815,24 +827,43 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
     const concepto = document.getElementById("CONCEPTO_PERMISO");
     const inputDias = document.getElementById("NODIAS_PERMISO");
     const inputHoras = document.getElementById("NOHORAS_PERMISO");
 
     concepto.addEventListener("change", function () {
-        if (this.value === "6") { 
+        if (this.value === "6") {
             inputDias.value = 84;
+            inputDias.disabled = false;
+            inputDias.required = false;
+            inputDias.classList.remove("validar", "error");
+
             inputHoras.value = "";
             inputHoras.disabled = true;
-        } else if (this.value === "7") { 
+            inputHoras.required = false;
+            inputHoras.classList.remove("validar", "error");
+
+        } else if (this.value === "7") {
             inputDias.value = 5;
+            inputDias.disabled = false;
+            inputDias.required = false;
+            inputDias.classList.remove("validar", "error");
+
             inputHoras.value = "";
             inputHoras.disabled = true;
+            inputHoras.required = false;
+            inputHoras.classList.remove("validar", "error");
+
         } else {
             inputDias.value = "";
+            inputDias.disabled = false;
+            inputDias.required = true;
+
             inputHoras.value = "";
             inputHoras.disabled = false;
+            inputHoras.required = true;
         }
     });
 
@@ -840,8 +871,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (this.value && parseInt(this.value) > 0) {
             inputHoras.value = "";
             inputHoras.disabled = true;
+            inputHoras.required = false;
+            inputHoras.classList.remove("validar", "error");
+
+            inputDias.disabled = false;
+            inputDias.required = false;
+            inputDias.classList.remove("validar", "error");
         } else {
             inputHoras.disabled = false;
+            inputHoras.required = true;
+
+            inputDias.required = true;
         }
     });
 
@@ -849,8 +889,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (this.value && parseInt(this.value) > 0) {
             inputDias.value = "";
             inputDias.disabled = true;
+            inputDias.required = false;
+            inputDias.classList.remove("validar", "error");
+
+            inputHoras.disabled = false;
+            inputHoras.required = false;
+            inputHoras.classList.remove("validar", "error");
         } else {
             inputDias.disabled = false;
+            inputDias.required = true;
+
+            inputHoras.required = true;
         }
     });
 });
